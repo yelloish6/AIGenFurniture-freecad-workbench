@@ -1,0 +1,63 @@
+Item,Material,Price,Unit,Minimum,pret [ron],furnizor,link
+pal,Alb W908ST2,423,sheet,0.5,423,proficut,PAL MEL Stejar Bardolino Gri H1146 711RON + TVA
+pal,Alb W962ST2,300,sheet,0.5,300,proficut,
+pal,Roz Fuchsia U337 ST9,514,sheet,0.5,514,proficut,Pal Roz Fuchsia  U337 ST9
+pal,Smoke Green K521 SU,475,sheet,1,475,proficut,
+pal,Roz Flamingo U363 ST9,514,sheet,1,514,proficut,Pal Roz Flamingo  U363 ST9
+pal,Stejar Halifax H1176 ST37,777,sheet,1,777,proficut,Stejar Halifax H1176 ST37
+pal,Verde kiwi U626 ST9,514,sheet,1,514,proficut,Verde kiwi U626 ST9- 18 mm
+blat,Stejar Bardolino Natur,320,m,2,319.6578,Holver,"K5577 DP - CER NEGRU DESCHIS 48,78 EUR + TVA => "
+blat,Stejar Halifax 600,347,m,4,382,proficut,Stejar Halifax Alb H1176 ST37 (1377RON/4m) + 35 RON/m aplicare cant
+blat,Stejar Halifax 920,634.25,m,4,634.25,proficut,Stejar Halifax Alb H1176 ST37
+blat,Stejar Alpin Keindl,138.75,m,2,138.75,,
+pfl,Alb,115,sheet,0.5,115,proficut,HDF ALB 100RON + debitare 15RON
+front,A75P AquaBlue Ultramat,493,m2,1,493,protege parol,414RON + TVA => 493 RON/m2
+front,A34R3,309.4,m2,1,309.4,nett front,
+front,Alb W962ST2,55,m2,0.5,55,proficut,
+front,Alb Riflat A356R3,637,m2,1,637,nett front,107 EUR + TVA
+front,Alb Riflat Global Design,975.8,m2,1,975,global design,164 EUR + TVA
+cant,0.4,3.57,m,,3.57,proficut,ABS0422A
+cant,2,7.36,m,,7.36,proficut,ABS222A
+service,decupare pal,29.75,piece,1,29.75,proficut,DECUPARE PAL SCHITA
+accessory,decupare blat,100,piece,1,100,proficut,DECUPARE BLAT SCHITA
+service,transport,131,piece,1,131,proficut,Cheltuieli Transport
+accessory,surub,0.1717,piece,100,0.1717,regency company,https://regencycompany.ro/elemente-imbinare/eurosurub-imbinare-pal-tip-ericsson-7x50-mm.html
+accessory,eurosurub 7x50,0.1717,piece,100,0.1717,regency company,https://regencycompany.ro/elemente-imbinare/eurosurub-imbinare-pal-tip-ericsson-7x50-mm.html
+accessory,surub 3.5x30,0.039,piece,100,0.039,regency company,https://regencycompany.ro/elemente-imbinare/holtzsurub-35x30-mm.html
+accessory,surub intre corpuri,0.039,piece,100,0.039,regency company,https://regencycompany.ro/elemente-imbinare/holtzsurub-35x30-mm.html
+accessory,surub blat,0.039,piece,100,0.039,regency company,https://regencycompany.ro/elemente-imbinare/holtzsurub-35x30-mm.html
+accessory,surub PFL,0.0259,piece,100,0.0259,regency company,https://regencycompany.ro/elemente-imbinare/holtzsurub-25x20.html
+accessory,surub 3.5x16,0.035,piece,100,0.035,proficut,Proficut
+accessory,plinta,13.538,m,4,13.5375,regency company,https://regencycompany.ro/inalatoare-si-plinte/plinta-din-plastic-folie-al-neted-h-100-39-ml.html
+accessory,picioare,1.25,piece,1,1.25,ProfiCut,https://www.feroshop.ro/picioare/picior-plastic-negru-reglabil-h-100mm-volpato (FeroShop 1.19)
+accessory,clema plinta,0.7,piece,1,0.7,ProfiCut,"https://regencycompany.ro/inalatoare-si-plinte/brida-prindere-pentru-plinta.html (Regency 0,33)"
+accessory,bolt polita,0.0384,piece,100,0.0384,regency company,https://regencycompany.ro/suporturi-polite/suport-din-metal-cu-inel-pentru-polita.html
+accessory,sipca apa,10.083,m,4,10.0825,regency company,https://regencycompany.ro/inalatoare-si-plinte/inaltator-triunghiular-din-pvc-argintiu-cu-striatii-39ml.html
+accessory,pereche clema prindere perete,9.8,piece,1,9.8,ProfiCut,https://regencycompany.ro/suporturi-corpuri-suspendate/agatatori-blum-48n0510-pt-corpuri-suspendate-dreapta-alb.html (Regency 11.94)
+accessory,sina perete,10.1,m,2,10.1,ProfiCut,"https://regencycompany.ro/suporturi-corpuri-suspendate/sina-corp-suspendat-2ml.html (Regency 5,08)"
+accessory,surub diblu perete,2.39,piece,1,2.39,dedeman,https://www.dedeman.ro/ro/diblu-universal-din-nylon-10-x-100-mm-friulsider-tup-cu-surub-cap-hexagonal-7-x-105-mm/p/6015316
+accessory,balama aplicata,7.2,piece,1,7.2,ProfiCut,"https://regencycompany.ro/balamale/balama-blum-modul-aplicata-91m2550.html, https://regencycompany.ro/balamale/placuta-balama-blum-193l6100.html (Regency 3,86)
+"
+accessory,balama aplicata cu amortizor,15.05,piece,1,15.05,Proficut,https://regencycompany.ro/balamale/balama-clip-top-cu-blumotion-incorporat-pentru-usa-aplicata-71b3550.html (Regency 14.7)
+accessory,balama usa franta,22.4,piece,,22.4,ProfiCut,MAM bricolaj 16.88
+accessory,balama 170 deg,17.2,piece,,17.2,ProfiCut,Viking Tools (eMAG) 15.47
+accessory,amortizor,7.74,piece,1,7.74,regency company,https://regencycompany.ro/balamale/blumotion-balama-aplicata-973a050001.html
+accessory,maner,10,piece,1,10,generic,
+accessory,pereche glisiera 400 mm,30,piece,1,30,generic,
+accessory,pereche glisiera 450 mm,19,piece,1,19,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m4500.html
+accessory,pereche glisiera 500 mm,49.8967,piece,1,19.58,proficut,Glisiera L=500 cu bile si amortizare extra tot 45MM 35kg 4301905 EUMUKA
+accessory,pereche glisiera 550 mm,22.71,piece,1,22.71,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m5500.html
+accessory,pereche glisiera 600 mm,25.86,piece,1,25.86,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m6000.html
+accessory,Joly150500,150,piece,1,107.76,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html
+accessory,Joly240500,250,piece,1,107.76,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html
+accessory,Joly300500,300,piece,1,244.55,MAM Bricolaj,https://webshop.mam-bricolaj.ro/produs/cos-jolly-300-mm-cu-amortizare-hafele?gclid=CjwKCAjw_tWRBhAwEiwALxFPoTAZRHSX3hwvYY7b79gUjj2oL3iZRrCTpfPMCOunEYo1TEYseA4WYhoCnkwQAvD_BwE
+accessory,Cos Jolly 300,300,piece,1,300,estimat,
+accessory,tandembox M,200,piece,1,200.2,ProfiCut,"(500) Laterale 90, Suport Spate, 6.6, Sina 78 | Cuplaj Front: 3.7*2 | 10% Buffer"
+accessory,tandembox D,236.4,piece,1,236.39,ProfiCut,"(500) Laterale 90, Suport Spate, 11, Sina 78 | Lonjeron 28.5 | Cuplaj Front: 3.7*2 | 10% Buffer"
+accessory,L,2.74,piece,1,2.74,alsafix.ro,Coltar metalic simplu 80x80x20mm
+accessory,demontabil,1.18,piece,1,1.18,regency company,https://regencycompany.ro/elemente-imbinare/demontabil-blum-420700w-alb.html
+accessory,demontabil cama,0.6504,piece,50,0.6504,MAM Bricolaj,https://webshop.mam-bricolaj.ro/produs/demontabil-minifix-cu-cama-hafele-set-50?gclid=CjwKCAiAkrWdBhBkEiwAZ9cdcCfOdy-SZqytPRja--Jf0EdZ8a85IwScv2aT96Adr17XvoCK_id9ARoCwqIQAvD_BwE
+accessory,diblu de lemn,0.0625,piece,200,0.0625,Hornbach,https://www.hornbach.ro/p/dibluri-lemn-wolfcraft-o6x30-mm-pachet-200-bucati/980483/
+accessory,bara haine dr,36.250375,m,4,36.25,proficut,Bara Haine Dreptunghiulara
+accessory,suport bara haine dreptunghiulara,13.8,piece,1,13.8,proficut,
+accessory,suport tacamuri 740x490,92,piece,1,92,proficut,

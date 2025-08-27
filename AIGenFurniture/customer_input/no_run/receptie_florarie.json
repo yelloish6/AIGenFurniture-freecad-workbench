@@ -1,0 +1,205 @@
+{
+    "client": "Florarie_Mosnita",
+    "Client Proficut": "Bogdan Urs",
+    "Tel Proficut": "0740472185",
+    "Transport": "Da",
+    "Adresa": "Mosnita Veche, str. Borsa, Nr. 38",
+    "h_bucatarie": 2070,
+    "h_faianta_top": 1470,
+    "h_faianta_base": 900,
+    "depth_base": 500,
+    "top_height": 600,
+    "top_height_2": 400,
+    "top_depth": 600,
+    "top_depth_2": 500,
+    "blat_height": 850,
+    "cuptor_height": 595,
+    "MsV_height_min": 815,
+    "MsV_height_max": 875,
+    "material_pal": "Roz Flamingo U363 ST9",
+    "material_front": "A34R3",
+    "material_blat": "Stejar Halifax 600",
+    "material_pfl": "Alb",
+    "h_rate": 120,
+    "discount": 0,
+    "nr_electrocasnice": 1,
+
+    "cabinets": [
+      {
+        "label": "C1",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 670,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_pol", "nr": 2, "cant": 2},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "C_int",
+        "cabinet_type": "Cabinet",
+        "height": 900,
+        "width": 400,
+        "depth": 500,
+        "additional_elements": [
+          {"element": "BoardPal",
+            "label": "C1.int",
+            "length": 400,
+            "width": 500,
+            "thick": 18,
+            "cant_L1": 1,
+            "cant_L2": 0,
+            "cant_l1": 0,
+            "cant_l2": 0
+          }
+        ]
+      },
+      {
+        "label": "C2",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 400,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_tandem_box", "type": "D", "offset": 0},
+          {"feature": "add_tandem_box", "type": "D", "offset": 300},
+          {"feature": "add_tandem_box", "type": "D", "offset": 600},
+          {"feature": "remove_all_pfl"},
+          {"feature": "front", "split_list": [[33, 100], [33, 100], [33, 100]], "type": "drawer"}
+        ]
+      },
+      {
+        "label": "C_int",
+        "cabinet_type": "Cabinet",
+        "height": 900,
+        "width": 800,
+        "depth": 500,
+        "additional_elements": [
+          {"element": "accessory", "label": "bara haine dr", "pieces": 0.8},
+          {"element": "accessory", "label": "bara haine dr", "pieces": 0.8},
+          {"element": "accessory", "label": "bara haine dr", "pieces": 0.8}
+        ]
+      },
+      {
+        "label": "C3",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 400,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_tandem_box", "type": "D", "offset": 0},
+          {"feature": "add_tandem_box", "type": "D", "offset": 300},
+          {"feature": "add_tandem_box", "type": "D", "offset": 600},
+          {"feature": "remove_all_pfl"},
+          {"feature": "front", "split_list": [[33, 100], [33, 100], [33, 100]], "type": "drawer"}
+        ]
+      },
+      {
+        "label": "C_int",
+        "cabinet_type": "Cabinet",
+        "height": 900,
+        "width": 400,
+        "depth": 500,
+        "additional_elements": [
+          {"element": "BoardPal",
+            "label": "C4.int",
+            "length": 400,
+            "width": 500,
+            "thick": 18,
+            "cant_L1": 1,
+            "cant_L2": 0,
+            "cant_l1": 0,
+            "cant_l2": 0
+          }
+        ]
+      },
+      {
+        "label": "C4",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 670,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_pol", "nr": 2, "cant": 2},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "C5",
+        "cabinet_type": "BaseCornerShelf",
+        "height": 900,
+        "width": 500,
+        "depth": 500,
+        "shelves": 2,
+        "positioning": [
+          {"rotate": "z"},
+          {"rotate": "z"},
+          {"rotate": "z"},
+          {"move": ["x", 500]}
+        ]
+      },
+      {
+        "label": "C6",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 1100,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_sep_h", "width": 1064, "offset_x": 0, "offset_z": 650, "cant": "0.4"},
+          {"feature": "add_drawer_b_pal", "height": 200, "offset": 400},
+          {"feature": "add_drawer_b_pal", "height": 350, "offset": 20},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "C6",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 600,
+        "depth": 500,
+        "additional_features": [
+          {"feature": "add_pol", "nr":  2, "cant": 2},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "C7",
+        "cabinet_type": "BaseBox",
+        "height": 900,
+        "width": 1600,
+        "depth": 582,
+        "additional_features": [
+          {"feature": "add_pol", "nr":  2, "cant": 2},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "C8",
+        "cabinet_type": "SinkBox",
+        "height": 900,
+        "width": 900,
+        "depth": 582,
+        "additional_features": [
+          {"feature": "front", "split_list":  [[100,50],[100,50]], "type": "door"},
+          {"feature": "remove_all_pfl"}
+        ]
+      },
+      {
+        "label": "dummy",
+        "cabinet_type": "Cabinet",
+        "height": 1,
+        "width": 1,
+        "depth": 1,
+        "additional_elements": [
+          {"element": "Blat", "label": "Blat1", "length": 3750, "width": 500, "thick": 40},
+          {"element": "Blat", "label": "Blat2", "length": 3000, "width": 600, "thick": 40},
+          {"element": "Front", "label": "Riflaj_alb", "length": 860, "width": 498, "thick": 18},
+          {"element": "Front", "label": "Riflaj_alb", "length": 860, "width": 498, "thick": 18},
+          {"element": "BoardPal", "label": "Spate1", "length": 2248, "width": 860, "thick": 18},
+          {"element": "BoardPal", "label": "Spate2", "length": 2500, "width": 860, "thick": 18}
+        ]
+      }
+
+    ]
+}

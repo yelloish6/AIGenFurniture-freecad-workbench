@@ -1,0 +1,14 @@
+stl-0.0.3.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+stl-0.0.3.dist-info/METADATA,sha256=oLAjxO63n__f6cqNj1CGXoRedYl6pqMXEw2PKMwATDI,289
+stl-0.0.3.dist-info/RECORD,,
+stl-0.0.3.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
+stl-0.0.3.dist-info/WHEEL,sha256=R06PA3UVYHThwHvxuRWMqaGcr-PuniXahwjmQRFMEkY,91
+stl-0.0.3.dist-info/top_level.txt,sha256=uhNU6NfJF-H1ykSlU9oT3dAfUibkYXjmXGGxjMCe2ls,4
+stl/__init__.py,sha256=h2M6wCpnVLFFYMEbftWaKIKwsSfY5RBet6WtsuYtyqc,1546
+stl/__pycache__/__init__.cpython-312.pyc,,
+stl/__pycache__/ascii.cpython-312.pyc,,
+stl/__pycache__/binary.cpython-312.pyc,,
+stl/__pycache__/types.cpython-312.pyc,,
+stl/ascii.py,sha256=K2PtmtPXws_X7Nj7A08Dp0RfPpXwbr6oH3mCBfrQRgg,7154
+stl/binary.py,sha256=TWdbXOTF_cxvO2Ce-131w6CyQ3CIWetsRBHUQiU-Pn8,2048
+stl/types.py,sha256=c0xFWMnVMSokGTJQEQzZw9h9ajzd6KLOY4I-3s17vFA,4096

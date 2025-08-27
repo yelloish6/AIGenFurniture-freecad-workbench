@@ -1,0 +1,775 @@
+{
+  "client": "Mircea Hurdugaciu",
+  "h_bucatarie": 2070,
+  "h_faianta_top": 1470,
+  "h_faianta_base": 900,
+  "depth_base": 500,
+  "top_height": 600,
+  "top_height_2": 400,
+  "top_depth": 600,
+  "top_depth_2": 500,
+  "blat_height": 850,
+  "cuptor_height": 595,
+  "MsV_height_min": 815,
+  "MsV_height_max": 875,
+  "material_pal": "Alb W962ST2",
+  "material_front": "A34R3",
+  "material_blat": "Stejar Alpin Keindl",
+  "material_pfl": "Alb",
+  "h_rate": 120,
+  "h_proiect": 8,
+  "discount": 0,
+  "nr_electrocasnice": 5,
+  "cabinets": [
+    {
+      "label": "S1",
+      "cabinet_type": "TopBox",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 350.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -349.99910007708695
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -1199.9987897810834
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              50,
+              100
+            ],
+            [
+              50,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "C4",
+      "cabinet_type": "BaseBox",
+      "height": 880.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -2599.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -599.9987897810837
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_tandem_box",
+          "offset": 20.0,
+          "type": "M"
+        },
+        {
+          "feature": "front",
+          "front_type": "drawer",
+          "split_list": [
+            [
+              20,
+              100
+            ]
+          ]
+        },
+        {
+          "feature": "add_sep_h",
+          "cant": 1,
+          "offset_x": 0.0,
+          "offset_z": 100.0,
+          "width": 564.0
+        }
+      ]
+    },
+    {
+      "label": "C3",
+      "cabinet_type": "MsVBox",
+      "height": 880.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -1999.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -599.9987897810836
+          ]
+        }
+      ]
+    },
+    {
+      "label": "C2",
+      "cabinet_type": "SinkBox",
+      "height": 880.0,
+      "width": 1200.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -799.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -599.9987897810834
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              50
+            ],
+            [
+              100,
+              50
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S3",
+      "cabinet_type": "TopBox",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 350.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -799.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -349.99878978108245
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S4",
+      "cabinet_type": "TopBox",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 350.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -1399.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -349.99878978108245
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S5",
+      "cabinet_type": "TopBox",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 350.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -1999.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -349.99878978108245
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S6",
+      "cabinet_type": "TopBox",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 350.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -2599.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -349.99878978108245
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "C5",
+      "cabinet_type": "BaseBox",
+      "height": 880.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -3199.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -599.9987897810827
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "add_pol",
+          "cant": 2,
+          "nr": 2
+        },
+        {
+          "feature": "front",
+          "front_type": "",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "C1",
+      "cabinet_type": "BaseCorner",
+      "height": 880.0,
+      "width": 1200.0,
+      "depth": 800.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -799.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -1199.9987897810834
+          ]
+        }
+      ],
+      "CabinetType": "BaseCorner",
+      "Height": 880.0,
+      "Length": 1200.0,
+      "Width": 800.0,
+      "cut_depth": 200.0,
+      "cut_width": 600.0,
+      "l_r": "right",
+      "with_polita": true
+    },
+    {
+      "label": "S2",
+      "cabinet_type": "TopCorner",
+      "height": 920.0,
+      "width": 600.0,
+      "depth": 800.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -799.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -599.9987897810825
+          ]
+        },
+        {
+          "move": [
+            "z",
+            1480.0
+          ]
+        }
+      ],
+      "CabinetType": "TopCorner",
+      "Height": 920.0,
+      "Legth": 600.0,
+      "Width": 800.0,
+      "cut_depth": 450.0,
+      "cut_width": 250.0,
+      "l_r": "right",
+      "polite": 2
+    },
+    {
+      "label": "S10",
+      "cabinet_type": "TopBox",
+      "height": 400.0,
+      "width": 1200.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -1200.0
+          ]
+        },
+        {
+          "move": [
+            "z",
+            2400.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              50
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S11",
+      "cabinet_type": "TopBox",
+      "height": 400.0,
+      "width": 800.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "z",
+            2400.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S12",
+      "cabinet_type": "TopBox",
+      "height": 400.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -1400.0
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "z",
+            2400.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S13",
+      "cabinet_type": "TopBox",
+      "height": 400.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -2000.0
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "z",
+            2400.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "S14",
+      "cabinet_type": "TopBox",
+      "height": 400.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "rotate": "z"
+        },
+        {
+          "move": [
+            "y",
+            -2600.0
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -600.0
+          ]
+        },
+        {
+          "move": [
+            "z",
+            2400.0
+          ]
+        }
+      ],
+      "additional_features": [
+        {
+          "feature": "front",
+          "front_type": "door",
+          "split_list": [
+            [
+              100,
+              100
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "T2",
+      "cabinet_type": "TowerBox",
+      "height": 2800.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -599.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -1799.9987897810834
+          ]
+        }
+      ],
+      "CabinetType": "TowerBox",
+      "front_list": [
+        1,
+        0,
+        1,
+        1
+      ],
+      "gap_heat": 50,
+      "gap_list": [
+        880,
+        600,
+        600
+      ]
+    },
+    {
+      "label": "T1",
+      "cabinet_type": "TowerBox",
+      "height": 2800.0,
+      "width": 600.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -599.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -2399.9987897810834
+          ]
+        }
+      ],
+      "CabinetType": "TowerBox",
+      "front_list": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap_heat": 50,
+      "gap_list": [
+        1800,
+        300,
+        300
+      ]
+    },
+    {
+      "label": "Bar",
+      "cabinet_type": "Bar",
+      "height": 918.0,
+      "width": 1500.0,
+      "depth": 600.0,
+      "positioning": [
+        {
+          "move": [
+            "y",
+            -3799.999100077087
+          ]
+        },
+        {
+          "move": [
+            "x",
+            -2099.998789781083
+          ]
+        }
+      ],
+      "CabinetType": "Bar"
+    }
+  ]
+}
