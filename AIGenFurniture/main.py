@@ -1,7 +1,7 @@
 import os, sys
 import json
 import argparse
-# from furniture_design.cabinets.kitchen_cabinet import KitchenCabinet  # Import specific cabinet type
+# from furniture_design.cabinets.kitchen_cabinet import KitchenCabinet # Import specific cabinet type
 
 # TODO vendor-lock dependencies in a requirements.txt file
 
@@ -58,7 +58,7 @@ def main():
     # # input_path = os.path.join(input_directory, input_file)
     # customer_data = load_customer_input(input_path)
     #
-    # # Generate furniture based on input data and store it under order
+    # # Generate furniture based on input data and store it under order.
     # order = design_furniture(customer_data)
     #
     # # # Create output directory if it doesn't exist

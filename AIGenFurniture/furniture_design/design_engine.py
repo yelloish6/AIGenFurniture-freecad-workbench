@@ -35,6 +35,7 @@ def design_furniture(customer_data):
     """
     order = Order(customer_data)
     cabinets_data = customer_data.get("cabinets", [])
+    elements_data = customer_data.get("elements", [])
 
     for cabinet_data in cabinets_data:
         cabinet_label = cabinet_data.get("label")
@@ -67,24 +68,13 @@ def design_furniture(customer_data):
                 element_handler(designed_cabinet, element)
         else:
             print(f"No additional elements in {cabinet_label}")
-        # handling of "positioning" when positioning{"move": [["x", 100],["y", 200]], "rotate": ["x"]}
-        # if "positioning" in cabinet_data:
-        #     positioning = cabinet_data.get("positioning")
-        #     if "move" in positioning:
-        #         move = positioning.get("move")
-        #         for move_position in move:
-        #             designed_cabinet.move_corp(move_position[0], move_position[1])
-        #     else: print(f"no movement for {cabinet_label}")
-        #     if "rotate" in positioning:
-        #         rotate = positioning.get("rotate")
-        #         for rotation_axis in rotate:
-        #             designed_cabinet.rotate_corp(rotation_axis)
-        #     else:
-        #         print(f"no rotation for {cabinet_label}")
-        # else:
-        #     print(f"no positioning for {cabinet_label}")
-
         order.append(designed_cabinet)
+    # define dummy cabinet for additional elements
+    rules = load_default_rules(DEFAULT_RULES_PATH)
+    generic_cab = Cabinet("Generic", 100, 100, 100, rules)
+    for element_data in elements_data:
+        element_handler(generic_cab, element_data)
+    order.append(generic_cab)
     return order
 
 
@@ -100,14 +90,20 @@ def element_handler(cabinet, element_data):
     :param element_data:
     :return:
     """
-    element_type = element_data.get("element")
+    element_type = element_data.get("element_type")
     if element_type == "BoardPal":
-        element = BoardPal(element_data.get("label"), element_data.get("length"), element_data.get("width"),
-                           element_data.get("thick"), element_data.get("cant_L1"), element_data.get("cant_L2"),
-                           element_data.get("cant_L=l1"), element_data.get("cant_l2"))
+        element = BoardPal(element_data.get("label"),
+                           element_data.get("length"),
+                           element_data.get("width"),
+                           element_data.get("thick"),
+                           element_data.get("cant_L1"),
+                           element_data.get("cant_L2"),
+                           element_data.get("cant_l1"),
+                           element_data.get("cant_l2")
+                           )
         element.move("z", element.thick + 2)
         cabinet.append(element)
-    elif element_type == "Blat":
+    elif element_type in ("Blat", "Countertop"):
         element = Blat(element_data.get("label"), element_data.get("length"), element_data.get("width"), element_data.get("thick"))
         element.move("z", element.thick + 2)
         cabinet.append(element)
@@ -120,6 +116,20 @@ def element_handler(cabinet, element_data):
         cabinet.append(element)
     else:
         print(f"Unsupported element {element_type}")
+        return
+
+    # Apply positioning if provided (supports same schema as cabinets)
+    if "positioning" in element_data:
+        for movement in element_data.get("positioning", []):
+            if "move" in movement:
+                move = movement.get("move")
+                # move is ["axis", value]
+                element.move(move[0], move[1])
+            elif "rotate" in movement:
+                axis = movement.get("rotate")
+                element.rotate(axis)
+            else:
+                print("Unidentified element movement")
 
 
 def feature_handler(cabinet, feature_data):

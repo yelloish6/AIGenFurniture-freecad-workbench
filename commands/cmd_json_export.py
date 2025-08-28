@@ -80,6 +80,68 @@ def export(doc, output_path):
                 globals_dict[alias] = val
         except:
             pass
+    # Extract elements
+    elements = []
+    for obj in doc.Objects:
+        if obj.TypeId in ["Part::Box"]:
+            if not hasattr(obj, "ElementType"):
+                continue
+
+            placement = obj.Placement
+            base = placement.Base
+            rot = placement.Rotation
+
+            # Dimensions
+            width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
+            if obj.TypeId == "Part::Cut":
+                bb = obj.Shape.BoundBox
+                width, depth, height = bb.XLength, bb.YLength, bb.ZLength
+            else:
+                width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
+
+            try:
+                yaw, pitch, roll = rot.toEuler()
+            except Exception:
+                yaw = pitch = roll = 0.0
+
+            element_type = getattr(obj, "ElementType", "Unknown")
+
+            element = {
+                "label": obj.Label,
+                "element_type": element_type,
+                "thick": height,
+                "length": width,
+                "width": depth,
+            }
+
+            # 👉 Positioning
+            positioning = []
+            z_rot_steps = round(yaw / 90)
+            if z_rot_steps % 4 != 0:
+                for _ in range(abs(z_rot_steps)):
+                    positioning.append({"rotate": "z"})
+
+            if base.y != 0:
+                positioning.append({"move": ["y", base.y]})
+            if base.x != 0:
+                positioning.append({"move": ["x", base.x]})
+            if base.z != 0:
+                positioning.append({"move": ["z", base.z]})
+
+            element["positioning"] = positioning
+
+            # ➕ Export all "Element" group properties (generic, any type)
+            element_props = {}
+            for prop in obj.PropertiesList:
+                group = obj.getGroupOfProperty(prop)
+                if group == "Element":
+                    val = getattr(obj, prop)
+                    element_props[prop] = serialize_property_value(val)
+
+            if element_props:
+                element.update(element_props)
+
+            elements.append(element)
 
     # ✅ Extract cabinets
     cabinets = []
@@ -177,6 +239,7 @@ def export(doc, output_path):
     # ✅ Combine and export
     export_data = globals_dict
     export_data["cabinets"] = cabinets
+    export_data["elements"] = elements
 
     # fc_path = doc.FileName or os.path.expanduser("~/kitchen_layout.json")
     # output_path = os.path.join(os.path.dirname(fc_path), "kitchen_layout.json")
@@ -203,144 +266,6 @@ class ExportJSONCommand:
             FreeCAD.Console.PrintError("No active document open.\n")
             return
 
-        # # ✅ Find the spreadsheet with Label "OrderVar"
-        # spreadsheet = None
-        # for obj in doc.Objects:
-        #     if obj.TypeId == "Spreadsheet::Sheet" and obj.Label == "OrderVar":
-        #         spreadsheet = obj
-        #         break
-        #
-        # if not spreadsheet:
-        #     FreeCAD.Console.PrintError("Spreadsheet with label 'OrderVar' not found.\n")
-        #     return
-        #
-        # # ✅ Load global variables from spreadsheet aliases
-        # global_aliases = [
-        #     "client", "Client Proficut", "Tel Proficut", "Transport", "Adresa",
-        #     "h_bucatarie", "h_faianta_top", "h_faianta_base", "depth_base",
-        #     "top_height", "top_height_2", "top_depth", "top_depth_2",
-        #     "blat_height", "cuptor_height", "MsV_height_min", "MsV_height_max",
-        #     "material_pal", "material_front", "material_blat", "material_pfl",
-        #     "h_rate", "h_proiect", "discount", "nr_electrocasnice"
-        # ]
-        #
-        # globals_dict = {}
-        # for alias in global_aliases:
-        #     try:
-        #         val = spreadsheet.get(alias)
-        #         if val != "":
-        #             try:
-        #                 val = float(val) if "." in str(val) else int(val)
-        #             except:
-        #                 pass
-        #             globals_dict[alias] = val
-        #     except:
-        #         pass
-        #
-        # # ✅ Extract cabinets
-        # cabinets = []
-        # for obj in doc.Objects:
-        #     if obj.TypeId in ["Part::Box", "Part::Cut"]:
-        #         if not hasattr(obj, "CabinetType"):
-        #             continue
-        #
-        #         placement = obj.Placement
-        #         base = placement.Base
-        #         rot = placement.Rotation
-        #
-        #         # Dimensions
-        #         if obj.TypeId == "Part::Cut":
-        #             bb = obj.Shape.BoundBox
-        #             width, depth, height = bb.XLength, bb.YLength, bb.ZLength
-        #         else:
-        #             width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
-        #
-        #         try:
-        #             yaw, pitch, roll = rot.toEuler()
-        #         except Exception:
-        #             yaw = pitch = roll = 0.0
-        #
-        #         cabinet_type = getattr(obj, "CabinetType", "Unknown")
-        #
-        #         cabinet = {
-        #             "label": obj.Label,
-        #             "cabinet_type": cabinet_type,
-        #             "height": height,
-        #             "width": width,
-        #             "depth": depth,
-        #         }
-        #
-        #         # 👉 Positioning
-        #         positioning = []
-        #         z_rot_steps = round(yaw / 90)
-        #         if z_rot_steps % 4 != 0:
-        #             for _ in range(abs(z_rot_steps)):
-        #                 positioning.append({"rotate": "z"})
-        #
-        #         if base.y != 0:
-        #             positioning.append({"move": ["y", base.y]})
-        #         if base.x != 0:
-        #             positioning.append({"move": ["x", base.x]})
-        #         if base.z != 0:
-        #             positioning.append({"move": ["z", base.z]})
-        #
-        #         cabinet["positioning"] = positioning
-        #
-        #         # ➕ Export all "Cabinet" group properties (generic, any type)
-        #         cabinet_props = {}
-        #         for prop in obj.PropertiesList:
-        #             group = obj.getGroupOfProperty(prop)
-        #             if group == "Cabinet":
-        #                 val = getattr(obj, prop)
-        #                 cabinet_props[prop] = serialize_property_value(val)
-        #
-        #         if cabinet_props:
-        #             cabinet.update(cabinet_props)
-        #
-        #         # ➕ Features
-        #         features = []
-        #         feature_groups = set()
-        #         for prop in obj.PropertiesList:
-        #             group = obj.getGroupOfProperty(prop)
-        #             if group and group.startswith("Feature_"):
-        #                 feature_groups.add(group)
-        #
-        #         for group in feature_groups:
-        #             gname = group[len("Feature_"):]
-        #             if "_" in gname:
-        #                 feature_name, index = gname.rsplit("_", 1)
-        #             else:
-        #                 feature_name, index = gname, "1"
-        #
-        #             feature_data = {"feature": feature_name}
-        #             for p in obj.PropertiesList:
-        #                 if obj.getGroupOfProperty(p) == group:
-        #                     val = getattr(obj, p)
-        #                     prefix = group + "_"
-        #                     pname = p[len(prefix):] if p.startswith(prefix) else p
-        #                     feature_data[pname] = serialize_property_value(val)
-        #                     # if hasattr(val, "Value") and isinstance(val.Value, (int, float)):
-        #                     #     feature_data[pname] = val.Value
-        #                     # elif isinstance(val, (str, int, float, bool)):
-        #                     #     feature_data[pname] = val
-        #             features.append(feature_data)
-        #
-        #         if features:
-        #             cabinet["additional_features"] = features
-        #
-        #         cabinets.append(cabinet)
-        #
-        # # ✅ Combine and export
-        # export_data = globals_dict
-        # export_data["cabinets"] = cabinets
-        #
-        # fc_path = doc.FileName or os.path.expanduser("~/kitchen_layout.json")
-        # output_path = os.path.join(os.path.dirname(fc_path), "kitchen_layout.json")
-        #
-        # with open(output_path, "w", encoding="utf-8") as f:
-        #     json.dump(export_data, f, indent=2, ensure_ascii=False)
-        #
-        # FreeCAD.Console.PrintMessage(f"✅ Exported {len(cabinets)} cabinets to: {output_path}\n")
         fc_path = doc.FileName or os.path.expanduser("~/kitchen_layout.json")
         output_path = os.path.join(os.path.dirname(fc_path), "kitchen_layout.json")
         try:

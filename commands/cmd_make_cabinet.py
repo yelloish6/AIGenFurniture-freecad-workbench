@@ -84,7 +84,7 @@ def make_cabinet_command(cabinet_name, params):
         def GetResources(self):
             return {
                 "Pixmap": "",  # put path to icon if you have one
-                "MenuText": f"Add {cabinet_name}",
+                "MenuText": f"{cabinet_name}",
                 "ToolTip": params.get("tooltip", f"Add {cabinet_name}"),
             }
 

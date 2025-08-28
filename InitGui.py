@@ -38,11 +38,13 @@ class CabinetWorkbench (Gui.Workbench):
         # features
         import commands.cmd_make_feature
         import commands.cmd_make_cabinet
+        import commands.cmd_make_element
         import commands.cmd_json_export
         import commands.cmd_aigenfurniture
 
         self.appendToolbar("Features", [f"Cmd_Add_{f}" for f in commands.cmd_make_feature.FEATURES])
         self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in commands.cmd_make_cabinet.CABINETS])
+        self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in commands.cmd_make_element.ELEMENTS])
         self.appendToolbar("Cabinet Tools", ["Export_JSON", "AIGenFurniture"])
 
     def Activated(self):
