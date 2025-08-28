@@ -60,7 +60,7 @@ def export(doc, output_path):
 
     # ✅ Load global variables from spreadsheet aliases
     global_aliases = [
-        "client", "Client Proficut", "Tel Proficut", "Transport", "Adresa",
+        "client", "client_proficut", "tel_proficut", "transport", "address",
         "h_bucatarie", "h_faianta_top", "h_faianta_base", "depth_base",
         "top_height", "top_height_2", "top_depth", "top_depth_2",
         "blat_height", "cuptor_height", "MsV_height_min", "MsV_height_max",
@@ -69,17 +69,33 @@ def export(doc, output_path):
     ]
 
     globals_dict = {}
-    for alias in global_aliases:
+    # Prefer dynamic alias enumeration if available; otherwise use the predefined list.
+    try:
+        alias_names = list(getattr(spreadsheet, "Aliases", {}).keys())
+    except Exception:
+        alias_names = None
+    alias_iter = alias_names if alias_names else global_aliases
+
+    for alias_name in alias_iter:
         try:
-            val = spreadsheet.get(alias)
-            if val != "":
-                try:
-                    val = float(val) if "." in str(val) else int(val)
-                except:
-                    pass
-                globals_dict[alias] = val
-        except:
-            pass
+            val = spreadsheet.get(alias_name)
+        except Exception:
+            val = None
+        # Always serialize; include empty/None as-is
+        globals_dict[alias_name] = serialize_property_value(val)
+
+    # globals_dict = {}
+    # for alias in global_aliases:
+    #     try:
+    #         val = spreadsheet.get(alias)
+    #         if val != "":
+    #             try:
+    #                 val = float(val) if "." in str(val) else int(val)
+    #             except:
+    #                 pass
+    #             globals_dict[alias] = val
+    #     except:
+    #         pass
     # Extract elements
     elements = []
     for obj in doc.Objects:
@@ -116,10 +132,25 @@ def export(doc, output_path):
 
             # 👉 Positioning
             positioning = []
-            z_rot_steps = round(yaw / 90)
-            if z_rot_steps % 4 != 0:
-                for _ in range(abs(z_rot_steps)):
-                    positioning.append({"rotate": "z"})
+            # Include rotation for all axes (roll=X, pitch=Y, yaw=Z), in 90° steps
+            def add_rot(axis, angle_deg):
+                try:
+                    # invert direction: FreeCAD +90 (CW) -> 3 CCW steps; -90 (CCW) -> 1 CCW step
+                    steps = (-int(round(angle_deg / 90.0))) % 4
+                    #steps = int(round(angle_deg / 90.0)) % 4
+                except Exception:
+                    steps = 0
+                for _ in range(abs(steps)):
+                    positioning.append({"rotate": axis})
+
+            add_rot("x", roll)
+            add_rot("y", pitch)
+            add_rot("z", yaw)
+
+            # z_rot_steps = round(yaw / 90)
+            # if z_rot_steps % 4 != 0:
+            #     for _ in range(abs(z_rot_steps)):
+            #         positioning.append({"rotate": "z"})
 
             if base.y != 0:
                 positioning.append({"move": ["y", base.y]})

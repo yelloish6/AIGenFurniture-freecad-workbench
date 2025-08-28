@@ -7,10 +7,10 @@ import FreeCADGui as Gui
 ELEMENTS = {
     "BoardPal": {
         "tooltip": "Add a standard chipboard",
-        "cant_L1": ("App:PropertyString", "", "Edge length 1"),
-        "cant_L2": ("App:PropertyString", "", "Edge length 2"),
-        "cant_l1": ("App:PropertyString", "", "Edge width 1"),
-        "cant_l1": ("App:PropertyString", "", "Edge width 2"),
+        "cant_L1": ("App::PropertyString", "", "Edge length 1"),
+        "cant_L2": ("App::PropertyString", "", "Edge length 2"),
+        "cant_l1": ("App::PropertyString", "", "Edge width 1"),
+        "cant_l2": ("App::PropertyString", "", "Edge width 2"),
     },
     "Countertop": {
         "tooltip": "Add a countertop board",
@@ -45,14 +45,14 @@ def make_element_command(element_name, params):
             # Add a ElementType property
             box.addProperty("App::PropertyString", "ElementType", "Element", "Type of element").ElementType = element_name
 
-            # # Add parameters as properties
-            # for pname, value in params.items():
-            #     if pname == "tooltip":  # skip tooltip
-            #         continue
-            #     ptype, default, desc = value
-            #     if not hasattr(box, pname):
-            #         box.addProperty(ptype, pname, "Cabinet", desc)
-            #         setattr(box, pname, default)
+            # Add parameters as properties
+            for pname, value in params.items():
+                if pname == "tooltip":  # skip tooltip
+                    continue
+                ptype, default, desc = value
+                if not hasattr(box, pname):
+                    box.addProperty(ptype, pname, "Element", desc)
+                    setattr(box, pname, default)
 
             doc.recompute()
             App.Console.PrintMessage(f"{element_name} created.\n")

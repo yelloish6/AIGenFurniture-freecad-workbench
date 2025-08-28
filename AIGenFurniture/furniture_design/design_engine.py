@@ -101,15 +101,15 @@ def element_handler(cabinet, element_data):
                            element_data.get("cant_l1"),
                            element_data.get("cant_l2")
                            )
-        element.move("z", element.thick + 2)
+        # element.move("z", element.thick + 2)
         cabinet.append(element)
     elif element_type in ("Blat", "Countertop"):
         element = Blat(element_data.get("label"), element_data.get("length"), element_data.get("width"), element_data.get("thick"))
-        element.move("z", element.thick + 2)
+        # element.move("z", element.thick + 2)
         cabinet.append(element)
     elif element_type == "Front":
         element = Front(element_data.get("label"), element_data.get("length"), element_data.get("width"), element_data.get("thick"))
-        element.move("z", element.thick + 2)
+        # element.move("z", element.thick + 2)
         cabinet.append(element)
     elif element_type == "Accessory" or "accessory":
         element = Accessory(element_data.get("label"), element_data.get("pieces"))

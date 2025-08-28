@@ -89,7 +89,6 @@ def print_order_summary(order):
     print("Nume client: ", order.client)
     print("Numar de corpuri: ", len(order.cabinets_list))
     print("Lungime totala mobila: ", get_order_length(order))
-
     total_cost += get_cost_pal(order)
     print("M2 PAL: ", "{:.2f}".format(get_m2_pal(order)),
           " | Nr. coli PAL: ", get_sheets_pal(order),
@@ -97,7 +96,6 @@ def print_order_summary(order):
           " | Cost decupaj piese pal: ", get_count_cost_cutout_pal(order)[1],
           " | Cost pal:", get_cost_pal(order) + get_count_cost_cutout_pal(order)[1],
           " | Material:", order.mat_pal)
-
     cant_price_04 = get_price_for_item("cant", "0.4") * get_m_cant(order, "0.4")
     cant_price_2 = get_price_for_item("cant", "2") * get_m_cant(order, "2")
     total_cost += cant_price_04 + cant_price_2
@@ -105,32 +103,26 @@ def print_order_summary(order):
           " | Pret ", "{:.2f}".format(cant_price_04))
     print("M Cant 2", math.ceil(get_m_cant(order, "2")),
           " | Pret ", "{:.2f}".format(cant_price_2))
-
     pfl_price = float(get_price_for_item("pfl", order.mat_pfl) * get_sheets_pfl(order))
     total_cost += pfl_price
     print("M2 PFL: ", "{:.2f}".format(get_m2_pfl(order)),
           " | Nr. coli PFL: ", get_sheets_pfl(order),
           " | Pret PFL: ", pfl_price)
-
     front_price = float(get_price_for_item("front", order.mat_front) * get_m2_front(order))
     total_cost += front_price
     print("M2 Front: ", "{:.2f}".format(get_m2_front(order)),
           " | Pret ", "{:.2f}".format(front_price),
           " | Material: ", "NETT FRONT", order.mat_front)
-
     blat_price = float(get_price_for_item("blat", order.mat_blat) * get_m_blat(order))
     total_cost += blat_price
     print("M Blat: ", "{:.2f}".format(get_m_blat(order)),
           " | Pret", blat_price)
-
     cost_acc = get_cost_accessories(order)
     total_cost += cost_acc
     print("Cost total accesorii: ", cost_acc)
-
     cost_transport = get_cost_transport(order)
     total_cost += cost_transport
     print("Cost transport:", cost_transport)
-
     cost_manopera = get_cost_manopera(order)[0]
     cost_man_disc = get_cost_manopera(order)[1]
     total_cost += cost_man_disc
@@ -300,23 +292,6 @@ def get_cost_accessories(order):
     return int(cost_acc)
 
 
-# def get_cost_manopera_old(order):
-#     """
-#     - 8h proictare
-#     - 2h per corp asamblare, pozitionare si montaj fronturi
-#     - 2h montaj / electrocasnic
-#     - 0.5h pe metru de blat, montaj blat
-#     :return: [pret manopera, pret manopera cu discount]
-#     """
-#
-#     discount = order.discount
-#     h_rate = order.h_rate
-#     electrocasnice = order.nr_electrocasnice
-#     pret_manop = math.ceil((8 + (len(order.cabinets_list) * 2) + electrocasnice * 2 + get_m_blat(order) * 0.5)) * h_rate
-#     pret_manop_discount = pret_manop * (100 - discount) / 100
-#     return [pret_manop, pret_manop_discount]
-
-
 def get_cost_manopera(order):
     """
     - 8h proiectare
@@ -331,7 +306,6 @@ def get_cost_manopera(order):
     electrocasnice = order.nr_electrocasnice
     boards = order.get_boards_number()
     h_proiect = order.h_proiect
-    print()
     pret_manop = math.ceil((h_proiect + (boards * 0.17) + electrocasnice * 2 + get_m_blat(order) * 0.5) * h_rate*(1 + IMPOZIT))
     pret_manop_discount = pret_manop * (100 - discount) / 100
     return [pret_manop, pret_manop_discount]
@@ -343,20 +317,3 @@ def get_cost_transport(order):
     else:
         print("Comanda fara transport.")
         return 0
-
-# def print_m_cant(order):
-#     """
-#     for debugging cant length
-#     :return:
-#     """
-#     m1 = 0
-#     m2 = 0
-#     for i in range(len(order.corpuri)):
-#         for j in range(len(order.corpuri[i].elements_list)):
-#             placa = order.corpuri[i].elements_list[j]
-#             if placa.type == "pal":
-#                 m1 = m1 + placa.get_m_cant("0.4")
-#                 m2 = m2 + placa.get_m_cant("2")
-#     print(m1)
-#     print(m2)
-

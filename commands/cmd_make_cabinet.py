@@ -63,15 +63,15 @@ CABINETS = {
     },
     "CorpDressing": {
         "tooltip": "Add a wardrobe cabinet",
-        "gap_list": ("App:PropertyString", "", "Gap List"),
-        "front_list": ("App:PropertyString", "", "List which gaps should be closed by doors"),
+        "gap_list": ("App::PropertyString", "", "Gap List"),
+        "front_list": ("App::PropertyString", "", "List which gaps should be closed by doors"),
     },
     "Dulap": {
         "tooltip": "Add a simple closet (Dulap)",
     },
     "CorpCuPicioare": {
         "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
-        "plinta_height": ("App:ProperyInteger", 100, "Height of legs area"),
+        "plinta_height": ("App::ProperyInteger", 100, "Height of legs area"),
     }
 }
 

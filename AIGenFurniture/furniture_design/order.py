@@ -52,10 +52,10 @@ class Order:
         #     self.mat_front = mat_front
         # else:
         self.client = customer_data.get("client")
-        self.client_proficut = customer_data.get("Client Proficut")
-        self.tel_proficut = customer_data.get("Tel Proficut")
-        self.transport = customer_data.get("Transport")
-        self.address = customer_data.get("Adresa")
+        self.client_proficut = customer_data.get("client_proficut")
+        self.tel_proficut = customer_data.get("tel_proficut")
+        self.transport = customer_data.get("transport")
+        self.address = customer_data.get("address")
         self.discount = customer_data.get("discount")
         self.h_rate = customer_data.get("h_rate")
         self.nr_electrocasnice = customer_data.get("nr_electrocasnice")
