@@ -71,7 +71,7 @@ CABINETS = {
     },
     "CorpCuPicioare": {
         "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
-        "plinta_height": ("App::ProperyInteger", 100, "Height of legs area"),
+        "plinta_height": ("App::PropertyInteger", 100, "Height of legs area"),
     }
 }
 

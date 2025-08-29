@@ -6,7 +6,7 @@
 
 from .order import Order
 from .cabinets.Kitchen.kitchen import *
-from .cabinets.Dressing.dressing import *
+from .cabinets.Dressing import (Banca, CorpCuPicioare, CorpDressing, Dulap, Etajera)
 from .cabinets.elements.board import *
 from .cabinets.elements.accessory import *
 
