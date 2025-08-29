@@ -3,27 +3,6 @@ import FreeCADGui
 import json
 import os
 
-# def serialize_property_value(val):
-#     """Convert FreeCAD property values into JSON-safe formats."""
-#     # Distances, Angles, etc. (they have .Value)
-#     if hasattr(val, "Value") and isinstance(val.Value, (int, float)):
-#         return val.Value
-#
-#     # Quantity types (e.g. Units like 'mm', 'deg')
-#     if hasattr(val, "UserString") and hasattr(val, "Value"):
-#         return float(val.Value)
-#
-#     # Lists of numbers (PropertyIntegerList, PropertyFloatList, PropertyVectorList, etc.)
-#     if isinstance(val, (list, tuple)):
-#         return [serialize_property_value(v) for v in val]
-#
-#     # Simple native types
-#     if isinstance(val, (str, int, float, bool)):
-#         return val
-#
-#     # Fallback: stringify anything else
-#     return str(val)
-
 def serialize_property_value(value):
     """Convert FreeCAD property values into JSON-serializable Python types."""
 
@@ -84,19 +63,7 @@ def export(doc, output_path):
         # Always serialize; include empty/None as-is
         globals_dict[alias_name] = serialize_property_value(val)
 
-    # globals_dict = {}
-    # for alias in global_aliases:
-    #     try:
-    #         val = spreadsheet.get(alias)
-    #         if val != "":
-    #             try:
-    #                 val = float(val) if "." in str(val) else int(val)
-    #             except:
-    #                 pass
-    #             globals_dict[alias] = val
-    #     except:
-    #         pass
-    # Extract elements
+
     elements = []
     for obj in doc.Objects:
         if obj.TypeId in ["Part::Box"]:
@@ -146,11 +113,6 @@ def export(doc, output_path):
             add_rot("x", roll)
             add_rot("y", pitch)
             add_rot("z", yaw)
-
-            # z_rot_steps = round(yaw / 90)
-            # if z_rot_steps % 4 != 0:
-            #     for _ in range(abs(z_rot_steps)):
-            #         positioning.append({"rotate": "z"})
 
             if base.y != 0:
                 positioning.append({"move": ["y", base.y]})
