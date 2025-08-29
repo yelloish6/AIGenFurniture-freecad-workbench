@@ -5,8 +5,10 @@
 # from .scipy.special import kwargs
 
 from .order import Order
-from .cabinets.Kitchen.kitchen import *
+# from .cabinets.Kitchen.kitchen import *
 from .cabinets.Dressing import (Banca, CorpCuPicioare, CorpDressing, Dulap, Etajera)
+from .cabinets.Kitchen import *
+from .cabinets.cabinet import Cabinet
 from .cabinets.elements.board import *
 from .cabinets.elements.accessory import *
 

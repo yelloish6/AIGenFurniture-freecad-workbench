@@ -1,6 +1,6 @@
 import FreeCAD as App
 import FreeCADGui as Gui
-import os, sys, subprocess
+import os, sys
 from PySide import QtGui
 
 # Add parent of CabinetWorkbench to sys.path if missing
