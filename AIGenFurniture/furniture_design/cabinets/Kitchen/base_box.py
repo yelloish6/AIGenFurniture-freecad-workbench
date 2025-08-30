@@ -19,13 +19,15 @@ class BaseBox(Cabinet):
 
         # arhitectura
         # jos
-        jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
-                       self.cant_lab)
+        jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal,
+                       self.cant_lab,"", self.cant_lab, self.cant_lab)
         self.append(jos)
 
         # lat rotit pe Y si ridicat pe z cu grosimea lui jos
-        lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
-                        "", "", "")
+        lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal,
+                        self.cant_lab,"", "", "")
+        lat1.rotate("y")
+        lat1.rotate("y")
         lat1.rotate("y")
         lat1.move("x", lat1.thick)
         lat1.move("z", jos.thick)
@@ -34,6 +36,8 @@ class BaseBox(Cabinet):
         # lat rotit pe y, translatat pe x cu (jos - grosime), translatat pe z cu grosime jos
         lat2 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
+        lat2.rotate("y")
+        lat2.rotate("y")
         lat2.rotate("y")
         lat2.move("x", lat2.thick)
         lat2.move("x", jos.length - lat2.thick)

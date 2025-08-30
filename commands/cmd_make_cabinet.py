@@ -5,9 +5,6 @@ import FreeCADGui as Gui
 # Define the CABINETS dict
 # -------------------------
 CABINETS = {
-    "Cabinet": {
-        "tooltip": "Add a standard cabinet",
-    },
     "BaseBox": {
         "tooltip": "Add a base box cabinet",
     },
