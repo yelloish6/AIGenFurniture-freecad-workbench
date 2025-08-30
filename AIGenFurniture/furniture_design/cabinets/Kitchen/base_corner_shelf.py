@@ -5,7 +5,7 @@ from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessor
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
 
 class BaseCornerShelf(Cabinet):
-    def __init__(self, label, height, width, depth, shelves, rules, rounded=False):
+    def __init__(self, label, height, width, depth, rules, shelves = 3, rounded=False):
         super().__init__(label, height, width, depth, rules)
 
         back1 = BoardPal(self.label + ".back1", self.height, self.width - self.thick_pal, self.thick_pal, 1, 1, 1, 0)

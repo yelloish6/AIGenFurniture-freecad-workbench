@@ -62,28 +62,33 @@ class Board:
             self.position[1] = -init_z
             self.position[2] = init_y
         # TODO: rotation of a board is clockwise for X and counterclockwise for Y and Z. Make all clockwise, in line with FreeCAD
-        # elif axis == "x":
-        #     self.position[0] = init_x
-        # elif axis == "y":
-        #     self.position[0] = init_z
-        #     self.position[1] = init_y
-        #     self.position[2] = -init_x
+        elif axis == "x":
+            self.position[0] = init_x
         elif axis == "y":
-            self.position[0] = -init_z
+            self.position[0] = init_z
             self.position[1] = init_y
-            self.position[2] = init_x
-        # elif axis == "z":
-        #     self.position[0] = -init_y
-        #     self.position[1] = init_x
-        #     self.position[2] = init_z
+            self.position[2] = -init_x
+        # elif axis == "y":
+        #     self.position[0] = -init_z
+        #     self.position[1] = init_y
+        #     self.position[2] = init_x
         elif axis == "z":
-            self.position[0] = init_y
-            self.position[1] = -init_x
+            self.position[0] = -init_y
+            self.position[1] = init_x
             self.position[2] = init_z
+        # elif axis == "z":
+        #     self.position[0] = init_y
+        #     self.position[1] = -init_x
+        #     self.position[2] = init_z
         else:
             self.position[0] = init_x
             self.position[1] = init_y
             self.position[2] = init_z
+
+    def rotate_cw(self, axis):
+        self.rotate(axis)
+        self.rotate(axis)
+        self.rotate(axis)
 
     def move(self, axis, offset):
         """

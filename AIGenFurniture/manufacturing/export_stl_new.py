@@ -204,9 +204,9 @@ def rotate_mesh(my_mesh, axis):
     if axis == "x":
         my_mesh.rotate([0.5, 0.0, 0.0], math.radians(-90))
     elif axis == "y":
-        my_mesh.rotate([0.0, 0.5, 0.0], math.radians(90))
+        my_mesh.rotate([0.0, 0.5, 0.0], math.radians(-90))
     elif axis == "z":
-        my_mesh.rotate([0.0, 0.0, 0.5], math.radians(90))
+        my_mesh.rotate([0.0, 0.0, 0.5], math.radians(-90))
     else:
         print(f"ERROR: Unknown axis {axis}. Value must be x, y or z.")
 

@@ -10,15 +10,15 @@ CABINETS = {
     },
     "BaseCorner": {
         "tooltip": "Add a base corner cabinet",
-        "cut_width": ("App::PropertyDistance", "", "Cut Width"),
-        "cut_depth": ("App::PropertyDistance", "", "Cut Depth"),
-        "l_r": ("App::PropertyString", "", "Left or Right Corner"),
-        "with_polita": ("App::PropertyBool", "false", "Has a shelf")
+        "cut_width": ("App::PropertyInteger", 0, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 0, "Cut Depth"),
+        "l_r": ("App::PropertyString", "", "\bleft or \bright Corner"),
+        "with_polita": ("App::PropertyBool", True, "Has a shelf")
     },
     "TopCorner": {
         "tooltip": "Add a top corner cabinet",
-        "cut_width": ("App::PropertyDistance", "", "Cut Width"),
-        "cut_depth": ("App::PropertyDistance", "", "Cut Depth"),
+        "cut_width": ("App::PropertyInteger", 0, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 0, "Cut Depth"),
         "l_r": ("App::PropertyString", "", "Left or Right Corner"),
         "polite": ("App::PropertyInteger", 1, "Number of shelves included")
     },

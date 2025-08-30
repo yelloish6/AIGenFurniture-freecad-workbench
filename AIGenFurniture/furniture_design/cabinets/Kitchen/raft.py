@@ -6,7 +6,7 @@ from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 
 
 class Raft(Cabinet):
-    def __init__(self, label, height, width, depth, shelves, rules):
+    def __init__(self, label, height, width, depth, rules, shelves = 3):
         super().__init__(label, height, width, depth, rules)
         legs = math.ceil(self.width / 400) * 2
         self.append(Accessory("picioare", legs))

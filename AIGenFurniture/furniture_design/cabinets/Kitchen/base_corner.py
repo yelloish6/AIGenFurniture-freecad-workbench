@@ -59,8 +59,8 @@ class BaseCorner(Cabinet):
             lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat1.rotate("x")
-            lat1.rotate("y")
-            lat1.rotate("z")
+            lat1.rotate_cw("y")
+            lat1.rotate_cw("z")
             lat1.move("z", self.thick_pal)
             lat1.move("x", jos.length)
             lat1.move("y", cut_depth)
@@ -69,7 +69,7 @@ class BaseCorner(Cabinet):
             lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat2.rotate("x")
-            lat2.rotate("y")
+            lat2.rotate_cw("y")
             # lat2.rotate("z")
             lat2.move("x", lat2.width)
             lat2.move("z", self.thick_pal)
@@ -83,7 +83,7 @@ class BaseCorner(Cabinet):
             # spate.move("y", depth)
             # spate.move("x", self.thick_pal)
             spate.rotate("x")
-            spate.rotate("z")
+            spate.rotate_cw("z")
             spate.move("z", self.thick_pal)
             spate.move("y", self.thick_pal + spate.length)
             spate.move("x", self.thick_pal)
@@ -112,8 +112,8 @@ class BaseCorner(Cabinet):
                             "")
             leg3.rotate("x")
             leg3.rotate("z")
-            leg3.rotate("z")
-            leg3.rotate("z")
+            # leg3.rotate("z")
+            # leg3.rotate("z")
             leg3.move("z", self.height - leg3.width)
             leg3.move("x", self.width - cut_width - self.thick_pal)
             leg3.move("y", self.thick_pal)
@@ -149,7 +149,7 @@ class BaseCorner(Cabinet):
 
             front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"],
                            cut_depth - 3 - rules["thick_front"], rules["thick_front"])
-            front1.rotate("y")
+            front1.rotate_cw("y")
             front1.move("x", width - cut_width + rules["thick_front"])
             front1.move("z", rules["gap_front"])
             front1.move("y", rules["gap_front"])
@@ -157,8 +157,8 @@ class BaseCorner(Cabinet):
 
             front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"],
                            cut_width - 3 - rules["thick_front"], rules["thick_front"])
-            front2.rotate("y")
-            front2.rotate("z")
+            front2.rotate_cw("y")
+            front2.rotate_cw("z")
             front2.move("x", width - cut_width + rules["thick_front"])
             front2.move("y", cut_depth - rules["thick_front"])
             front2.move("z", rules["gap_front"])
@@ -195,8 +195,8 @@ class BaseCorner(Cabinet):
             lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat1.rotate("x")
-            lat1.rotate("y")
-            lat1.rotate("z")
+            lat1.rotate_cw("y")
+            lat1.rotate_cw("z")
             lat1.move("z", self.thick_pal)
             lat1.move("x", self.thick_pal)
             lat1.move("y", cut_depth)
@@ -205,7 +205,7 @@ class BaseCorner(Cabinet):
             lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat2.rotate("x")
-            lat2.rotate("y")
+            lat2.rotate_cw("y")
             lat2.move("z", self.thick_pal)
             lat2.move("x", self.width)
             lat2.move("y", self.thick_pal)
@@ -214,7 +214,7 @@ class BaseCorner(Cabinet):
             spate = BoardPal(self.label + ".spate", self.depth - self.thick_pal, self.height - self.thick_pal,
                              self.thick_pal, "", "", "", "")
             spate.rotate("x")
-            spate.rotate("z")
+            spate.rotate_cw("z")
             spate.move("z", self.thick_pal)
             spate.move("y", self.depth)
             # spate.move("y", -cut_depth)
@@ -242,7 +242,7 @@ class BaseCorner(Cabinet):
             leg3 = BoardPal(self.label + ".leg", cut_depth - self.thick_pal, 100, self.thick_pal, self.cant_lab, "",
                             "", "")
             leg3.rotate("x")
-            leg3.rotate("z")
+            leg3.rotate_cw("z")
             leg3.move("z", self.height - leg3.width)
             leg3.move("x", cut_width)
             leg3.move("x", self.thick_pal)
@@ -279,7 +279,7 @@ class BaseCorner(Cabinet):
 
             front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"], cut_depth - 3 -
                            rules["thick_front"], rules["thick_front"])
-            front1.rotate("y")
+            front1.rotate_cw("y")
             front1.move("x", cut_width)
             front1.move("z", rules["gap_front"])
             front1.move("y", rules["gap_front"])
@@ -287,8 +287,8 @@ class BaseCorner(Cabinet):
 
             front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"], cut_width - 3 -
                            rules["thick_front"], rules["thick_front"])
-            front2.rotate("y")
-            front2.rotate("z")
+            front2.rotate_cw("y")
+            front2.rotate_cw("z")
             front2.move("x", rules["gap_front"])
             front2.move("y", cut_depth - rules["thick_front"])
             front2.move("z", rules["gap_front"])
