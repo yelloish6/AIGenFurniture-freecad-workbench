@@ -39,9 +39,9 @@ class TopBox(Cabinet):
         sus.move("y",self.cant_lab)
         self.append(sus)
 
-        self.assemble_pal(lat1, jos, "wood_dowel", 6, 2)
-        self.assemble_pal(lat1, sus, "wood_dowel", 6, 2)
-        self.assemble_pal(lat2, jos, "wood_dowel", 6, 2)
-        self.assemble_pal(lat2, sus, "wood_dowel", 6, 2)
+        # self.assemble_pal(lat1, jos, "wood_dowel", 6, 2)
+        # self.assemble_pal(lat1, sus, "wood_dowel", 6, 2)
+        # self.assemble_pal(lat2, jos, "wood_dowel", 6, 2)
+        # self.assemble_pal(lat2, sus, "wood_dowel", 6, 2)
 
         self.add_pfl()

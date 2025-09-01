@@ -209,7 +209,7 @@ def cabinet_handler(cabinet_data):
         return TopCorner(label, height, width, depth, rules, cut_width, cut_depth, l_r, polite)
     elif cabinet_type == "Raft":
         shelves = cabinet_data.get("shelves")
-        return Raft(label, height, width, depth, shelves, rules)
+        return Raft(label, height, width, depth, rules, shelves)
     elif cabinet_type == "Bar":
         return Bar(label, height, width, depth, rules)
     elif cabinet_type == "JollyBox":
@@ -234,12 +234,12 @@ def cabinet_handler(cabinet_data):
         return MsVBox(label, height, width, depth, rules)
     elif cabinet_type == "BaseCornerShelf":
         shelves = cabinet_data.get("shelves")
-        return BaseCornerShelf(label, height, width, depth, shelves, rules)
+        return BaseCornerShelf(label, height, width, depth, rules, shelves)
     elif cabinet_type == "Banca":
         return Banca(label, height, width, depth, rules)
     elif cabinet_type == "Etajera":
         shelves = cabinet_data.get("shelves")
-        return Etajera(label, height, width, depth, shelves, rules)
+        return Etajera(label, height, width, depth, rules, shelves)
     elif cabinet_type == "CorpDressing":
         gap_list = cabinet_data.get("gap_list")
         front_list = cabinet_data.get("front_list")
@@ -248,7 +248,7 @@ def cabinet_handler(cabinet_data):
         return Dulap(label, height, width, depth, rules)
     elif cabinet_type == "CorpCuPicioare":
         plinta = cabinet_data.get("plinta_height")
-        return CorpCuPicioare(label, height, width, depth, plinta, rules)
+        return CorpCuPicioare(label, height, width, depth, rules, plinta)
 
     else:
         raise ValueError(f"Unsupported cabinet type: {cabinet_type}")
