@@ -7,29 +7,66 @@ from AIGenFurniture.furniture_design.design_engine import load_default_rules, DE
 from AIGenFurniture.furniture_design.cabinets.Kitchen import CABINETS
 
 def apply_movements_to_part(part, position_list):
-    """Apply the same sequence of move/rotate operations as STL export."""
-    pl = part.Placement
+    pl = App.Placement()  # identity
     for movement in position_list:
         if movement[0] == "move":
             axis, offset = movement[1], movement[2]
             if axis == "x":
-                pl.Base.x += offset
+                step = App.Placement(App.Vector(offset, 0, 0), App.Rotation())
             elif axis == "y":
-                pl.Base.y += offset
+                step = App.Placement(App.Vector(0, offset, 0), App.Rotation())
             elif axis == "z":
-                pl.Base.z += offset
+                step = App.Placement(App.Vector(0, 0, offset), App.Rotation())
         elif movement[0] == "rotate":
             axis = movement[1]
             if axis == "x":
-                pl.Rotation = pl.Rotation.multiply(App.Rotation(App.Vector(1, 0, 0), 90))
+                step = App.Placement(App.Vector(), App.Rotation(App.Vector(1, 0, 0), -90))
             elif axis == "y":
-                pl.Rotation = pl.Rotation.multiply(App.Rotation(App.Vector(0, 1, 0), 90))
+                step = App.Placement(App.Vector(), App.Rotation(App.Vector(0, 1, 0), -90))
             elif axis == "z":
-                pl.Rotation = pl.Rotation.multiply(App.Rotation(App.Vector(0, 0, 1), 90))
-            else:
-                App.Console.PrintError(f"❌ Unknown rotation axis {axis}\n")
+                step = App.Placement(App.Vector(), App.Rotation(App.Vector(0, 0, 1), -90))
+        else:
+            continue
+
+        pl = pl.multiply(step)  # sequential like STL
     part.Placement = pl
 
+def placement_from_position_list(position_list):
+    """
+    Build a Placement that exactly matches STL's imperative transform:
+    - moves add to a translation vector t (in global coords at that moment)
+    - rotates are about global origin and also spin the accumulated t
+    Resulting transform: x' = R x + t
+    """
+    t = App.Vector(0, 0, 0)          # accumulated translation
+    R = App.Rotation()               # accumulated rotation (identity)
+
+    for op, axis, *rest in position_list:
+        if op == "move":
+            offset = rest[0]
+            if axis == "x":
+                t = t.add(App.Vector(offset, 0, 0))
+            elif axis == "y":
+                t = t.add(App.Vector(0, offset, 0))
+            elif axis == "z":
+                t = t.add(App.Vector(0, 0, offset))
+
+        elif op == "rotate":
+            # build rotation matching STL (-90°)
+            if axis == "x":
+                Rstep = App.Rotation(App.Vector(1,0,0), 90)
+            elif axis == "y":
+                Rstep = App.Rotation(App.Vector(0,1,0), 90)
+            elif axis == "z":
+                Rstep = App.Rotation(App.Vector(0,0,1), 90)
+            else:
+                continue
+
+            # IMPORTANT: rotate both the rotation and the already-accumulated translation
+            t = Rstep.multVec(t)
+            R = Rstep.multiply(R)
+
+    return App.Placement(t, R)
 
 def explode_box_to_cabinet(box):
     doc = App.ActiveDocument
@@ -47,32 +84,10 @@ def explode_box_to_cabinet(box):
 
     # Rules (normally from spreadsheet / OrderVar)
     rules = load_default_rules(DEFAULT_RULES_PATH)
-    # rules = {
-    #     "thick_pal": 18,
-    #     "thick_front": 18,
-    #     "thick_blat": 40,
-    #     "width_blat": 600,
-    #     "cant_general": 2,
-    #     "gap_front": 3,
-    #     "pol_depth": 500,
-    #     "cant_pol": 2,
-    #     "cant_separator": 2,
-    #     "gap_fata": 20
-    # }
-
-    # Build cabinet
-    # if cab_type == "BaseBox":
-    #     cabinet = BaseBox(box.Label, height, width, depth, rules)
-    # else:
-    #     App.Console.PrintError(f"⚠ Unknown CabinetType '{cab_type}', defaulting to BaseBox.\n")
-    #     cabinet = BaseBox(box.Label, height, width, depth, rules)
-
-
 
     # Lookup cabinet factory
     if cab_type in CABINETS:
         CabinetFactory = CABINETS[cab_type]
-
         # Handle special factories (functions) vs normal classes
         if callable(CabinetFactory):
             try:
@@ -88,7 +103,7 @@ def explode_box_to_cabinet(box):
         cabinet = CABINETS["BaseBox"](box.Label, height, width, depth, rules)
 
     # Create container group
-    cab_group = doc.addObject("App::DocumentObjectGroup", cabinet.label)
+    cab_group = doc.addObject("App::Part", cabinet.label)
 
     # Add accessories properties (parallel arrays: names + counts)
     cab_group.addProperty("App::PropertyStringList", "AccessoryTypes", "Cabinet",
@@ -107,8 +122,14 @@ def explode_box_to_cabinet(box):
             part.Width  = elem.width
             part.Height = elem.thick
 
-            # Apply recorded transformations
-            apply_movements_to_part(part, elem.position_list)
+            # Apply recorded transformations of the element (match STL)
+            part.Placement = placement_from_position_list(elem.position_list)
+            cab_group.addObject(part)
+            # apply_movements_to_part(part, elem.position_list)
+            # # ... existing code ...
+            # # Also apply cabinet-level transforms (match STL applying cabinet.position_list)
+            # if getattr(cabinet, "position_list", None):
+            #     apply_movements_to_part(part, cabinet.position_list)
 
             cab_group.addObject(part)
 
@@ -122,7 +143,7 @@ def explode_box_to_cabinet(box):
     # Store accessories
     cab_group.AccessoryTypes = accessory_types
     cab_group.AccessoryCounts = accessory_counts
-
+    cab_group.Placement = box.Placement.multiply(placement_from_position_list(cabinet.position_list))
     # Hide original box
     box.ViewObject.Visibility = False
 
