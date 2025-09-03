@@ -7,7 +7,7 @@ class JollyBox(BaseBox):
         self.append(Accessory("surub 3.5x16", 8))  # prentu glisiere
         self.append(Accessory("surub 3.5x16", 8))  # pentru front
         if width < 150:
-            raise NameError("ERROR: Cos Jolly pentru Cabinetul ", self.label, "inexistent!")
+            raise NameError("ERROR: Jolly basket for cabinet ", self.label, "not available!")
         elif width < 200:
             self.append(Accessory("Joly150500", 1))
         elif width < 300:

@@ -6,6 +6,8 @@ from .dulap import Dulap
 from .etajera import Etajera
 # from .tower_box import TowerBox
 
+# TODO Complete the cabinet package also with the dressing cabinets
+
 __all__ = [
     # ... existing exported classes ...,
     "CorpCuPicioare", "Banca", "CorpDressing", "Dulap", "Etajera"

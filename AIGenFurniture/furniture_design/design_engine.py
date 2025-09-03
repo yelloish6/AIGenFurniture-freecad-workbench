@@ -27,7 +27,7 @@ project requirements.
 
 # DEFAULT_RULES_PATH = ".default_rules.json"
 DEFAULT_RULES_PATH = os.path.join(os.path.dirname(__file__), "default_rules.json")
-
+# TODO move rules to the FReeCAD as spreadsheet
 
 def design_furniture(customer_data):
     """

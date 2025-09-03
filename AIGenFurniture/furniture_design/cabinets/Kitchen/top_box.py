@@ -16,7 +16,7 @@ class TopBox(Cabinet):
         # arhitectura
         lat1 = BoardPal(self.label + ".lat1", self.height, self.depth, self.thick_pal, self.cant_lab, "",
                         self.cant_lab, self.cant_lab)
-        lat1.rotate("y")
+        lat1.rotate_cw("y")
         lat1.move("x", lat1.thick)
         self.append(lat1)
         # self.palOO.append(lat1)
@@ -28,7 +28,7 @@ class TopBox(Cabinet):
         # self.palOO.append(jos)
         lat2 = BoardPal(self.label + ".lat2", self.height, self.depth, self.thick_pal, self.cant_lab, "",
                         self.cant_lab, self.cant_lab)
-        lat2.rotate("y")
+        lat2.rotate_cw("y")
         lat2.move("x", jos.length + 2 * lat2.thick)
         self.append(lat2)
         # self.palOO.append(lat2)

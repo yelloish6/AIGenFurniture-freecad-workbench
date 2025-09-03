@@ -45,7 +45,7 @@ class BaseBox(Cabinet):
         self.append(lat2)
 
         # leg translatat pe z cu (lungimea lat + offset lat - grosime leg), si pe x cu grosime lat
-        leg1 = BoardPal(self.label + ".leg1", self.width - (2 * (self.thick_pal + self.cant)), 100, self.thick_pal,
+        leg1 = BoardPal(self.label + ".leg1", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
         leg1.move("z", lat1.length + jos.thick - leg1.thick)
         leg1.move("x", lat1.thick)
@@ -54,7 +54,7 @@ class BaseBox(Cabinet):
         # leg translatat pe z cu (lungimea lat + offset lat - grosime leg)
         #               pe y cu (latime lat - latime leg)
         #               pe x cu grosime lat
-        leg2 = BoardPal(self.label + ".leg2", self.width - (2 * (self.thick_pal + self.cant)), 100, self.thick_pal,
+        leg2 = BoardPal(self.label + ".leg2", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
         leg2.move("z", lat1.length + jos.thick - leg1.thick)
         leg2.move("y", lat1.width - leg2.width)

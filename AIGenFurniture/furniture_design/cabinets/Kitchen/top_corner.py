@@ -65,7 +65,7 @@ class TopCorner(Cabinet):
             # sus.move("y", -cut_depth)
             self.append(sus)
 
-            for polita in range(polite):
+            for i in range(polite):
                 pol = BoardPal(self.label + ".pol", self.width - (2 * self.thick_pal),
                                self.depth - (1 * self.thick_pal),
                                self.thick_pal, "", "", "", "")
@@ -78,13 +78,13 @@ class TopCorner(Cabinet):
                             str(self.depth - self.thick_pal))
                 pol.move("x", self.thick_pal)
                 pol.move("y", self.thick_pal)
-                pol.move("z", polita * int((self.height - self.thick_pal) / polite))
+                pol.move("z", (i+1) * int((self.height - self.thick_pal) / (polite + 1)))
                 # pol.move("y", -cut_depth)
                 self.append(pol)
 
             spate = BoardPal(self.label + ".spate", self.height, self.depth - self.thick_pal,
                              self.thick_pal, "", "", "", "")
-            spate.rotate("y")
+            spate.rotate_cw("y")
             spate.move("y", self.thick_pal)
             spate.move("x", self.thick_pal)
             # spate.move("y", -cut_depth)
@@ -93,15 +93,15 @@ class TopCorner(Cabinet):
             lat1 = BoardPal(self.label + ".lat1", self.height, self.width - cut_width, self.thick_pal, self.cant_lab,
                             "",
                             self.cant_lab, self.cant_lab)
-            lat1.rotate("y")
-            lat1.rotate("z")
+            lat1.rotate_cw("y")
+            lat1.rotate_cw("z")
             # lat1.move("y", -cut_depth)
             self.append(lat1)
 
             lat2 = BoardPal(self.label + ".lat2", self.height, self.depth - cut_depth, self.thick_pal, self.cant_lab,
                             "",
                             self.cant_lab, self.cant_lab)
-            lat2.rotate("y")
+            lat2.rotate_cw("y")
             lat2.move("x", self.width)
             lat2.move("y", self.depth - lat2.width)
             # lat2.move("y", -cut_depth)
@@ -109,7 +109,7 @@ class TopCorner(Cabinet):
 
             front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"],
                            cut_depth - 3 - rules["thick_front"], rules["thick_front"])
-            front1.rotate("y")
+            front1.rotate_cw("y")
             front1.move("x", width - cut_width + rules["thick_front"])
             front1.move("z", rules["gap_front"])
             front1.move("y", rules["gap_front"])
@@ -117,8 +117,8 @@ class TopCorner(Cabinet):
 
             front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"],
                            cut_width - 3 - rules["thick_front"], rules["thick_front"])
-            front2.rotate("y")
-            front2.rotate("z")
+            front2.rotate_cw("y")
+            front2.rotate_cw("z")
             front2.move("x", width - cut_width + rules["thick_front"])
             front2.move("y", cut_depth - rules["thick_front"])
             front2.move("z", rules["gap_front"])
@@ -176,13 +176,13 @@ class TopCorner(Cabinet):
                     str(self.depth - cut_depth - 20) + ":")
                 pol.move("x", self.thick_pal)
                 pol.move("y", self.thick_pal)
-                pol.move("z", i * int((self.height - self.thick_pal) / polite))
+                pol.move("z", (i+1) * int((self.height - self.thick_pal) / (polite + 1)))
                 # pol.move("y", -cut_depth)
                 self.append(pol)
 
             spate = BoardPal(self.label + ".spate", self.height, self.depth - self.thick_pal,
                              self.thick_pal, "", "", "", "")
-            spate.rotate("y")
+            spate.rotate_cw("y")
             spate.move("y", self.thick_pal)
             spate.move("x", self.width)
             # spate.move("z", self.thick_pal)
@@ -192,8 +192,8 @@ class TopCorner(Cabinet):
             lat1 = BoardPal(self.label + ".lat1", self.height, self.width - cut_width, self.thick_pal, self.cant_lab,
                             "",
                             self.cant_lab, self.cant_lab)
-            lat1.rotate("y")
-            lat1.rotate("z")
+            lat1.rotate_cw("y")
+            lat1.rotate_cw("z")
             # lat1.move("y", -cut_depth)
             lat1.move("x", cut_width)
             self.append(lat1)
@@ -201,7 +201,7 @@ class TopCorner(Cabinet):
             lat2 = BoardPal(self.label + ".lat2", self.height, self.depth - cut_depth, self.thick_pal, self.cant_lab,
                             "",
                             self.cant_lab, self.cant_lab)
-            lat2.rotate("y")
+            lat2.rotate_cw("y")
             lat2.move("x", self.thick_pal)
             lat2.move("y", self.depth - lat2.width)
             # lat2.move("y", -cut_depth)
@@ -209,7 +209,7 @@ class TopCorner(Cabinet):
 
             front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"],
                            cut_depth - 3 - rules["thick_front"], rules["thick_front"])
-            front1.rotate("y")
+            front1.rotate_cw("y")
             front1.move("x", cut_width)
             front1.move("z", rules["gap_front"])
             front1.move("y", rules["gap_front"])
@@ -217,8 +217,8 @@ class TopCorner(Cabinet):
 
             front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"],
                            cut_width - 3 - rules["thick_front"], rules["thick_front"])
-            front2.rotate("y")
-            front2.rotate("z")
+            front2.rotate_cw("y")
+            front2.rotate_cw("z")
             front2.move("x", rules["gap_front"])
             front2.move("y", cut_depth - rules["thick_front"])
             front2.move("z", rules["gap_front"])

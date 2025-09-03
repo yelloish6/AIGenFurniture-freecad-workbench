@@ -25,16 +25,16 @@ class Raft(Cabinet):
         # lat rotit pe Y si ridicat pe z cu grosimea lui jos
         lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
-        lat1.rotate("y")
-        lat1.move("x", 2 * self.thick_pal)
+        lat1.rotate_cw("y")
+        lat1.move("x", self.thick_pal)
         lat1.move("z", jos.thick)
         self.append(lat1)
 
         # lat rotit pe y, translatat pe x cu (jos - grosime), translatat pe z cu grosime jos
         lat2 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
-        lat2.rotate("y")
-        lat2.move("x", jos.length + self.thick_pal)
+        lat2.rotate_cw("y")
+        lat2.move("x", jos.length)
         lat2.move("z", jos.thick)
         self.append(lat2)
 

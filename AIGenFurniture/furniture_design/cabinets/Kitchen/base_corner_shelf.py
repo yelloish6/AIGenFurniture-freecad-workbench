@@ -9,14 +9,14 @@ class BaseCornerShelf(Cabinet):
         super().__init__(label, height, width, depth, rules)
 
         back1 = BoardPal(self.label + ".back1", self.height, self.width - self.thick_pal, self.thick_pal, 1, 1, 1, 0)
-        back1.rotate("y")
-        back1.rotate("z")
+        back1.rotate_cw("y")
+        back1.rotate_cw("z")
         back1.move("x", self.thick_pal)
         back1.move("y", self.depth - self.thick_pal)
         self.append(back1)
 
         back2 = BoardPal(self.label + ".back2", self.height, self.depth, self.thick_pal, 1, 0, 1, 0)
-        back2.rotate("y")
+        back2.rotate_cw("y")
         self.append(back2)
         back2.move("x", self.thick_pal)
         self.append(Accessory("surub", 2))

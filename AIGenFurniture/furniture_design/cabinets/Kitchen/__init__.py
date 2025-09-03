@@ -10,6 +10,8 @@ from .top_box import TopBox
 from .top_corner import TopCorner
 from .tower_box import TowerBox
 
+# TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
+
 __all__ = [
     "Bar",
     "BaseBox",
@@ -39,7 +41,8 @@ def make_base_corner_shelf(label, height, width, depth, rules, box=None):
     """Factory for BaseCornerShelf with extra shelves parameter."""
     # Read shelves count from the box if present, otherwise default = 3
     shelves = getattr(box, "shelves", 3)
-    return BaseCornerShelf(label, height, width, depth, rules, shelves=shelves)
+    rounded = getattr(box, "rounded", False)
+    return BaseCornerShelf(label, height, width, depth, rules, shelves=shelves, rounded=rounded)
 
 def make_base_corner(label, height, width, depth, rules, box=None):
     """Factory for BaseCorner with extra cut_width, cut_depth, l_r, with_polita parameters."""

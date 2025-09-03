@@ -8,7 +8,6 @@ SHEET_HEIGHT = 2800
 SHEET_WIDTH = 2070
 IMPOZIT = 0.1
 
-
 def generate_offer_file(order, output_path):
     # doc = fitz.open()
     # page = doc.new_page()
@@ -18,7 +17,7 @@ def generate_offer_file(order, output_path):
     # shape.finish(color=(0, 0, 0), width=1)
     # shape.commit()
     # doc.save(output_path + '/offer.pdf')
-    # TODO implement offer file generation in .pdf
+    # TODO generate offer in a PDF file with brand included and other specific offering features.
     print(f"Generating offer file in {output_path} to be implemented")
 
 
@@ -143,7 +142,8 @@ def get_price_for_item(element_type, material):
     :param material:
     :return:
     """
-    # TODO store price_list.csv in one place only, now it's in 2 places, and rewrite all paths to it. Or even write a method that reads prices that every file can access
+    # TODO store price_list.csv in one place only, now it's in 2 places, and rewrite all paths to it. Or even write
+    #  a method that reads prices that every file can access or move the price list in FreeCAD
     price_list_path = os.path.join(os.path.dirname(__file__), "templates", "price_list.csv")
     with open(price_list_path) as price_list_file:
         price_reader = csv.DictReader(price_list_file, delimiter=',')
@@ -301,6 +301,7 @@ def get_cost_manopera(order):
     :param order:
     :return:
     """
+    # TODO get all manufaturing prices from the price list in FreeCAD
     discount = order.discount
     h_rate = order.h_rate
     electrocasnice = order.nr_electrocasnice

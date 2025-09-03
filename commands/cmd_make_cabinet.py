@@ -50,6 +50,7 @@ CABINETS = {
     "BaseCornerShelf": {
         "tooltip": "Add a base corner shelf cabinet",
         "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+        "rounded": ("App::PropertyBool", False, "Rounded shelves"),
     },
     "Banca": {
         "tooltip": "Add a bench cabinet",

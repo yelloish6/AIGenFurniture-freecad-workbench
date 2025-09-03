@@ -198,7 +198,7 @@ class Cabinet(DrawersMixin, ShelvesMixin):
             w = int((w_tot * split[1] / 100) - self.front_gap)
             usa = Front(self.label + "_" + str(i + 1), h, w, self.thick_front)
             usa.rotate("x")
-            usa.rotate("y")
+            usa.rotate_cw("y")
             usa.move("x", origin[0])
             usa.move("z", origin[1])
             usa.move("x", usa.width)
@@ -231,17 +231,17 @@ class Cabinet(DrawersMixin, ShelvesMixin):
     def add_front_lateral(self, left_right):
         front = Front(self.label + ".fr_lat", self.height, self.depth + self.thick_front, self.thick_front)
         if left_right == "left":
-            front.rotate("y")
+            front.rotate_cw("y")
             front.move("y", -self.thick_front)
         elif left_right == "right":
-            front.rotate("y")
+            front.rotate_cw("y")
             front.move("x", self.width)
         self.append(front)
 
     def add_front_manual(self, height, width, offset_x, offset_z):
         fr = Front(self.label + ".man", height, width, self.thick_front)
         fr.rotate("x")
-        fr.rotate("y")
+        fr.rotate_cw("y")
         fr.move("x", fr.width)
         fr.move("x", self.front_gap)
         fr.move("z", self.front_gap)

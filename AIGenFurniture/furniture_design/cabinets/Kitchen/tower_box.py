@@ -25,14 +25,14 @@ class TowerBox(Cabinet):
 
         lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
-        lat1.rotate("y")
+        lat1.rotate_cw("y")
         lat1.move("z", jos.thick)
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
         lat2 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
-        lat2.rotate("y")
+        lat2.rotate_cw("y")
         lat2.move("z", jos.thick)
         lat2.move("x", jos.length)
         self.append(lat2)
@@ -62,6 +62,8 @@ class TowerBox(Cabinet):
         self.append(Accessory("surub 3.5x16", picioare * 4))  # pentru picioare
 
         self.add_pfl()
+        self.get_item_by_type_label("pfl",self.label + ".pfl").__setattr__("length", self.width - (2 * self.thick_pal))
+        self.get_item_by_type_label("pfl",self.label + ".pfl").move("x", self.thick_pal - 2)
 
         # if front_list[0] == 1:
         #     if front_list[1] == 0:
