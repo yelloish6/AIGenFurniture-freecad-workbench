@@ -1,7 +1,14 @@
+from .banca import Banca
 from .bar import Bar
 from .base_box import BaseBox
 from .base_corner import BaseCorner
 from .base_corner_shelf import BaseCornerShelf
+
+from .corp_cu_picioare import CorpCuPicioare
+from .corp_dressing import CorpDressing
+from .dulap import Dulap
+from .etajera import Etajera
+
 from .jolly_box import JollyBox
 from .msv_box import MsVBox
 from .raft import Raft
@@ -13,10 +20,15 @@ from .tower_box import TowerBox
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
 
 __all__ = [
+    "Banca",
     "Bar",
     "BaseBox",
     "BaseCorner",
     "BaseCornerShelf",
+    "CorpCuPicioare",
+    "CorpDressing",
+    "Dulap",
+    "Etajera",
     "JollyBox",
     "MsVBox",
     "Raft",
@@ -30,6 +42,7 @@ __all__ = [
 _GENERIC_CABINETS = {
     "Bar": Bar,
     "BaseBox": BaseBox,
+    "Dulap": Dulap,
     "JollyBox": JollyBox,
     "MsVBox": MsVBox,
     "SinkBox": SinkBox,
@@ -73,9 +86,37 @@ def make_tower_box(label, height, width, depth, rules, box=None):
     front_list = getattr(box, "front_list", [0, 0, 0, 0])
     return TowerBox(label, height, width, depth, rules, gap_list = [20, 40], gap_heat = 50, front_list = [0, 0, 0, 0])
 
+def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
+    """Factory for CorpCuPicioare with extra shelves parameter."""
+    plinta = getattr(box, "plinta", 100)
+    return CorpCuPicioare(label, height, width, depth, rules, plinta=plinta)
+
+def make_corp_dressing(label, height, width, depth, rules, box=None):
+    """Factory for Corp Dressing with extra tower_height parameter."""
+    gap_list = getattr(box, "tower_height", [20, 40])
+    front_list = getattr(box, "front_list", [0, 0, 0, 0])
+    return TowerBox(label, height, width, depth, rules, gap_list = [20, 40], front_list = [0, 0, 0, 0])
+
+def make_etajera(label, height, width, depth, rules, box=None):
+    """Factory for Etajera with extra shelves parameter."""
+    # Read shelves count from the box if present, otherwise default = 3
+    shelves = getattr(box, "shelves", 3)
+    return Raft(label, height, width, depth, rules, shelves=shelves)
+
+def make_bench(label, height, width, depth, rules, box=None):
+    """Factory for Bench with extra parameters."""
+    gap_front = getattr(box, "gap_front", 50)
+    gap_lat = getattr(box, "gap_lat", 50)
+    height_base = getattr(box, "height_base", 100)
+    return Banca(label, height, width, depth, rules, gap_front = 50, gap_lat = 50, height_base = 100)
+
 _SPECIAL_CABINETS = {
+    "Banca": make_bench,
     "BaseCorner": make_base_corner,
     "BaseCornerShelf": make_base_corner_shelf,
+    "CorpCuPicioare": make_corp_cu_picioare,
+    "CorpDressing": make_corp_dressing,
+    "Etajera": make_etajera,
     "Raft": make_raft,
     "TopCorner": make_top_corner,
     "TowerBox": make_tower_box,

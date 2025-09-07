@@ -6,7 +6,7 @@
 
 from .order import Order
 # from .cabinets.Kitchen.kitchen import *
-from .cabinets.Dressing import (Banca, CorpCuPicioare, CorpDressing, Dulap, Etajera)
+# from .cabinets.Dressing import (Banca, CorpCuPicioare, CorpDressing, Dulap, Etajera)
 from .cabinets.Kitchen import *
 from .cabinets.cabinet import Cabinet
 from .cabinets.elements.board import *
@@ -236,7 +236,10 @@ def cabinet_handler(cabinet_data):
         shelves = cabinet_data.get("shelves")
         return BaseCornerShelf(label, height, width, depth, rules, shelves)
     elif cabinet_type == "Banca":
-        return Banca(label, height, width, depth, rules)
+        gap_front = cabinet_data.get("gap_front")
+        gap_lat = cabinet_data.get("gap_lat")
+        height_base = cabinet_data.get("height_base")
+        return Banca(label, height, width, depth, rules, gap_front, gap_lat, height_base)
     elif cabinet_type == "Etajera":
         shelves = cabinet_data.get("shelves")
         return Etajera(label, height, width, depth, rules, shelves)

@@ -3,7 +3,7 @@ from AIGenFurniture.furniture_design.cabinets.elements.board import *
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 
 class CorpCuPicioare(Cabinet):
-    def __init__(self, label, height, width, depth, plinta, rules):
+    def __init__(self, label, height, width, depth, rules, plinta):
         drill_depth_offset = 120 # distance from the other edge of the cabinet to where the screw is assembled
         """
         Cabinet simplu:
@@ -22,12 +22,12 @@ class CorpCuPicioare(Cabinet):
         super().__init__(label, height, width, depth, rules)
         lat1 = BoardPal(self.label + ".lat1", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
             self.cant_lab)
-        lat1.rotate("y")
+        lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
 
         lat2 = BoardPal(self.label + ".lat2", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                         self.cant_lab)
-        lat2.rotate("y")
+        lat2.rotate_cw("y")
         lat2.move("x", self.width)
 
         jos = BoardPal(self.label + ".jos", self.width - 2 * self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
@@ -64,6 +64,7 @@ class CorpCuPicioare(Cabinet):
         self.append(jos)
         self.append(sus)
 
+# TODO following methods should be moved to main Cabinet class filename: cabinet.py
     def add_pol_2(self, orient, length, height, offset):
         """
         adds a polita in the cabinet, but you can adjust length height and offset

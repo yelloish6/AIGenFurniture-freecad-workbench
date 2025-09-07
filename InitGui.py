@@ -1,6 +1,8 @@
 import os
+import inspect
 import FreeCAD as App
 import FreeCADGui as Gui
+# import DraftGui
 
 class CabinetWorkbench (Gui.Workbench):
     """Cabinet Generator Workbench"""
@@ -19,22 +21,6 @@ class CabinetWorkbench (Gui.Workbench):
 
     def Initialize(self):
 
-        # Convert to cabinet command
-        # import ConvertCommand
-        # ConvertCommand.ICON_PATH = self.icon_path
-        # Gui.addCommand('Convert_Box_To_Cabinet', ConvertCommand.ConvertBoxCommand())
-        # self.appendToolbar("Cabinet Tools", ["Convert_Box_To_Cabinet"])
-        # self.appendMenu("Cabinet Tools", ["Convert_Box_To_Cabinet"])
-
-        from commands import cmd_make_box, cmd_add_shelf
-
-        # # Toolbars
-        # self.appendToolbar("Cabinets", ["Cmd_Base_Box"])
-        # self.appendToolbar("Features", ["Cmd_Add_Shelf"])
-
-        # Menus
-        # self.appendMenu("CabinetGenerator", ["Cmd_Base_Box", "Cmd_Add_Shelf"])
-
         # features
         import commands.cmd_make_feature
         import commands.cmd_make_cabinet
@@ -43,6 +29,12 @@ class CabinetWorkbench (Gui.Workbench):
         import commands.cmd_aigenfurniture
         import commands.cmd_make_ordervar
         import commands.cmd_explode_cabinet
+        import Draft
+        import DraftTools
+        import DraftGui
+
+        # Gui.activateWorkbench("DraftWorkbench")
+        # Gui.activateWorkbench("CabinetWorkbench")
 
         self.appendToolbar("Features", [f"Cmd_Add_{f}" for f in commands.cmd_make_feature.FEATURES])
         self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in commands.cmd_make_cabinet.CABINETS])
@@ -54,6 +46,7 @@ class CabinetWorkbench (Gui.Workbench):
                                     "AIGenFurniture"
                                     ]
                            )
+        self.appendToolbar("Manipulation", ["Draft_Move"])
 
     def Activated(self):
         pass

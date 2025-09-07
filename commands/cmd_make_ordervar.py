@@ -1,6 +1,8 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 
+import os
+
 def create_globals_spreadsheet(doc):
     """Create a spreadsheet with all global_aliases prefilled and aliases set."""
 
@@ -77,8 +79,9 @@ def create_globals_spreadsheet(doc):
 
 class CreateGlobalsSpreadsheetCommand:
     def GetResources(self):
+        base_dir = os.path.dirname(os.path.dirname(__file__))
         return {
-            "Pixmap": "path/to/icon_create_spreadsheet.svg",  # replace with actual icon path
+            "Pixmap": os.path.join(base_dir, "Resources", "icons", "icon_create_spreadsheet.jpg"),  # replace with actual icon path
             "MenuText": "Create Globals Spreadsheet",
             "ToolTip": "Create a spreadsheet with all global aliases and default values"
         }

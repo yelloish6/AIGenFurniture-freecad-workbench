@@ -54,6 +54,9 @@ CABINETS = {
     },
     "Banca": {
         "tooltip": "Add a bench cabinet",
+        "gap_front": ("App::PropertyInteger", 0, "Gap for front"),
+        "gap_lat": ("App::PropertyInteger", 0, "Gap for lateral"),
+        "height_base": ("App::PropertyInteger", 0, "Height of base"),
     },
     "Etajera": {
         "tooltip": "Add an Etajera (shelf unit)",

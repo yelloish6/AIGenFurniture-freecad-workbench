@@ -19,13 +19,13 @@ class Dulap(Cabinet):
         super().__init__(label, height, width, depth, rules)
 
         lat1 = BoardPal(self.label + "_lat", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
-        lat1.rotate("y")
+        lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
         lat2 = BoardPal(self.label + "_lat", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                         self.cant_lab)
-        lat2.rotate("y")
+        lat2.rotate_cw("y")
         lat2.move("x", self.width)
         self.append(lat2)
 

@@ -244,8 +244,9 @@ def export(doc, output_path):
 
 class ExportJSONCommand:
     def GetResources(self):
+        base_dir = os.path.dirname(os.path.dirname(__file__))
         return {
-            "Pixmap": "path/to/icon_json_export.svg",  # replace with actual icon path
+            "Pixmap": os.path.join(base_dir, "Resources", "icons", "icon_json_export.png"),  # replace with actual icon path
             "MenuText": "Export Cabinets JSON",
             "ToolTip": "Export all cabinets and global parameters to a JSON file"
         }

@@ -1,10 +1,15 @@
 import FreeCAD as App
 import FreeCADGui as Gui
+import os
 
 from AIGenFurniture.furniture_design.cabinets.Kitchen.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat, Front, Pfl
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from AIGenFurniture.furniture_design.cabinets.Kitchen import CABINETS
+
+# def get_icon(filename):
+#     base_dir = os.path.dirname(os.path.dirname(__file__))  # goes up from Resources/ to CabinetWorkbench/
+#     return os.path.join(base_dir, "Resources", "icons", filename)
 
 def apply_movements_to_part(part, position_list):
     pl = App.Placement()  # identity
@@ -152,9 +157,11 @@ def explode_box_to_cabinet(box):
 
 
 class ExplodeBoxCommand:
+
     def GetResources(self):
+        base_dir = os.path.dirname(os.path.dirname(__file__))  # goes up from Resources/ to CabinetWorkbench/
         return {
-            "Pixmap": "path/to/icon_explode_box.svg",
+            "Pixmap": os.path.join(base_dir, "Resources", "icons", "icon_explode_box.png"),
             "MenuText": "Explode Box to Cabinet",
             "ToolTip": "Explode a simple box into a Cabinet architecture"
         }

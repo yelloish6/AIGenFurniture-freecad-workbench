@@ -50,9 +50,12 @@ def export_and_generate():
 
 class AIGenFurnitureCommand:
     def GetResources(self):
-        return {"MenuText": "AIGen Furniture generator",
-                "ToolTip": "Run AIGen Furniture generator",
-                "Pixmap": "icons/generate.svg"}
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        return {
+            "Pixmap": os.path.join(base_dir, "Resources", "icons", "icon_AIGenFurniture.png"),
+            "MenuText": "AIGen Furniture generator",
+            "ToolTip": "Run AIGen Furniture generator"
+        }
 
     def Activated(self):
         export_and_generate()

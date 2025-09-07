@@ -3,7 +3,7 @@ from AIGenFurniture.furniture_design.cabinets.elements.board import *
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 
 class Etajera(Cabinet):
-    def __init__(self, label, height, width, depth, shelves, rules):
+    def __init__(self, label, height, width, depth, rules, shelves):
         super().__init__(label, height, width, depth, rules)
 
         lat1 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal, self.cant_lab, "", "", "")
