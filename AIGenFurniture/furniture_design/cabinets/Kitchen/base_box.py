@@ -61,9 +61,9 @@ class BaseBox(Cabinet):
         leg2.move("x", lat1.thick)
         self.append(leg2)
 
-        blatul = Blat(self.label + ".blat", self.width, self.width_blat, self.thick_blat)
-        blatul.move("z", self.height)
-        blatul.move("y", -rules["gap_fata"])
-        self.append(blatul)
+        # blatul = Blat(self.label + ".blat", self.width, self.width_blat, self.thick_blat)
+        # blatul.move("z", self.height)
+        # blatul.move("y", -rules["gap_fata"])
+        # self.append(blatul)
 
         self.add_pfl()

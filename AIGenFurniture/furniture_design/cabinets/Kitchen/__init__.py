@@ -81,10 +81,10 @@ def make_raft(label, height, width, depth, rules, box=None):
 
 def make_tower_box(label, height, width, depth, rules, box=None):
     """Factory for TowerBox with extra tower_height parameter."""
-    gap_list = getattr(box, "tower_height", [20, 40])
+    gap_list = getattr(box, "gap_list", [20, 40])
     gap_heat = getattr(box, "gap_heat", 50)
     front_list = getattr(box, "front_list", [0, 0, 0, 0])
-    return TowerBox(label, height, width, depth, rules, gap_list = [20, 40], gap_heat = 50, front_list = [0, 0, 0, 0])
+    return TowerBox(label, height, width, depth, rules, gap_list = gap_list, gap_heat = gap_heat, front_list = front_list)
 
 def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
     """Factory for CorpCuPicioare with extra shelves parameter."""
@@ -92,23 +92,23 @@ def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
     return CorpCuPicioare(label, height, width, depth, rules, plinta=plinta)
 
 def make_corp_dressing(label, height, width, depth, rules, box=None):
-    """Factory for Corp Dressing with extra tower_height parameter."""
-    gap_list = getattr(box, "tower_height", [20, 40])
+    """Factory for Corp Dressing with extra parameter."""
+    gap_list = getattr(box, "gap_list", [200, 400])
     front_list = getattr(box, "front_list", [0, 0, 0, 0])
-    return TowerBox(label, height, width, depth, rules, gap_list = [20, 40], front_list = [0, 0, 0, 0])
+    return CorpDressing(label, height, width, depth, rules, gap_list = gap_list, front_list = front_list)
 
 def make_etajera(label, height, width, depth, rules, box=None):
     """Factory for Etajera with extra shelves parameter."""
     # Read shelves count from the box if present, otherwise default = 3
     shelves = getattr(box, "shelves", 3)
-    return Raft(label, height, width, depth, rules, shelves=shelves)
+    return Etajera(label, height, width, depth, rules, shelves=shelves)
 
 def make_bench(label, height, width, depth, rules, box=None):
     """Factory for Bench with extra parameters."""
-    gap_front = getattr(box, "gap_front", 50)
-    gap_lat = getattr(box, "gap_lat", 50)
-    height_base = getattr(box, "height_base", 100)
-    return Banca(label, height, width, depth, rules, gap_front = 50, gap_lat = 50, height_base = 100)
+    gap_front = getattr(box, "gap_front")
+    gap_lat = getattr(box, "gap_lat")
+    height_base = getattr(box, "height_base")
+    return Banca(label, height, width, depth, rules, gap_front = gap_front, gap_lat = gap_lat, height_base = height_base)
 
 _SPECIAL_CABINETS = {
     "Banca": make_bench,

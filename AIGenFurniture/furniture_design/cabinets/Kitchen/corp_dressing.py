@@ -5,7 +5,7 @@ from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 import math
 
 class CorpDressing(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list, front_list):
+    def __init__(self, label, height, width, depth, rules, gap_list = [20, 40], front_list = [0, 0, 0, 0]):
         """
 
         :param label:
@@ -26,13 +26,13 @@ class CorpDressing(Cabinet):
 
         lat1 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
-        lat1.rotate("y")
+        lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
         lat2 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
-        lat2.rotate("y")
+        lat2.rotate_cw("y")
         lat2.move("x", self.width)
         self.append(lat2)
 

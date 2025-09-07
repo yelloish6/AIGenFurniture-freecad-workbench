@@ -54,9 +54,9 @@ CABINETS = {
     },
     "Banca": {
         "tooltip": "Add a bench cabinet",
-        "gap_front": ("App::PropertyInteger", 0, "Gap for front"),
-        "gap_lat": ("App::PropertyInteger", 0, "Gap for lateral"),
-        "height_base": ("App::PropertyInteger", 0, "Height of base"),
+        "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
+        "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
+        "height_base": ("App::PropertyInteger", 100, "Height of base"),
     },
     "Etajera": {
         "tooltip": "Add an Etajera (shelf unit)",
@@ -64,8 +64,8 @@ CABINETS = {
     },
     "CorpDressing": {
         "tooltip": "Add a wardrobe cabinet",
-        "gap_list": ("App::PropertyString", "", "Gap List"),
-        "front_list": ("App::PropertyString", "", "List which gaps should be closed by doors"),
+        "gap_list": ("App::PropertyIntegerList", [20, 40], "Gap List"),
+        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
     },
     "Dulap": {
         "tooltip": "Add a simple closet (Dulap)",

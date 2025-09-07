@@ -103,8 +103,8 @@ def export(doc, output_path):
             def add_rot(axis, angle_deg):
                 try:
                     # invert direction: FreeCAD +90 (CW) -> 3 CCW steps; -90 (CCW) -> 1 CCW step
-                    steps = (-int(round(angle_deg / 90.0))) % 4
-                    #steps = int(round(angle_deg / 90.0)) % 4
+                    #steps = (-int(round(angle_deg / 90.0))) % 4
+                    steps = int(round(angle_deg / 90.0)) % 4
                 except Exception:
                     steps = 0
                 for _ in range(abs(steps)):
@@ -171,10 +171,22 @@ def export(doc, output_path):
 
             # 👉 Positioning
             positioning = []
-            z_rot_steps = round(yaw / 90)
-            if z_rot_steps % 4 != 0:
-                for _ in range(abs(z_rot_steps)):
-                    positioning.append({"rotate": "z"})
+            # z_rot_steps = round(yaw / 90)
+            # if z_rot_steps % 4 != 0:
+            #     for _ in range(abs(z_rot_steps)):
+            #         positioning.append({"rotate": "z"})
+
+            def add_rot(axis, angle_deg):
+                try:
+                    steps = (int(round(angle_deg / 90.0))) % 4
+                except Exception:
+                    steps = 0
+                for _ in range(abs(steps)):
+                    positioning.append({"rotate": axis})
+
+            add_rot("x", roll)
+            add_rot("y", pitch)
+            add_rot("z", yaw)
 
             if base.y != 0:
                 positioning.append({"move": ["y", base.y]})
