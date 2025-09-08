@@ -110,10 +110,11 @@ class Cabinet(DrawersMixin, ShelvesMixin):
             Returns: None
             """
         connection_surface = board1.calculate_connection_surface(board2)
+        board1_label = board1.__getattribute__("label")
+        board2_label = board2.__getattribute__("label")
 
         if not connection_surface:
-            raise ValueError("No valid connection surface found between " + board1.label + "and " + board2.label + ".")
-        # TODO: correct adding the board labels in the error message
+            raise ValueError("No valid connection surface found between " + board1_label + "and " + board2_label + ".")
         board1_face = connection_surface['board1_face']
         board2_face = connection_surface['board2_face']
         x1_min, x1_max, y1_min, y1_max = connection_surface['board1_dim']
