@@ -62,8 +62,51 @@ class TowerBox(Cabinet):
         self.append(Accessory("surub 3.5x16", picioare * 4))  # pentru picioare
 
         self.add_pfl()
-        self.get_item_by_type_label("pfl",self.label + ".pfl").__setattr__("length", self.width - (2 * self.thick_pal))
-        self.get_item_by_type_label("pfl",self.label + ".pfl").move("x", self.thick_pal - 2)
+        if gap_heat > 0:
+            self.get_item_by_type_label("pfl",self.label + ".pfl").__setattr__("length", self.width - (2 * self.thick_pal))
+            self.get_item_by_type_label("pfl",self.label + ".pfl").move("x", self.thick_pal - 2)
+
+        # --- Setting the front doors for the tower (loop-based with fg + separator sharing) ---
+        fg = rules["gap_front"]
+
+        # --- Ensure last gap exists ---
+        used_height = sum(gap_list) + len(gap_list) * self.thick_pal
+        last_gap = self.height - used_height - (2 * self.thick_pal)  # subtract top board and bottom board
+        if len(gap_list) < len(front_list):  # only append if needed
+            gap_list = gap_list + [last_gap]
+
+        offset = 0  # cumulative height from bottom
+        for i, (gap, has_front) in enumerate(zip(gap_list, front_list)):
+            if has_front:
+                # Neighbors
+                below_has_front = (i > 0 and front_list[i - 1] == 1)
+                above_has_front = (i < len(front_list) - 1 and front_list[i + 1] == 1)
+
+                # Bottom trimming
+                if below_has_front:
+                    bottom_trim = (self.thick_pal / 2) + (fg / 2)
+                else:
+                    bottom_trim = fg
+
+                # Top trimming
+                if above_has_front:
+                    top_trim = (self.thick_pal / 2) + (fg / 2)
+                else:
+                    top_trim = fg
+
+                # Front height = gap minus trims
+                front_height = gap + (2 * self.thick_pal) - (bottom_trim + top_trim)
+
+                # Position = offset + bottom_trim
+                self.add_front_manual(
+                    front_height,               # door height
+                    self.width - (2 * fg),      # door width
+                    0,                          # x offset
+                    offset + bottom_trim        # z offset
+                )
+
+            # Move offset for next level
+            offset += gap + self.thick_pal
 
         # if front_list[0] == 1:
         #     if front_list[1] == 0:
@@ -74,49 +117,49 @@ class TowerBox(Cabinet):
         #     elif front_list[1] == 1:
         #         self.add_front_manual(gap_list[0] + (1.5 * self.thick_pal) - 3, self.width - 4, 0, 0)
 
-        # Setting the front doors for the tower
-        fg = rules["gap_front"]
-        # gap_list[0]
-        if (front_list[0] == 1) and (front_list[1] == 0):
-            # door down but not above
-            self.add_front_manual(gap_list[0] + (self.thick_pal - fg) * 2, self.width - (2 * fg), 0, 0)
-        if (front_list[0] == 1) and (front_list[1] == 1):
-            # door down and above
-            self.add_front_manual(gap_list[0] + (self.thick_pal - fg) * 1.5, self.width - (2 * fg), 0, 0)
-
-        # gap_list[1]
-        if (front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 0):
-            self.add_front_manual(gap_list[1] + (self.thick_pal - fg) * 2 , self.width - (2 * fg), 0,
-                                  gap_list[0] + self.thick_pal)
-        if (((front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 0))
-                or ((front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 1))):
-            self.add_front_manual(gap_list[1] + (1.5 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
-                                  gap_list[0] + (self.thick_pal / 2))
-        if (front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 1):
-            self.add_front_manual(gap_list[1] + self.thick_pal - fg, self.width - 4, 0,
-                                  gap_list[0] + (self.thick_pal - fg) * 1.5 + fg)
-
-        # gap_list[2]
-        if (front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 0):
-            self.add_front_manual(gap_list[2] + (2 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
-                                  gap_list[0] + self.thick_pal + gap_list[1] + self.thick_pal)
-        if (((front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 0))
-                or ((front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 1))):
-            self.add_front_manual(gap_list[2] + (1.5 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
-                                  gap_list[0] + 2 * self.thick_pal + gap_list[1])
-        if (front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 1):
-            self.add_front_manual(gap_list[2] + self.thick_pal - fg, self.width - 4, 0,
-                                  gap_list[0] + (self.thick_pal - fg) * 1.5 + fg +
-                                  gap_list[1] + self.thick_pal - fg + fg)
-
-        # gap_list[3]
-        if (front_list[3] == 1) and (front_list[2] == 0):
-            self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3 * (self.thick_pal - fg)),
-                                  self.width - (2 * fg), 0,
-                                  gap_list[0] + gap_list[1] + gap_list[2] + (3 * self.thick_pal) + fg)
-        if (front_list[3] == 1) and (front_list[2] == 1):
-            self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.thick_pal) - 3,
-                                  self.width - 4, 0,
-                                  gap_list[0] + (self.thick_pal - fg) * 1.5 + fg +
-                                  gap_list[1] + self.thick_pal - fg + fg +
-                                  gap_list[2] + self.thick_pal - fg + fg)
+        # # Setting the front doors for the tower
+        # fg = rules["gap_front"]
+        # # gap_list[0]
+        # if (front_list[0] == 1) and (front_list[1] == 0):
+        #     # door down but not above
+        #     self.add_front_manual(gap_list[0] + (self.thick_pal - fg) * 2, self.width - (2 * fg), 0, 0)
+        # if (front_list[0] == 1) and (front_list[1] == 1):
+        #     # door down and above
+        #     self.add_front_manual(gap_list[0] + (self.thick_pal - fg) * 1.5, self.width - (2 * fg), 0, 0)
+        #
+        # # gap_list[1]
+        # if (front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 0):
+        #     self.add_front_manual(gap_list[1] + (self.thick_pal - fg) * 2 , self.width - (2 * fg), 0,
+        #                           gap_list[0] + self.thick_pal)
+        # if (((front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 0))
+        #         or ((front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 1))):
+        #     self.add_front_manual(gap_list[1] + (1.5 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
+        #                           gap_list[0] + (self.thick_pal / 2))
+        # if (front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 1):
+        #     self.add_front_manual(gap_list[1] + self.thick_pal - fg, self.width - 4, 0,
+        #                           gap_list[0] + (self.thick_pal - fg) * 1.5 + fg)
+        #
+        # # gap_list[2]
+        # if (front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 0):
+        #     self.add_front_manual(gap_list[2] + (2 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
+        #                           gap_list[0] + self.thick_pal + gap_list[1] + self.thick_pal)
+        # if (((front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 0))
+        #         or ((front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 1))):
+        #     self.add_front_manual(gap_list[2] + (1.5 * (self.thick_pal - fg)), self.width - (2 * fg), 0,
+        #                           gap_list[0] + 2 * self.thick_pal + gap_list[1])
+        # if (front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 1):
+        #     self.add_front_manual(gap_list[2] + self.thick_pal - fg, self.width - 4, 0,
+        #                           gap_list[0] + (self.thick_pal - fg) * 1.5 + fg +
+        #                           gap_list[1] + self.thick_pal - fg + fg)
+        #
+        # # gap_list[3]
+        # if (front_list[3] == 1) and (front_list[2] == 0):
+        #     self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3 * (self.thick_pal - fg)),
+        #                           self.width - (2 * fg), 0,
+        #                           gap_list[0] + gap_list[1] + gap_list[2] + (3 * self.thick_pal) + fg)
+        # if (front_list[3] == 1) and (front_list[2] == 1):
+        #     self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.thick_pal) - 3,
+        #                           self.width - 4, 0,
+        #                           gap_list[0] + (self.thick_pal - fg) * 1.5 + fg +
+        #                           gap_list[1] + self.thick_pal - fg + fg +
+        #                           gap_list[2] + self.thick_pal - fg + fg)

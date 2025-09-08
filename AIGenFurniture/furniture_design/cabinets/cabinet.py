@@ -244,7 +244,7 @@ class Cabinet(DrawersMixin, ShelvesMixin):
         fr.rotate_cw("y")
         fr.move("x", fr.width)
         fr.move("x", self.front_gap)
-        fr.move("z", self.front_gap)
+        # fr.move("z", self.front_gap)
         fr.move("x", offset_x)
         fr.move("z", offset_z)
         # fr.move("y", - self.thick_front)
