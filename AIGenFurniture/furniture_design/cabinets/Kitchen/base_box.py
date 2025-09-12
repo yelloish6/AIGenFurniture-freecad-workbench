@@ -3,6 +3,7 @@ import math
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
+from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
 
 class BaseBox(Cabinet):
@@ -24,7 +25,7 @@ class BaseBox(Cabinet):
         self.append(jos)
 
         # lat rotit pe Y si ridicat pe z cu grosimea lui jos
-        lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal,
+        lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth, self.thick_pal,
                         self.cant_lab,"", "", "")
         lat1.rotate("y")
         lat1.rotate("y")
@@ -33,8 +34,10 @@ class BaseBox(Cabinet):
         lat1.move("z", jos.thick)
         self.append(lat1)
 
+        ASSEMBLIES["wood_dowel"](jos, lat1)
+
         # lat rotit pe y, translatat pe x cu (jos - grosime), translatat pe z cu grosime jos
-        lat2 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat2.rotate("y")
         lat2.rotate("y")
@@ -44,6 +47,8 @@ class BaseBox(Cabinet):
         lat2.move("z", jos.thick)
         self.append(lat2)
 
+        ASSEMBLIES["wood_dowel"](jos, lat2)
+
         # leg translatat pe z cu (lungimea lat + offset lat - grosime leg), si pe x cu grosime lat
         leg1 = BoardPal(self.label + ".leg1", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
@@ -51,9 +56,9 @@ class BaseBox(Cabinet):
         leg1.move("x", lat1.thick)
         self.append(leg1)
 
-        # leg translatat pe z cu (lungimea lat + offset lat - grosime leg)
-        #               pe y cu (latime lat - latime leg)
-        #               pe x cu grosime lat
+        ASSEMBLIES["wood_dowel"](leg1, lat1)
+        ASSEMBLIES["wood_dowel"](leg1, lat2)
+
         leg2 = BoardPal(self.label + ".leg2", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
         leg2.move("z", lat1.length + jos.thick - leg1.thick)
@@ -61,7 +66,8 @@ class BaseBox(Cabinet):
         leg2.move("x", lat1.thick)
         self.append(leg2)
 
-
+        ASSEMBLIES["wood_dowel"](leg2, lat1)
+        ASSEMBLIES["wood_dowel"](leg2, lat2)
 
         # blatul = Blat(self.label + ".blat", self.width, self.width_blat, self.thick_blat)
         # blatul.move("z", self.height)
