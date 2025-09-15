@@ -99,7 +99,18 @@ if __name__ == "__main__":
 
     cabinet = BaseBox("test_cabinet", 720, 600, 500, RULES)
 
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.jos").__getattribute__("label"))
     print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("position"))
     print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("label"))
     print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("position"))
     print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg1").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg1").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg1").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg2").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg2").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.leg2").__getattribute__("drill_list"))

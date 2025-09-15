@@ -1,266 +1,350 @@
-# save as generate_drill_reportlab.py
+import os
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib import colors
-import math
-import os
 
-# Visual / projection parameters
-VIEW_ANGLE_DEG = 30  # like your original VIEW_ANGLE
-PAGE_SIZE = A4
-MARGIN_MM = 12
-HEADER_HEIGHT_MM = 18
-DEFAULT_DRAW_AREA = (PAGE_SIZE[0] - 2 * MARGIN_MM * mm,
-                     PAGE_SIZE[1] - 2 * MARGIN_MM * mm - HEADER_HEIGHT_MM * mm)
+MARGIN_MM = 20
+HEADER_HEIGHT_MM = 20
+
 
 def normalize_face_code(face):
-    """Normalize face name to canonical token."""
-    if face is None:
+    if not face:
         return None
     s = str(face).lower()
-    if s in ("+x", "right", "r"):
-        return "+x"
-    if s in ("-x", "left", "l"):
-        return "-x"
-    if s in ("+y", "up", "u", "top"):
-        return "+y"
-    if s in ("-y", "down", "d", "bottom"):
-        return "-y"
-    if s in ("+z", "front", "f"):
-        return "+z"
-    if s in ("-z", "back", "b"):
-        return "-z"
+    if s in ("+x", "right", "r"): return "+x"
+    if s in ("-x", "left", "l"): return "-x"
+    if s in ("+y", "up", "u", "top"): return "+y"
+    if s in ("-y", "down", "d", "bottom"): return "-y"
+    if s in ("+z", "front", "f"): return "+z"
+    if s in ("-z", "back", "b"): return "-z"
     return face
 
+
 def parse_drill_entry(entry):
-    """
-    Accept either tuple/list or dict.
-    Tuple convention used here:
-      (diameter_mm, face, a, b, depth_mm_opt, note_opt)
-    where (a,b) meaning depends on face (see top-level comment).
-    Returns dict with keys: diameter, face, a, b, depth, note
-    """
     if isinstance(entry, dict):
-        diameter = float(entry.get("diameter", entry.get("d", 0)))
-        face = normalize_face_code(entry.get("face", entry.get("side")))
-        a = entry.get("a", entry.get("x", None))
-        b = entry.get("b", entry.get("y", None))
-        depth = entry.get("depth", None)
-        note = entry.get("note", "")
-        return {"diameter": diameter, "face": face, "a": a, "b": b, "depth": depth, "note": note}
+        return {
+            "diameter": float(entry.get("diameter", 0)),
+            "face": normalize_face_code(entry.get("face")),
+            "a": float(entry.get("a", entry.get("x", 0))),
+            "b": float(entry.get("b", entry.get("y", 0))),
+            "depth": entry.get("depth"),
+            "note": entry.get("note", "")
+        }
     elif isinstance(entry, (list, tuple)):
-        # destruct tuple safely
-        diameter = float(entry[0]) if len(entry) > 0 else 0.0
-        face = normalize_face_code(entry[1]) if len(entry) > 1 else None
-        a = entry[2] if len(entry) > 2 else None
-        b = entry[3] if len(entry) > 3 else None
-        depth = entry[4] if len(entry) > 4 else None
-        note = entry[5] if len(entry) > 5 else ""
-        return {"diameter": float(diameter), "face": face, "a": a, "b": b, "depth": depth, "note": note}
+        return {
+            "diameter": float(entry[0]) if len(entry) > 0 else 0,
+            "face": normalize_face_code(entry[1]) if len(entry) > 1 else None,
+            "a": float(entry[2]) if len(entry) > 2 else 0,
+            "b": float(entry[3]) if len(entry) > 3 else 0,
+            "depth": entry[4] if len(entry) > 4 else None,
+            "note": entry[5] if len(entry) > 5 else ""
+        }
     else:
-        raise ValueError("Unsupported drill_list entry type: " + str(type(entry)))
+        raise ValueError("Unsupported drill entry type")
 
-def generate_drill_pdf_reportlab(order, output_path, filename="Drill_file_reportlab.pdf",
-                                 view_angle_deg=VIEW_ANGLE_DEG):
+
+def draw_board(c, board, page_w, page_h, margin, header_h):
     """
-    Generate a PDF of drill coordinates for each Board-like element in the order's cabinets.
-    Uses ReportLab. One page per board.
-
-    order.cabinets_list -> iterate cabinets
-    cabinet.elements_list -> iterate elements, filter Board-like by having .length,.width,.thick and .position and .drill_list
+    Draw board front (LxW) and extrude thickness bottom-left.
+    Returns: front_rect, extruded_rect, scale, ox, oy
+    rects are lists of 4 (x,y) points ordered: p0 (BL), p1 (BR), p2 (TR), p3 (TL)
     """
+    L, W, T = float(board.length), float(board.width), float(board.thick)
 
-    # projection basis (matches your fitz code: depth vector projected with cos/sin)
-    angle_rad = math.radians(view_angle_deg)
-    angle_x = math.cos(angle_rad)
-    angle_z = math.sin(angle_rad)
+    draw_w = page_w - 2 * margin
+    draw_h = page_h - 2 * margin - header_h
 
-    # create canvas
-    out_path = os.path.join(output_path, filename)
-    c = canvas.Canvas(out_path, pagesize=PAGE_SIZE)
-    page_w, page_h = PAGE_SIZE
+    # origin
+    # reserve extra space for header/title at top and table at bottom
+    reserved_top = header_h + 40 * mm
+    reserved_bottom = 40 * mm + 90
+    draw_h = page_h - reserved_top - reserved_bottom
+    scale = min(draw_w / ((L + T) * mm), draw_h / ((W + T) * mm), 1.0)
+
+    ox = margin + 40
+    oy = reserved_bottom
+
+    # better iso extrusion (balanced)
+    dx = -T * mm * scale * 0.7071
+    dy = -T * mm * scale * 0.7071
+
+    front = [
+        (ox, oy),
+        (ox + L * mm * scale, oy),
+        (ox + L * mm * scale, oy + W * mm * scale),
+        (ox, oy + W * mm * scale),
+    ]
+    extruded = [(x + dx, y + dy) for (x, y) in front]
+
+    def draw_face(points, fill_color):
+        path = c.beginPath()
+        x0, y0 = points[0]
+        path.moveTo(x0, y0)
+        for (x, y) in points[1:]:
+            path.lineTo(x, y)
+        path.close()
+        c.setFillColor(fill_color)
+        c.setStrokeColor(colors.black)
+        c.drawPath(path, stroke=1, fill=1)
+
+    # visible faces
+    draw_face(front, colors.white)
+    draw_face([front[0], extruded[0], extruded[3], front[3]], colors.whitesmoke)  # left
+    draw_face([front[0], front[1], extruded[1], extruded[0]], colors.whitesmoke)  # bottom
+
+    # hidden edges (dashed)
+    c.setDash(3, 3)
+    c.line(front[1][0], front[1][1], extruded[1][0], extruded[1][1])
+    c.line(front[2][0], front[2][1], extruded[2][0], extruded[2][1])
+    c.line(front[3][0], front[3][1], extruded[3][0], extruded[3][1])
+    c.line(extruded[1][0], extruded[1][1], extruded[2][0], extruded[2][1])
+    c.line(extruded[2][0], extruded[2][1], extruded[3][0], extruded[3][1])
+    c.setDash()
+
+    return front, extruded, scale, ox, oy
+
+
+def face_rects(front, extruded):
+    """
+    Return rects for faces with consistent p0..p3 ordering
+    p0 == local (0,0). p1 == (max_x,0), p2 == (max_x,max_y), p3 == (0,max_y)
+    """
+    rects = {}
+    rects["+z"] = front[:]  # L x W
+    rects["-z"] = front[:]  # back uses same rect (drawn dashed if needed)
+    # left: local_x = thickness (0..T) maps p0->extruded[0], local_y = Y (0..W) maps p0->p3
+    rects["-x"] = [front[0], extruded[0], extruded[3], front[3]]
+    # right: local_x = thickness, local_y = Y; origin is front[1]
+    rects["+x"] = [front[1], extruded[1], extruded[2], front[2]]
+    # bottom: local_x = X (0..L), local_y = thickness (0..T)
+    rects["-y"] = [front[0], front[1], extruded[1], extruded[0]]
+    # top: origin at front[3], local_x = X, local_y = thickness
+    rects["+y"] = [front[3], front[2], extruded[2], extruded[3]]
+    return rects
+
+
+def project_local_to_page_affine(rect, local_x_mm, local_y_mm, face_w_mm, face_h_mm):
+    """
+    Bilinear/affine map from face local mm coords -> page points.
+    rect must be ordered p0,p1,p2,p3 as per face_rects docstring.
+    """
+    (x0, y0), (x1, y1), (_, _), (x3, y3) = rect
+    # avoid division by zero, caller should guard; but handle gracefully:
+    if face_w_mm == 0 or face_h_mm == 0:
+        return x0, y0
+    u = local_x_mm / face_w_mm
+    v = local_y_mm / face_h_mm
+    px = (1 - u) * (1 - v) * x0 + u * (1 - v) * x1 + u * v * x1 + (1 - u) * v * x3
+    # note: the above uses a simplified bilinear consistent with p0/p1/p2/p3 co-linearity
+    py = (1 - u) * (1 - v) * y0 + u * (1 - v) * y1 + u * v * y1 + (1 - u) * v * y3
+    # The simplification (p2 not used separately) is valid because p2 = p1 + (p3-p0)
+    return px, py
+
+
+def draw_hole_affine(c, rect, face, a_mm, b_mm, r_mm, L, W, T, visible=True):
+    """
+    Draw hole with affine transform aligning mm-space circle into face rectangle.
+    Returns (px, py, clamped_flag) page coords of drawn center and whether clamping happened.
+    """
+    # map local variables depending on face
+    if face in ("+z", "-z"):
+        local_x_mm = a_mm
+        local_y_mm = b_mm
+        face_w_mm = L
+        face_h_mm = W
+    elif face in ("-x", "+x"):
+        # for x faces: drill entry a = Y, b = Z  (user convention)
+        local_x_mm = a_mm  # Y → vertical axis in drawing
+        local_y_mm = b_mm  # Z → horizontal (thickness)
+        face_w_mm = T
+        face_h_mm = W
+    elif face in ("-y", "+y"):
+        # for y faces: a = X, b = Z
+        local_x_mm = a_mm
+        local_y_mm = b_mm
+        face_w_mm = L
+        face_h_mm = T
+    else:
+        return None, None, False
+
+    # clamp coords into face
+    clamped = False
+    orig_local_x = local_x_mm
+    orig_local_y = local_y_mm
+    if local_x_mm < 0:
+        local_x_mm = 0; clamped = True
+    if local_x_mm > face_w_mm:
+        local_x_mm = face_w_mm; clamped = True
+    if local_y_mm < 0:
+        local_y_mm = 0; clamped = True
+    if local_y_mm > face_h_mm:
+        local_y_mm = face_h_mm; clamped = True
+
+    # make sure radius fits inside the face (reduce if needed)
+    max_r = min(face_w_mm, face_h_mm) * 0.5
+    if r_mm > max_r:
+        r_mm = max_r
+        clamped = True
+
+    # compute page center for label (before applying transform)
+    px, py = project_local_to_page_affine(rect, local_x_mm, local_y_mm, face_w_mm, face_h_mm)
+
+    # compute affine transform parameters (points-per-mm along local axes)
+    p0 = rect[0]; p1 = rect[1]; p3 = rect[3]
+    # guard
+    if face_w_mm == 0 or face_h_mm == 0:
+        return px, py, clamped
+
+    m_a = (p1[0] - p0[0]) / face_w_mm
+    m_b = (p1[1] - p0[1]) / face_w_mm
+    m_c = (p3[0] - p0[0]) / face_h_mm
+    m_d = (p3[1] - p0[1]) / face_h_mm
+    m_e = p0[0]
+    m_f = p0[1]
+
+    # dashed if hidden
+    if visible:
+        c.setDash()
+    else:
+        c.setDash(2, 2)
+    c.setStrokeColor(colors.red)
+
+    # draw by transforming mm-space -> page-space
+    c.saveState()
+    c.transform(m_a, m_b, m_c, m_d, m_e, m_f)
+    c.setLineWidth(0.8)
+    # draw circle in local mm coords (becomes ellipse in page)
+    left = local_x_mm - r_mm
+    bottom = local_y_mm - r_mm
+    right = local_x_mm + r_mm
+    top = local_y_mm + r_mm
+    c.ellipse(left, bottom, right, top, stroke=1, fill=0)
+    c.restoreState()
+
+    c.setDash()  # reset dash style
+    return px, py, clamped
+
+
+def draw_dimensions(c, front, L_mm, W_mm):
+    p0, p1, p2, p3 = front
+    y_dim = p0[1] - 8 * mm
+    c.setStrokeColor(colors.black)
+    c.line(p0[0], y_dim, p1[0], y_dim)
+    arrow = 3 * mm
+    c.line(p0[0], y_dim, p0[0] + arrow, y_dim + arrow / 2)
+    c.line(p0[0], y_dim, p0[0] + arrow, y_dim - arrow / 2)
+    c.line(p1[0], y_dim, p1[0] - arrow, y_dim + arrow / 2)
+    c.line(p1[0], y_dim, p1[0] - arrow, y_dim - arrow / 2)
+    c.setFont("Helvetica", 8)
+    c.setFillColor(colors.black)
+    c.drawCentredString((p0[0] + p1[0]) / 2, y_dim - 6, f"{L_mm:.0f} mm")
+
+    x_dim = p0[0] - 12 * mm
+    c.line(x_dim, p0[1], x_dim, p3[1])
+    c.line(x_dim, p3[1], x_dim + arrow / 2, p3[1] - arrow)
+    c.line(x_dim, p3[1], x_dim - arrow / 2, p3[1] - arrow)
+    c.line(x_dim, p0[1], x_dim + arrow / 2, p0[1] + arrow)
+    c.line(x_dim, p0[1], x_dim - arrow / 2, p0[1] + arrow)
+    c.saveState()
+    c.translate(x_dim - 6 * mm, (p0[1] + p3[1]) / 2)
+    c.rotate(90)
+    c.setFont("Helvetica", 8)
+    c.setFillColor(colors.black)
+    c.drawCentredString(0, 0, f"{W_mm:.0f} mm")
+    c.restoreState()
+
+
+def generate_drill_pdf_reportlab(order, output_path, filename="Drill_file_reportlab.pdf"):
+    os.makedirs(output_path, exist_ok=True)
+    out_file = os.path.join(output_path, filename)
+    c = canvas.Canvas(out_file, pagesize=A4)
+    page_w, page_h = A4
     margin = MARGIN_MM * mm
     header_h = HEADER_HEIGHT_MM * mm
 
     for cabinet in getattr(order, "cabinets_list", []):
-        for elem in getattr(cabinet, "elements_list", []):
-            # detect board-like element
-            if not (hasattr(elem, "length") and hasattr(elem, "width") and hasattr(elem, "thick") and hasattr(elem, "position")):
+        for board in getattr(cabinet, "elements_list", []):
+            if not (hasattr(board, "length") and hasattr(board, "width") and hasattr(board, "thick")):
                 continue
 
-            board = elem
-            # dimensions (use actual physical dimensions)
-            L = float(board.length)  # length along x (mm)
-            W = float(board.width)   # width along y (mm)
-            T = float(board.thick)   # thickness along z (mm)
+            L = float(board.length)
+            W = float(board.width)
+            T = float(board.thick)
 
-            # offsets from position[3..5] (can be negative)
-            pos = getattr(board, "position", [L, W, T, 0.0, 0.0, 0.0])
-            x_off = float(pos[3])
-            y_off = float(pos[4])
-            z_off = float(pos[5])
-
-            # compute a scale to fit the drawing into available draw area
-            draw_area_w, draw_area_h = DEFAULT_DRAW_AREA
-            # compute projected extents in the same style as your fitz code:
-            # projected_x_extent ~ L + W * angle_x
-            # projected_y_extent ~ T + W * angle_z
-            proj_w_mm = L + W * angle_x
-            proj_h_mm = T + W * angle_z
-            # convert mm to points (use mm->pt later); compute scale to fit into area
-            pts_per_mm = mm
-            scale = min(draw_area_w / (proj_w_mm * pts_per_mm), draw_area_h / (proj_h_mm * pts_per_mm), 1.0)
-
-            # set origin (bottom-left corner of front face projected)
-            # mimic your existing origin calc: start from margin + offsets
-            # We map x_off, y_off offsets into the drawing similarly:
-            ox = margin + (x_off * pts_per_mm + y_off * angle_x * pts_per_mm) * scale
-            oy = margin + header_h + draw_area_h - ((z_off * pts_per_mm) + (y_off * angle_z * pts_per_mm)) * scale - (T * pts_per_mm * scale)
-
-            # helper: project a 3D board-local point (x,y,z) in mm -> page points
-            def project(x_mm, y_mm, z_mm):
-                px = ox + (x_mm * pts_per_mm + y_mm * angle_x * pts_per_mm) * scale
-                py = oy + (- y_mm * angle_z * pts_per_mm + z_mm * pts_per_mm) * scale
-                return (px, py)
-
-            # draw header
+            # header
             c.setFont("Helvetica-Bold", 12)
-            c.drawString(margin, page_h - margin - 10, f"Cabinet: {getattr(cabinet, 'label', '—')}  —  Board: {getattr(board, 'label', '')}")
+            c.drawString(margin, page_h - margin - 10,
+                         f"Cabinet: {getattr(cabinet,'label','—')}  —  Board: {getattr(board,'label','')}")
             c.setFont("Helvetica", 9)
-            c.drawString(margin, page_h - margin - 24, f"{int(L)}×{int(W)}×{int(T)} mm  type: {getattr(board,'type','-')}  material: {getattr(board,'material','-')}")
+            c.drawString(margin, page_h - margin - 24,
+                         f"{int(L)}×{int(W)}×{int(T)} mm    type: {getattr(board,'type','-')}    material: {getattr(board,'material','-')}")
 
-            # draw three principal faces: front, top, right (like original)
-            # points for the front rectangle (z from 0 to T, x from 0..L, y=0)
-            p_front_bl = project(0, 0, 0)         # origin lower-left of front face
-            p_front_br = project(L, 0, 0)
-            p_front_tl = project(0, 0, T)
-            p_front_tr = project(L, 0, T)
-            # top face (y = W plane): quad (project(0,W,T) ... etc)
-            p_top_bl = project(0, W, 0)
-            p_top_br = project(L, W, 0)
-            p_top_tl = project(0, W, T)
-            p_top_tr = project(L, W, T)
-            # right face (x = L plane): quad
-            p_right_bl = project(L, 0, 0)
-            p_right_br = project(L, W, 0)
-            p_right_tl = project(L, 0, T)
-            p_right_tr = project(L, W, T)
+            # draw board and faces
+            front, extruded, scale, ox, oy = draw_board(c, board, page_w, page_h, margin, header_h)
+            rects = face_rects(front, extruded)
 
-            # draw faces: front (filled white), top (light grey), right (light grey)
-            c.setStrokeColor(colors.black)
-            c.setLineWidth(1)
-            # fill order: top -> right -> front so front draws on top
-            # helper to draw filled polygons on canvas
-            def draw_polygon(c, points, fill_color=colors.whitesmoke, stroke_color=colors.black, stroke=1, fill=1):
-                path = c.beginPath()
-                x0, y0 = points[0]
-                path.moveTo(x0, y0)
-                for (x, y) in points[1:]:
-                    path.lineTo(x, y)
-                path.close()
-                c.setFillColor(fill_color)
-                c.setStrokeColor(stroke_color)
-                c.drawPath(path, stroke=stroke, fill=fill)
-
-            # draw faces: top -> right -> front
-            draw_polygon(c, [p_top_bl, p_top_br, p_top_tr, p_top_tl], fill_color=colors.whitesmoke)
-            draw_polygon(c, [p_right_bl, p_right_br, p_right_tr, p_right_tl], fill_color=colors.whitesmoke)
-            draw_polygon(c, [p_front_bl, p_front_br, p_front_tr, p_front_tl], fill_color=colors.white)
-
-            # draw boards label centered on the front
+            # dims + label
+            draw_dimensions(c, front, L, W)
             c.setFont("Helvetica", 8)
-            center_front_x = (p_front_bl[0] + p_front_br[0]) / 2
-            center_front_y = (p_front_bl[1] + p_front_tl[1]) / 2 + 4
-            c.drawCentredString(center_front_x, center_front_y, board.label if getattr(board, "label", None) else "")
+            if getattr(board, "label", None):
+                cx = (front[0][0] + front[2][0]) / 2
+                cy = (front[0][1] + front[2][1]) / 2
+                c.drawCentredString(cx, cy, board.label)
 
-            # collect hole entries
+            # collect holes preserving original a,b for table
             hole_entries = []
             for i, raw in enumerate(getattr(board, "drill_list", []) or []):
-                entry = parse_drill_entry(raw)
-                face = entry["face"]
-                diameter = float(entry["diameter"])
-                depth = entry.get("depth", None)
-                note = entry.get("note", "")
-
-                # map a,b to 3D (x_mm, y_mm, z_mm) depending on face:
-                a = entry["a"]
-                b = entry["b"]
-                # guard: missing coords -> skip
-                if a is None or b is None:
+                e = parse_drill_entry(raw)
+                face = e["face"]
+                if not face:
                     continue
-
-                if face == "+z":            # front face: (x=a, y=b), z = T
-                    x3, y3, z3 = float(a), float(b), T
-                elif face == "-z":          # back face: z = 0
-                    x3, y3, z3 = float(a), float(b), 0.0
-                elif face == "+x":          # right face (x = L): coords (y,z) -> a=y, b=z
-                    x3, y3, z3 = L, float(a), float(b)
-                elif face == "-x":          # left face (x = 0)
-                    x3, y3, z3 = 0.0, float(a), float(b)
-                elif face == "+y":          # top face (y = W): coords (x,z)
-                    x3, y3, z3 = float(a), W, float(b)
-                elif face == "-y":          # bottom face (y = 0)
-                    x3, y3, z3 = float(a), 0.0, float(b)
-                else:
-                    # unknown face: skip
+                rect = rects.get(face)
+                if not rect:
                     continue
-
-                # compute 2D projection
-                px, py = project(x3, y3, z3)
-                # circle radius in pts
-                r_pts = (diameter / 2.0) * mm * scale
-                # determine if face is "visible" in this view:
-                # approximate visibility: we assume front (+z), top (+y), right (+x) are visible
-                visible_faces = {"+z", "+y", "+x"}
-                visible = (face in visible_faces)
-
+                a_mm = float(e["a"])
+                b_mm = float(e["b"])
                 hole_entries.append({
                     "idx": i + 1,
                     "face": face,
-                    "x3": x3, "y3": y3, "z3": z3,
-                    "px": px, "py": py,
-                    "diameter": diameter,
-                    "depth": depth,
-                    "note": note,
-                    "r_pts": r_pts,
-                    "visible": visible
+                    "a": a_mm,
+                    "b": b_mm,
+                    "diameter": float(e["diameter"]),
+                    "depth": e["depth"],
+                    "note": e["note"],
+                    "rect": rect
                 })
 
-            # draw holes: visible = solid circle, hidden = dashed circle
+            # draw holes and labels
             for h in hole_entries:
-                if h["visible"]:
-                    c.setDash()  # solid
-                    c.setStrokeColor(colors.red)
-                    c.circle(h["px"], h["py"], h["r_pts"], stroke=1, fill=0)
-                else:
-                    c.setDash(3, 3)
-                    c.setStrokeColor(colors.red)
-                    c.circle(h["px"], h["py"], h["r_pts"], stroke=1, fill=0)
-                    c.setDash()  # reset
-
-                # small index near hole
-                c.setFont("Helvetica", 6)
+                px, py, clamped = draw_hole_affine(
+                    c, h["rect"], h["face"], h["a"], h["b"], h["diameter"] / 2.0, L, W, T,
+                    visible=(h["face"] in ("+z", "-x", "-y"))
+                )
+                if px is None:
+                    continue
+                # index label
                 c.setFillColor(colors.black)
-                c.drawString(h["px"] + 1.5 * mm * scale, h["py"] + 1.5 * mm * scale, str(h["idx"]))
+                c.setFont("Helvetica", 6)
+                c.drawString(px + 2, py + 2, str(h["idx"]))
+                if clamped:
+                    # append a small CLAMPED flag to note so user sees the mismatch
+                    h["note"] = (h["note"] + " CLAMPED").strip()
 
-            # draw hole table on the lower right area of the page
-            c.setFont("Helvetica", 8)
+            # hole table with original a,b in mm
             table_x = page_w - margin - 90 * mm
-            table_y = margin + 20 * mm
-            line_h = 10
-            c.drawString(table_x, table_y + 6 * mm, "Holes (index, face, X(mm), Y(mm), Z(mm), Dia(mm), Depth, note)")
+            table_y = margin + 30 * mm
+            c.setFont("Helvetica", 8)
+            c.drawString(table_x, table_y + 6 * mm, "Holes: idx face a(mm) b(mm) dia depth note")
             y = table_y
             for h in hole_entries:
-                visible_note = "" if h["visible"] else "hidden"
-                depth_txt = f"{h['depth']}" if h['depth'] is not None else ""
-                txt = f"{h['idx']:>2}: {h['face']:>3}  {h['x3']:6.1f}  {h['y3']:6.1f}  {h['z3']:6.1f}  {h['diameter']:5.1f}  {depth_txt:>5}  {visible_note} {h['note']}"
-                c.drawString(table_x, y, txt)
-                y -= line_h
-                # if table area overflows page, it will overwrite — you can split into multiple pages if needed
+                depth_txt = f"{h['depth']}" if h['depth'] else ""
+                vis_txt = "" if h["face"] in ("+z", "-x", "-y") else "hidden"
+                line = f"{h['idx']:>2} {h['face']:>3} {h['a']:6.1f} {h['b']:6.1f} {h['diameter']:5.1f} {depth_txt:>5} {vis_txt} {h['note']}"
+                c.drawString(table_x, y, line)
+                y -= 10
 
-            # finished page
             c.showPage()
 
     c.save()
-    print(f"Saved PDF to {out_path}")
+    print(f"Saved drill PDF to {out_file}")

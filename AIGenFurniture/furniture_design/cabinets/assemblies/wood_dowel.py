@@ -29,6 +29,9 @@ def assemble(board1, board2):
     # connection_count = max(2, int(connection_length // spacing))
     connection_count_u = math.ceil(b1_u / spacing)
     connection_count_v = math.ceil(b1_v / spacing)
+    if connection_count_v == connection_count_u == 1:
+        if b1_u > b1_v: connection_count_u = 2
+        else: connection_count_v = 2
     hole_spacing_u = int(b1_u / (connection_count_u + 1))
     hole_spacing_v = int(b1_v / (connection_count_v + 1))
 
