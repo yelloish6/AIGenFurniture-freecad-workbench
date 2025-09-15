@@ -1,9 +1,10 @@
-import math
+import math, json, os
 
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
 from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
+
 
 
 class BaseBox(Cabinet):
@@ -75,3 +76,30 @@ class BaseBox(Cabinet):
         # self.append(blatul)
 
         self.add_pfl()
+
+if __name__ == "__main__":
+
+    RULES = {
+        "thick_pal": 18,
+        "thick_front": 18,
+        "thick_blat": 38,
+        "height_legs": 100,
+        "general_width": 600,
+        "width_blat": 600,
+        "gap_spate": 50,
+        "gap_fata": 50,
+        "gap_front": 2,
+        "cant_general": 1,
+        "cant_pol": 2,
+        "cant_separator": 1,
+        "pol_depth": 20
+    }
+
+    print("=== Running BaseBox test scenario ===")
+
+    cabinet = BaseBox("test_cabinet", 720, 600, 500, RULES)
+
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("drill_list"))

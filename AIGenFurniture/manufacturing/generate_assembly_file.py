@@ -6,7 +6,7 @@ VIEW_ANGLE = 30 # angle to use when drawing isometric (the lines that go in dept
 DRAW_AREA = [500, 700] # size of the area where to draw in pdf in pixels
 DRAW_AREA_START = [50, 50] # point to start the drawing in pdf in pixels
 
-# TODO Assembly file: correct and test the assembly file gnerator across all cabinets
+# TODO Assembly file: correct and test the assembly file generator across all cabinets
 
 def generate_assembly_file(order, output_path):
     doc = fitz.open() # open new PDF file

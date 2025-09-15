@@ -6,6 +6,7 @@ from .export_csv import export_csv
 from .export_stl_new import export_stl_order
 from .generate_offer_cost import export_cost_sheet, print_order_summary, generate_offer_file
 from .generate_assembly_file import generate_assembly_file, generate_drill_file
+from .generate_assembly_file_reportlab import generate_drill_pdf_reportlab
 
 
 def generate_manufacturing_files(order, output_path):
@@ -33,6 +34,7 @@ def generate_manufacturing_files(order, output_path):
     generate_offer_file(order, output_path)
     generate_assembly_file(order, output_path)
     generate_drill_file(order, output_path)
+    generate_drill_pdf_reportlab(order, output_path)
 
     print(f"Manufacturing files generated in: {output_path}")
 

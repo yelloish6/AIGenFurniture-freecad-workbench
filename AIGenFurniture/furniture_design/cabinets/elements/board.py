@@ -32,7 +32,7 @@ class Board:
         self.price = 0
         self.position_list = [] #
         self.cut_coords = cut_coords
-
+        self.drill_list = []
         self.check_board()
 
     def add_obs(self, text):
@@ -61,7 +61,6 @@ class Board:
             self.position[0] = init_x
             self.position[1] = -init_z
             self.position[2] = init_y
-        # TODO: rotation of a board is clockwise for X and counterclockwise for Y and Z. Make all clockwise, in line with FreeCAD
         elif axis == "x":
             self.position[0] = init_x
         elif axis == "y":
@@ -112,78 +111,194 @@ class Board:
         print(f"Board type {self.type}, {self.label}, [{self.length} x {self.width} x {self.thick}], {self.material}, "
               f"position {self.position}")
 
-    def calculate_connection_surface(board1, board2, tol=1e-5):
+    def get_box(board):
+        length, width, thickness, ox, oy, oz = board.position
+        return {
+            'x_min': min(ox, ox + length),
+            'x_max': max(ox, ox + length),
+            'y_min': min(oy, oy + width),
+            'y_max': max(oy, oy + width),
+            'z_min': min(oz, oz + thickness),
+            'z_max': max(oz, oz + thickness),
+        }
+
+    def calculate_connection_surface(board1, board2, tol=1e-6):
         """
-        General connection surface detection between two boards.
-        Works by comparing each face of board1 with each face of board2.
+        Return a dict with:
+          board1_face, board1_dim (u,v), board1_offset (u0,v0),
+          board2_face, board2_dim (u,v), board2_offset (u0,v0)
+        All dims/offsets are in the *local* coordinates of each board.
         """
 
-        def get_box(board):
-            length, width, thickness, ox, oy, oz = board.position
-            return {
-                'x_min': ox,
-                'x_max': ox + length,
-                'y_min': oy,
-                'y_max': oy + width,
-                'z_min': oz,
-                'z_max': oz + thickness,
+        FACE_MAP = {
+            ("x", +1): "right",
+            ("x", -1): "left",
+            ("y", +1): "up",
+            ("y", -1): "down",
+            ("z", +1): "front",
+            ("z", -1): "back",
+        }
+
+        # helper: interval with tolerance (returns (min,max) even for zero-length touch)
+        def interval(a_min, a_max, b_min, b_max):
+            lo = max(a_min, b_min)
+            hi = min(a_max, b_max)
+            if hi + tol < lo:
+                return None
+            return (lo, hi)
+
+        # get bounding boxes (uses your class get_box)
+        box1 = board1.get_box()
+        box2 = board2.get_box()
+
+        ix = interval(box1["x_min"], box1["x_max"], box2["x_min"], box2["x_max"])
+        iy = interval(box1["y_min"], box1["y_max"], box2["y_min"], box2["y_max"])
+        iz = interval(box1["z_min"], box1["z_max"], box2["z_min"], box2["z_max"])
+
+        # decide which axis is the contact plane (one interval must be zero-length / touching)
+        contact_axis = None
+        side1 = side2 = None
+        if iz is not None and abs(iz[1] - iz[0]) <= tol and ix is not None and (
+                ix[1] - ix[0]) > tol and iy is not None and (iy[1] - iy[0]) > tol:
+            contact_axis = "z"
+            side1 = +1 if abs(box1["z_max"] - box2["z_min"]) <= tol else -1
+            side2 = -side1
+            overlap_u = ix
+            overlap_v = iy
+        elif ix is not None and abs(ix[1] - ix[0]) <= tol and iy is not None and (
+                iy[1] - iy[0]) > tol and iz is not None and (iz[1] - iz[0]) > tol:
+            contact_axis = "x"
+            side1 = +1 if abs(box1["x_max"] - box2["x_min"]) <= tol else -1
+            side2 = -side1
+            overlap_u = iy
+            overlap_v = iz
+        elif iy is not None and abs(iy[1] - iy[0]) <= tol and ix is not None and (
+                ix[1] - ix[0]) > tol and iz is not None and (iz[1] - iz[0]) > tol:
+            contact_axis = "y"
+            side1 = +1 if abs(box1["y_max"] - box2["y_min"]) <= tol else -1
+            side2 = -side1
+            overlap_u = ix
+            overlap_v = iz
+        else:
+            # not a clean face-to-face contact (either volume overlap or no contact)
+            return None
+
+        # build local->global mapping from board.position[:3]
+        # mapping: local_axis ('x','y','z') -> (global_axis 'x'/'y'/'z', sign)
+        def build_local_map(board):
+            px, py, pz = board.position[:3]
+            mapping = {"x": None, "y": None, "z": None}
+            # global x (px) holds one of the local dims
+            if abs(px) == board.length:
+                mapping["x"] = ("x", 1 if px > 0 else -1)
+            elif abs(px) == board.width:
+                mapping["y"] = ("x", 1 if px > 0 else -1)
+            elif abs(px) == board.thick:
+                mapping["z"] = ("x", 1 if px > 0 else -1)
+            # global y (py)
+            if abs(py) == board.length:
+                mapping["x"] = ("y", 1 if py > 0 else -1)
+            elif abs(py) == board.width:
+                mapping["y"] = ("y", 1 if py > 0 else -1)
+            elif abs(py) == board.thick:
+                mapping["z"] = ("y", 1 if py > 0 else -1)
+            # global z (pz)
+            if abs(pz) == board.length:
+                mapping["x"] = ("z", 1 if pz > 0 else -1)
+            elif abs(pz) == board.width:
+                mapping["y"] = ("z", 1 if pz > 0 else -1)
+            elif abs(pz) == board.thick:
+                mapping["z"] = ("z", 1 if pz > 0 else -1)
+            return mapping
+
+        # For each contact_local axis, which local axes span the face and in which order (u,v)
+        plane_axes_for_local = {
+            "x": ("z", "y"),  # left/right face -> (local z, local y) -> (thickness, width)
+            "y": ("x", "z"),  # up/down face    -> (local x, local z) -> (length, thickness)
+            "z": ("x", "y"),  # front/back face -> (local x, local y) -> (length, width)
+        }
+
+        # Convert a board overlap to (face, (u_size,v_size), (u0,v0)) in local coords
+        def compute_board_result(board, contact_axis, side, overlap_u, overlap_v):
+            mapping = build_local_map(board)
+            origin = {"x": board.position[3], "y": board.position[4], "z": board.position[5]}
+
+            # find which local axis corresponds to the contact_axis
+            contact_local = None
+            for local_axis, (g_axis, sign) in mapping.items():
+                if g_axis == contact_axis:
+                    contact_local = local_axis
+                    sign_local = sign
+                    break
+            if contact_local is None:
+                return None
+
+            effective_sign = sign_local * side
+            face = FACE_MAP[(contact_local, 1 if effective_sign > 0 else -1)]
+
+            # plane axes in local coords (order u,v)
+            u_local_axis, v_local_axis = plane_axes_for_local[contact_local]
+
+            # helper: determine global axis & sign for a local axis
+            def local_to_global(local_ax):
+                g_axis, sign = mapping[local_ax]
+                return g_axis, sign
+
+            # get the relevant global intervals (overlap_u and overlap_v were chosen in earlier detection,
+            # but we must map them to the correct global axes depending on contact_axis)
+            # overlap_u and overlap_v are provided in global axis order determined above:
+            # - for contact z: overlap_u=ix (global x interval), overlap_v=iy (global y interval)
+            # - for contact x: overlap_u=iy (global y interval), overlap_v=iz (global z interval)
+            # - for contact y: overlap_u=ix (global x interval), overlap_v=iz (global z interval)
+            # We'll create a dict for fast lookup:
+            global_intervals = {
+                "x": ix,
+                "y": iy,
+                "z": iz
             }
 
-        def faces(box):
+            # function to get local interval (min,max) for a local axis
+            def get_local_interval(local_ax):
+                g_axis, sign = local_to_global(local_ax)
+                interval = global_intervals[g_axis]
+                if interval is None:
+                    return (0.0, 0.0)  # no overlap on that axis
+                g_min, g_max = interval
+                # convert to local coords: local = sign * (global - origin_global)
+                origin_val = origin[g_axis]
+                l_min = sign * (g_min - origin_val)
+                l_max = sign * (g_max - origin_val)
+                # ensure ordering ascending
+                return (min(l_min, l_max), max(l_min, l_max))
+
+            u_min, u_max = get_local_interval(u_local_axis)
+            v_min, v_max = get_local_interval(v_local_axis)
+
+            u0 = u_min
+            v0 = v_min
+            u_size = u_max - u_min
+            v_size = v_max - v_min
+
             return {
-                "left": ("x", box["x_min"]),
-                "right": ("x", box["x_max"]),
-                "front": ("y", box["y_min"]),
-                "back": ("y", box["y_max"]),
-                "down": ("z", box["z_min"]),
-                "up": ("z", box["z_max"]),
+                "face": face,
+                "dim": (u_size, v_size),
+                "offset": (u0, v0)
             }
 
-        box1, box2 = get_box(board1), get_box(board2)
-        faces1, faces2 = faces(box1), faces(box2)
+        res1 = compute_board_result(board1, contact_axis, side1, overlap_u, overlap_v)
+        res2 = compute_board_result(board2, contact_axis, side2, overlap_u, overlap_v)
 
-        # Try all face pairs
-        for face1, (axis1, val1) in faces1.items():
-            for face2, (axis2, val2) in faces2.items():
-                if axis1 != axis2:
-                    continue  # must be the same axis to possibly touch
+        if res1 is None or res2 is None:
+            return None
 
-                # Check if planes coincide (within tolerance)
-                if abs(val1 - val2) > tol:
-                    continue
-
-                # Determine the two other axes
-                other_axes = [ax for ax in ("x", "y", "z") if ax != axis1]
-
-                # Compute overlap in those two axes
-                overlap = {}
-                for ax in other_axes:
-                    a_min, a_max = box1[f"{ax}_min"], box1[f"{ax}_max"]
-                    b_min, b_max = box2[f"{ax}_min"], box2[f"{ax}_max"]
-                    o_min, o_max = max(a_min, b_min), min(a_max, b_max)
-                    if o_min >= o_max:  # no overlap
-                        break
-                    overlap[ax] = (o_min, o_max)
-                else:
-                    # We found a valid connection surface
-                    dim1 = overlap[other_axes[0]][1] - overlap[other_axes[0]][0]
-                    dim2 = overlap[other_axes[1]][1] - overlap[other_axes[1]][0]
-
-                    offset = (
-                        overlap[other_axes[0]][0],
-                        overlap[other_axes[1]][0],
-                        val1
-                    )
-
-                    return {
-                        "board1_face": face1,
-                        "board2_face": face2,
-                        "dimensions": (dim1, dim2),
-                        "offset": offset,
-                        "board1_dim": overlap,
-                    }
-
-        return None
+        return {
+            "board1_face": res1["face"],
+            "board1_dim": (round(res1["dim"][0], 6), round(res1["dim"][1], 6)),
+            "board1_offset": (round(res1["offset"][0], 6), round(res1["offset"][1], 6)),
+            "board2_face": res2["face"],
+            "board2_dim": (round(res2["dim"][0], 6), round(res2["dim"][1], 6)),
+            "board2_offset": (round(res2["offset"][0], 6), round(res2["offset"][1], 6)),
+        }
 
     # def calculate_connection_surface(board1, board2):
     #     """
@@ -315,7 +430,16 @@ class Board:
     #     # Return None if no valid connection is found
     #     return None
 
-
+    def drill(self, face, x, y, diameter=6):
+        """
+        adds a list of parameters of a hole in the board's drill list
+        :param face: front, back, up, down, left, right
+        :param x: the x coordinate of the hole center
+        :param y: the y coordinate of the hole center
+        :param diameter: diameter of the hole in mm
+        :return: none
+        """
+        self.drill_list.append([diameter, face, int(x), int(y)])
 
     def get_price_for_item(self, item_type, material):
         """
@@ -391,17 +515,17 @@ class BoardPal(Board):
 
         self.check_board()
 
-    def drill(self, surface, x, y, diameter=6):
-        """
-        adds a list of parameters of a hole in the board's drill list
-        :param surface: front, back, up, down, left, right
-        :param x: the x coordinate of the hole center
-        :param y: the y coordinate of the hole center
-        :param diameter: diameter of the hole in mm
-        :return: none
-        """
-        self.drill_list.append([diameter, surface, int(x), int(y)])
-        print("DEBUG: Drilling " + self.label, diameter, surface, int(x), int(y))
+    # def drill(self, face, x, y, diameter=6):
+    #     """
+    #     adds a list of parameters of a hole in the board's drill list
+    #     :param face: front, back, up, down, left, right
+    #     :param x: the x coordinate of the hole center
+    #     :param y: the y coordinate of the hole center
+    #     :param diameter: diameter of the hole in mm
+    #     :return: none
+    #     """
+    #     self.drill_list.append([diameter, face, int(x), int(y)])
+    #     print("DEBUG: Drilling " + self.label, diameter, face, int(x), int(y))
 
     def get_m_cant(self, cant_type):
         """
@@ -472,12 +596,13 @@ if __name__ == "__main__":
 
     # Create two boards
     b1 = Board("Bottom", 600, 500, 18)   # 600 x 500 board, 18 mm thick
-    b2 = Board("Side", 720, 600, 18)     # Side panel: 720 tall, 500 deep, 18 thick
+    b2 = Board("Side", 800, 500, 18)     # Side panel: 720 tall, 500 deep, 18 thick
 
     # Move side board to sit on top of bottom board, aligned at (0,0,0)
     b2.rotate_cw("y")
-    b2.move("z", 18)
-    b2.move("x", 18)
+    # b2.move("z", 18)
+    # b2.move("x", 18)
+    # b2.move("x", 200)
 
     print("\nBoard positions:")
     b1.print()

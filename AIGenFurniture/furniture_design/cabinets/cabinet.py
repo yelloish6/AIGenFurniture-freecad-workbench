@@ -3,7 +3,7 @@ from AIGenFurniture.furniture_design.cabinets.elements.accessory import *
 
 from AIGenFurniture.furniture_design.cabinets.features.drawers import DrawersMixin
 from AIGenFurniture.furniture_design.cabinets.features.shelves import ShelvesMixin
-import math
+import math, json
 
 # TODO default rules must be moved on cabinet level and they don't need to be an argument for the init method.
 #  Replace rules with "cabinet_data" as a dictionary for all generic parameters of a cabinet.
