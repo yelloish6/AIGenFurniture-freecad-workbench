@@ -4,7 +4,11 @@ FEATURES = {
         "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
         "front_type": ("App::PropertyString", "", "Front type"),
     },
-    "remove_all_pfl": {},
+
+    "remove_all_pfl": {
+        "remove_all_pfl": ("App::PropertyBool", True, "Remove PFL"),
+    },
+
     "remove_element": {
         "type": ("App::PropertyString", "", "Element type"),
         "label": ("App::PropertyString", "", "Element label"),
@@ -15,6 +19,12 @@ FEATURES = {
     "add_tandem_box": {
         "type": ("App::PropertyString", "", "Box type"),
         "offset": ("App::PropertyFloat", 0.0, "Offset"),
+    },
+    "add_drawer": {
+        "height": ("App::PropertyFloat", 100.0, "Drawer height"),
+        "offset": ("App::PropertyFloat", 0.0, "Offset"),
+        "box_type": ("App::PropertyString", "a", "(a) lateral assembles on the edge of the front board, or (b) on the back"),
+        "bottom": ("App::PropertyString", "pfl", "material of the bottom. Can be (pal) or (pfl) -> (default and not defined)"),
     },
     "add_drawer_a_pfl": {
         "height": ("App::PropertyFloat", 100.0, "Drawer height"),
@@ -39,10 +49,10 @@ FEATURES = {
         "cant": ("App::PropertyString", "", "Edge type"),
     },
     "add_pol_2": {
-        "orient": ("App::PropertyString", "H", "Orientation"),
-        "length": ("App::PropertyFloat", 0.0, "Length"),
-        "height": ("App::PropertyFloat", 0.0, "Height"),
-        "offset": ("App::PropertyFloat", 0.0, "Offset"),
+        "orient": ("App::PropertyString", "h", "orientation [h or v]"),
+        "length": ("App::PropertyFloat", 0.0, "length of the board, 0 for default width"),
+        "height": ("App::PropertyFloat", 0.0, "Position offset of the shelf in the cabinet on Z"),
+        "offset": ("App::PropertyFloat", 0.0, "Position offset of the shelf in the cabinet on X"),
     },
     "add_separator": {
         "orient": ("App::PropertyString", "V", "Orientation"),
@@ -93,7 +103,17 @@ def make_feature_command(feature_name, params):
                 App.Console.PrintError("Please select a valid Cabinet Box first.\n")
                 return
             obj = sel[0]
-            group = f"Feature_{feature_name}_1"
+
+            # find next available group name
+            idx = 1
+            while True:
+                group = f"Feature_{feature_name}_{idx}"
+                # check if this group name is already used
+                if not any(obj.getGroupOfProperty(p) == group for p in obj.PropertiesList):
+                    break
+                idx += 1
+
+            # group = f"Feature_{feature_name}_1"
 
             for pname, (ptype, default, desc) in params.items():
                 if not hasattr(obj, pname):

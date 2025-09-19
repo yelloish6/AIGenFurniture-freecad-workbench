@@ -1,6 +1,9 @@
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
+from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
+
+ASSEMBLY_TYPE = "euro_screw"
 
 class TopBox(Cabinet):
     def __init__(self, label, height, width, depth, rules):
@@ -38,6 +41,11 @@ class TopBox(Cabinet):
         sus.move("x", lat1.thick)
         sus.move("y",self.cant_lab)
         self.append(sus)
+
+        ASSEMBLIES[ASSEMBLY_TYPE](lat1, sus)
+        ASSEMBLIES[ASSEMBLY_TYPE](lat1, jos)
+        ASSEMBLIES[ASSEMBLY_TYPE](lat2, sus)
+        ASSEMBLIES[ASSEMBLY_TYPE](lat2, jos)
 
         # self.assemble_pal(lat1, jos, "wood_dowel", 6, 2)
         # self.assemble_pal(lat1, sus, "wood_dowel", 6, 2)

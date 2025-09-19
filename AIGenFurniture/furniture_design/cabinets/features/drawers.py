@@ -1,6 +1,8 @@
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Pfl
+from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
+ASSEMBLY_TYPE = "euro_screw"
 
 class DrawersMixin:
 
@@ -60,12 +62,14 @@ class DrawersMixin:
         self.append(Accessory("surub 3.5x16", 12))
         self.append(Accessory("surub", 8))
         self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
-        
-    def add_drawer_a_pal(self, sert_h, height_offset):
+
+    def add_drawer(self, sert_h, height_offset, box_type="a", bottom="pfl"):
         """
-        adds an "A" box drawer with PAL bottom
+        adds a drawer
         :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)
         :param height_offset: positioning of the drawer in the cabinet
+        :param box_type: "a" lateral assembles on the edge of the front board, or "b" on the back
+        :param bottom: material of the bottom. Can be "pal" or "pfl"(default and not defined)
         :return:
         """
 
@@ -74,21 +78,85 @@ class DrawersMixin:
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
         sert_depth = self.depth - gap_glisiera
 
-        self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
+        if box_type == "a":
+            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                     height_offset)
+        else:
+            self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                     height_offset)
 
-        fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
-                        self.thick_pal, "", "", "", "")
-        fund.move("x", (2 * self.thick_pal) + gap_glisiera)
-        fund.move("y", self.thick_pal)
-        fund.move("z", height_offset)
-        self.append(fund)
+        if bottom == "pal":
+            fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+                            self.thick_pal, "", "", "", "")
+            fund.move("x", (2 * self.thick_pal) + gap_glisiera)
+            fund.move("y", self.thick_pal)
+            fund.move("z", height_offset)
+
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.left"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.right"))
+
+            self.append(fund)
+        else:
+            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+            pfl.move("x", self.thick_pal + gap_glisiera + 2)
+            pfl.move("y", 2)
+            pfl.move("z", height_offset - pfl.thick)
+            self.append(pfl)
 
         self.append(Accessory("pereche glisiera " + str(self.get_standard_slide_length(sert_depth)) + " mm", 1))
         self.append(Accessory("surub 3.5x16", 12))
         self.append(Accessory("surub", 8))
         self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
 
-    def add_drawer_b_pal(self, sert_h, height_offset):
+    def add_drawer_a_pal(self, sert_h, height_offset, type = "a", bottom = "pfl"):
+        """
+        adds an "A" box drawer with PAL bottom
+        :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)
+        :param height_offset: positioning of the drawer in the cabinet
+        :param bottom: material of the bottom. Can be "pal" or "pfl"(default and not defined)
+        :return:
+        """
+
+        gap_glisiera = 13
+        sert_height = sert_h
+        sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
+        sert_depth = self.depth - gap_glisiera
+
+        if type == "a":
+            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                     height_offset)
+        else:
+            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                     height_offset)
+
+        if bottom == "pal":
+            fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+                            self.thick_pal, "", "", "", "")
+            fund.move("x", (2 * self.thick_pal) + gap_glisiera)
+            fund.move("y", self.thick_pal)
+            fund.move("z", height_offset)
+
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "front"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "back"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "left"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "right"))
+
+            self.append(fund)
+        else:
+            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+            pfl.move("x", self.thick_pal + gap_glisiera + 2)
+            pfl.move("y", 2)
+            pfl.move("z", height_offset - pfl.thick)
+            self.append(pfl)
+
+        self.append(Accessory("pereche glisiera " + str(self.get_standard_slide_length(sert_depth)) + " mm", 1))
+        self.append(Accessory("surub 3.5x16", 12))
+        self.append(Accessory("surub", 8))
+        self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
+
+    def add_drawer_b_pal(self, sert_h, height_offset, bottom = "pfl"):
         """
         adds an "B" box drawer with PAL bottom
         :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)
@@ -103,6 +171,26 @@ class DrawersMixin:
         sert_depth = self.depth - gap_glisiera
 
         self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
+
+        if bottom == "pal":
+            fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+                            self.thick_pal, "", "", "", "")
+            fund.move("x", (2 * self.thick_pal) + gap_glisiera)
+            fund.move("y", self.thick_pal)
+            fund.move("z", height_offset)
+
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.left"))
+            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.right"))
+
+            self.append(fund)
+        else:
+            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+            pfl.move("x", self.thick_pal + gap_glisiera + 2)
+            pfl.move("y", 2)
+            pfl.move("z", height_offset - pfl.thick)
+            self.append(pfl)
 
         fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                         self.thick_pal, "", "", "", "")
@@ -212,10 +300,10 @@ class DrawersMixin:
         """
 
         left = BoardPal(self.label + ".ser.left", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
-        left.rotate("y")
+        left.rotate_cw("y")
         left.rotate("x")
-        left.rotate("z")
-        left.rotate("z")
+        left.rotate_cw("z")
+        left.rotate_cw("z")
         left.move("x", offset_x)
         left.move("z", offset_z)
         self.append(left)
@@ -239,11 +327,17 @@ class DrawersMixin:
         right = BoardPal(self.label + ".ser.right", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
         right.rotate("x")
         right.rotate("z")
-        right.rotate("z")
-        right.rotate("z")
+        # right.rotate("z")
+        # right.rotate("z")
         right.move("x", offset_x + back.length + right.thick)
         right.move("z", offset_z)
         self.append(right)
+
+        ASSEMBLIES[ASSEMBLY_TYPE](left, front)
+        ASSEMBLIES[ASSEMBLY_TYPE](left, back)
+        ASSEMBLIES[ASSEMBLY_TYPE](right, front)
+        ASSEMBLIES[ASSEMBLY_TYPE](right, back)
+
 
     def create_drawer_box_b(self, sert_height, sert_width, sert_depth, offset_x, offset_y, offset_z):
         """
@@ -268,11 +362,11 @@ class DrawersMixin:
         front.move("y", front.thick)
         self.append(front)
 
-        left = BoardPal(self.label + ".ser.long", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
-        left.rotate("y")
+        left = BoardPal(self.label + ".ser.left", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
+        left.rotate_cw("y")
         left.rotate("x")
-        left.rotate("z")
-        left.rotate("z")
+        left.rotate_cw("z")
+        left.rotate_cw("z")
         left.move("x", offset_x)
         left.move("z", offset_z)
         left.move("y", front.thick)
@@ -281,8 +375,8 @@ class DrawersMixin:
         right = BoardPal(self.label + ".ser.right", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
         right.rotate("x")
         right.rotate("z")
-        right.rotate("z")
-        right.rotate("z")
+        # right.rotate("z")
+        # right.rotate("z")
         right.move("x", offset_x + front.length - right.thick)
         right.move("z", offset_z)
         right.move("y", front.thick)
@@ -295,6 +389,11 @@ class DrawersMixin:
         back.move("y", left.length + back.thick + front.thick)
         back.move("z", offset_z)
         self.append(back)
+
+        ASSEMBLIES[ASSEMBLY_TYPE](left, front)
+        ASSEMBLIES[ASSEMBLY_TYPE](left, back)
+        ASSEMBLIES[ASSEMBLY_TYPE](right, front)
+        ASSEMBLIES[ASSEMBLY_TYPE](right, back)
 
     def get_standard_slide_length(self, drawer_depth):
         """

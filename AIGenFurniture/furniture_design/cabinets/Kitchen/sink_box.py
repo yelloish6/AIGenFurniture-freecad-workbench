@@ -1,6 +1,8 @@
 from AIGenFurniture.furniture_design.cabinets.Kitchen.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal
+from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
+ASSEMBLY_TYPE = "euro_screw"
 
 # class SinkBox(BaseBox):
 #     def __init__(self, label, height, width, depth, rules):
@@ -45,6 +47,10 @@ class SinkBox(BaseBox):
         legatura.move("y", self.depth - self.thick_pal)
         legatura.move("y", self.thick_pal)
         self.append(legatura)
+
+        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat1"))
+        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat2"))
+        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".jos"))
 
         leg1 = self.get_item_by_type_label("pal", self.label + ".leg1")
 

@@ -27,7 +27,7 @@ class ShelvesMixin:
         """
         adds a polita in the cabinet, but you can adjust length height and offset
         :param orient: orientation ["h" or "v"]
-        :param length: length of the plank, 0 for default width
+        :param length: length of the board, 0 for default width
         :param height: positioning height
         :param offset: displacement from the left to the right
         :return: n/a

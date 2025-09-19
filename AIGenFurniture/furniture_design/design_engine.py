@@ -157,6 +157,8 @@ def feature_handler(cabinet, feature_data):
     # drawers features
     elif feature_type == "add_tandem_box":
         cabinet.add_tandem_box(feature_data.get("type"), feature_data.get("offset"))
+    elif feature_type == "add_drawer":
+        cabinet.add_drawer(feature_data.get("height"), feature_data.get("offset"), feature_data.get("box_type"), feature_data.get("bottom"))
     elif feature_type == "add_drawer_a_pfl":
         cabinet.add_drawer_a_pfl(feature_data.get("height"), feature_data.get("offset"))
     elif feature_type == "add_drawer_a_pal":

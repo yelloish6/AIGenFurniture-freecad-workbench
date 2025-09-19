@@ -5,8 +5,6 @@ from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessor
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
 from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
-
-
 class BaseBox(Cabinet):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
