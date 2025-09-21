@@ -264,8 +264,10 @@ def generate_drill_pdf_reportlab(order, output_path, filename="Drill_file_report
     header_h = HEADER_HEIGHT_MM * mm
 
     for cabinet in getattr(order, "cabinets_list", []):
+        cabinet.auto_assemble()
         for board in getattr(cabinet, "elements_list", []):
-            if not (hasattr(board, "length") and hasattr(board, "width") and hasattr(board, "thick")):
+            if board.type != "pal":
+            # if not (hasattr(board, "length") and hasattr(board, "width") and hasattr(board, "thick")):
                 continue
 
             L = float(board.length)

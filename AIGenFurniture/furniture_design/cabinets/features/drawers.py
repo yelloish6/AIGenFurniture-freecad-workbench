@@ -1,8 +1,8 @@
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Pfl
-from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
+# from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
-ASSEMBLY_TYPE = "euro_screw"
+# ASSEMBLY_TYPE = "euro_screw"
 
 class DrawersMixin:
 
@@ -92,10 +92,10 @@ class DrawersMixin:
             fund.move("y", self.thick_pal)
             fund.move("z", height_offset)
 
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.left"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.right"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](self.get_item_by_type_label("pal", self.label + ".ser.left"), fund)
+            # ASSEMBLIES[ASSEMBLY_TYPE](self.get_item_by_type_label("pal", self.label + ".ser.right"), fund)
 
             self.append(fund)
         else:
@@ -138,10 +138,10 @@ class DrawersMixin:
             fund.move("y", self.thick_pal)
             fund.move("z", height_offset)
 
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "front"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "back"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "left"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "right"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "front"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "back"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "left"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", "right"))
 
             self.append(fund)
         else:
@@ -179,10 +179,10 @@ class DrawersMixin:
             fund.move("y", self.thick_pal)
             fund.move("z", height_offset)
 
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.left"))
-            ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.right"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.front"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.back"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.left"))
+            # ASSEMBLIES[ASSEMBLY_TYPE](fund, self.get_item_by_type_label("pal", self.label + ".ser.right"))
 
             self.append(fund)
         else:
@@ -333,10 +333,10 @@ class DrawersMixin:
         right.move("z", offset_z)
         self.append(right)
 
-        ASSEMBLIES[ASSEMBLY_TYPE](left, front)
-        ASSEMBLIES[ASSEMBLY_TYPE](left, back)
-        ASSEMBLIES[ASSEMBLY_TYPE](right, front)
-        ASSEMBLIES[ASSEMBLY_TYPE](right, back)
+        # ASSEMBLIES[ASSEMBLY_TYPE](left, front)
+        # ASSEMBLIES[ASSEMBLY_TYPE](left, back)
+        # ASSEMBLIES[ASSEMBLY_TYPE](right, front)
+        # ASSEMBLIES[ASSEMBLY_TYPE](right, back)
 
 
     def create_drawer_box_b(self, sert_height, sert_width, sert_depth, offset_x, offset_y, offset_z):
@@ -390,10 +390,10 @@ class DrawersMixin:
         back.move("z", offset_z)
         self.append(back)
 
-        ASSEMBLIES[ASSEMBLY_TYPE](left, front)
-        ASSEMBLIES[ASSEMBLY_TYPE](left, back)
-        ASSEMBLIES[ASSEMBLY_TYPE](right, front)
-        ASSEMBLIES[ASSEMBLY_TYPE](right, back)
+        # ASSEMBLIES[ASSEMBLY_TYPE](left, front)
+        # ASSEMBLIES[ASSEMBLY_TYPE](left, back)
+        # ASSEMBLIES[ASSEMBLY_TYPE](right, front)
+        # ASSEMBLIES[ASSEMBLY_TYPE](right, back)
 
     def get_standard_slide_length(self, drawer_depth):
         """

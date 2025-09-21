@@ -327,6 +327,46 @@ class BaseCorner(Cabinet):
         # blat1.move("z", 10)
         # self.append(blat1)
 
+if __name__ == "__main__":
+
+    RULES = {
+        "thick_pal": 18,
+        "thick_front": 18,
+        "thick_blat": 38,
+        "height_legs": 100,
+        "general_width": 600,
+        "width_blat": 600,
+        "gap_spate": 50,
+        "gap_fata": 50,
+        "gap_front": 2,
+        "cant_general": 1,
+        "cant_pol": 2,
+        "cant_separator": 1,
+        "pol_depth": 20
+    }
+
+    print("=== Running BaseBox test scenario ===")
+
+    cabinet_r = BaseCorner("test_cabinet_r", 720, 600, 800, RULES, 400, 400, "right", True)
+    cabinet_l = BaseCorner("test_cabinet_l", 720, 600, 800, RULES, 400, 400, "left", True)
+    cabinet_r.auto_assemble()
+    cabinet_l.auto_assemble()
+
+    for board in cabinet_r.elements_list:
+        label = board.label
+        board.print()
+        # print(cabinet_r.get_item_by_type_label("pal", label).__getattribute__("label"))
+        # print(cabinet_r.get_item_by_type_label("pal", label).__getattribute__("position"))
+        # print(cabinet_r.get_item_by_type_label("pal", label).__getattribute__("drill_list"))
+
+    for board in cabinet_l.elements_list:
+        label = board.label
+        board.print()
+        # print(cabinet_l.get_item_by_type_label("pal", label).__getattribute__("label"))
+        # print(cabinet_l.get_item_by_type_label("pal", label).__getattribute__("position"))
+        # print(cabinet_l.get_item_by_type_label("pal", label).__getattribute__("drill_list"))
+
+
 # class BaseCorner(Cabinet):
 #     def __init__(self, label, height, width, depth, rules, cut_width, cut_depth, l_r, with_polita):
 #         """

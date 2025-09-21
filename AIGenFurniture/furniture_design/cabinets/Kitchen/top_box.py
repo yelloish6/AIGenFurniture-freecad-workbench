@@ -1,9 +1,9 @@
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
-from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
+# from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
-ASSEMBLY_TYPE = "euro_screw"
+# ASSEMBLY_TYPE = "euro_screw"
 
 class TopBox(Cabinet):
     def __init__(self, label, height, width, depth, rules):
@@ -42,10 +42,10 @@ class TopBox(Cabinet):
         sus.move("y",self.cant_lab)
         self.append(sus)
 
-        ASSEMBLIES[ASSEMBLY_TYPE](lat1, sus)
-        ASSEMBLIES[ASSEMBLY_TYPE](lat1, jos)
-        ASSEMBLIES[ASSEMBLY_TYPE](lat2, sus)
-        ASSEMBLIES[ASSEMBLY_TYPE](lat2, jos)
+        # ASSEMBLIES[ASSEMBLY_TYPE](lat1, sus)
+        # ASSEMBLIES[ASSEMBLY_TYPE](lat1, jos)
+        # ASSEMBLIES[ASSEMBLY_TYPE](lat2, sus)
+        # ASSEMBLIES[ASSEMBLY_TYPE](lat2, jos)
 
         # self.assemble_pal(lat1, jos, "wood_dowel", 6, 2)
         # self.assemble_pal(lat1, sus, "wood_dowel", 6, 2)
@@ -53,3 +53,38 @@ class TopBox(Cabinet):
         # self.assemble_pal(lat2, sus, "wood_dowel", 6, 2)
 
         self.add_pfl()
+
+if __name__ == "__main__":
+
+    RULES = {
+        "thick_pal": 18,
+        "thick_front": 18,
+        "thick_blat": 38,
+        "height_legs": 100,
+        "general_width": 600,
+        "width_blat": 600,
+        "gap_spate": 50,
+        "gap_fata": 50,
+        "gap_front": 2,
+        "cant_general": 1,
+        "cant_pol": 2,
+        "cant_separator": 1,
+        "pol_depth": 20
+    }
+
+    print("=== Running BaseBox test scenario ===")
+
+    cabinet = TopBox("test_cabinet", 720, 600, 500, RULES)
+
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.jos").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.jos").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat1").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat2").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.sus").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.sus").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.sus").__getattribute__("drill_list"))

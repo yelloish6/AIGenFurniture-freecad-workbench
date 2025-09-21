@@ -1,6 +1,7 @@
 from AIGenFurniture.furniture_design.cabinets.elements.board import *
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import *
 
+from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 from AIGenFurniture.furniture_design.cabinets.features.drawers import DrawersMixin
 from AIGenFurniture.furniture_design.cabinets.features.shelves import ShelvesMixin
 import math, json
@@ -10,7 +11,7 @@ import math, json
 
 
 class Cabinet(DrawersMixin, ShelvesMixin):
-    def __init__(self, label, height, width, depth, rules):
+    def __init__(self, label, height, width, depth, rules, assembly_type = "euro_screw"):
         """
         collection of boards forming one cabinet
         all items collected in "self.material_list[]"
@@ -50,6 +51,7 @@ class Cabinet(DrawersMixin, ShelvesMixin):
         self.sep_prev = ""
         # self.arch = []  # matricea de arhitectura care contine elementele corpului orientate si cu offset
         self.cant_length = [['0.4', 0], ['2', 0]]
+        self.assembly_type = assembly_type
 
     def append(self, obj):
         self.elements_list.append(obj)
@@ -93,76 +95,97 @@ class Cabinet(DrawersMixin, ShelvesMixin):
                 board1 = pal_list[i]
                 board2 = pal_list[j]
                 
-
-
-    def assemble_pal(self, board1, board2, assembly_type, diameter=0, connection_count=2):
+    def auto_assemble(self):
         """
-            Calculate the positions where holes should be drilled for assembling two boards and modifies each boards
-            drill list.
+        Go through all elements of the cabinet.
+        If both are 'pal' boards and have a valid connection surface,
+        assemble them using the cabinet's assembly_type.
+        """
+        pal_list = self.get_element_list_by_type("pal")
+        assembly_func = ASSEMBLIES.get(self.assembly_type)
 
-            Parameters:
-            - board1: First board object (with position and size).
-            - board2: Second board object (with position and size).
-            - connection_method: Type of connection ("wood_dowel", "eccentric", "euro_screw")
-            - diameter: Diameter of the drill for the connection method.
-            - connection_count: The number of holes to drill (default is 2).
+        if not assembly_func:
+            raise ValueError(f"Unknown assembly type: {self.assembly_type}")
 
-            Returns: None
-            """
-        connection_surface = board1.calculate_connection_surface(board2)
-        board1_label = board1.__getattribute__("label")
-        board2_label = board2.__getattribute__("label")
+        for i in range(len(pal_list)):
+            for j in range(i + 1, len(pal_list)):
+                b1 = pal_list[i]
+                b2 = pal_list[j]
+                connection = b1.calculate_connection_surface(b2)
+                if connection:  # valid connection
+                    try:
+                        assembly_func(b1, b2)
+                    except Exception as e:
+                        print(f"[WARN] Could not assemble {b1.label} with {b2.label}: {e}")
 
-        if not connection_surface:
-            raise ValueError(f"No valid connection surface found between {board1_label} and {board2_label}.")
-        board1_face = connection_surface['board1_face']
-        board2_face = connection_surface['board2_face']
-        x1_min, x1_max, y1_min, y1_max = connection_surface['board1_dim']
-        x2_min, x2_max, y2_min, y2_max = connection_surface['board2_dim']
-        connection_length = x1_max - x1_min
-        connection_width = y1_max - y1_min
-
-        if connection_count > 1:
-            hole_spacing = connection_length / (connection_count + 1) # Uniformly spaced along the connection length
-        else:
-            hole_spacing = connection_length / 2 # If only one hole, place it in the middle
-
-        if assembly_type == "wood_dowel":
-
-            for i in range(1, connection_count + 1):
-                # Calculate positions for both boards using the same spacing and relative alignment
-
-                # For board1
-                hole_x1 = x1_min + (hole_spacing * i)  # Along the length of the connection
-                hole_y1 = y1_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
-                # hole_z1 = offset1_z  # Adjust the z-coordinate based on the face
-
-                board1.drill(board1_face, hole_x1, hole_y1, diameter)
-
-                hole_x2 = x2_min + (hole_spacing * i)  # Along the length of the connection
-                hole_y2 = y2_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
-
-                board2.drill(board2_face, hole_x2, hole_y2, diameter)
-
-        if assembly_type == "eccentric":
-
-            for i in range(1, connection_count + 1):
-                # Calculate positions for both boards using the same spacing and relative alignment
-
-                # For board1
-                hole_x1 = x1_min + (hole_spacing * i)  # Along the length of the connection
-                hole_y1 = y1_min + (connection_width / 2) + 8 # Centered in width + 8 mm (standard for eccentric)
-                # hole_z1 = offset1_z  # Adjust the z-coordinate based on the face
-
-                board1.drill(board1_face, hole_x1, hole_y1, 25)
-
-                hole_x2 = x2_min + (hole_spacing * i)  # Along the length of the connection
-                hole_y2 = y2_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
-
-                board2.drill(board2_face, hole_x2, hole_y2, 5)
-
-        else:
-            print("Assembly type not valid.")
+    # def assemble_pal(self, board1, board2, assembly_type, diameter=0, connection_count=2):
+    #     """
+    #         Calculate the positions where holes should be drilled for assembling two boards and modifies each boards
+    #         drill list.
+    #
+    #         Parameters:
+    #         - board1: First board object (with position and size).
+    #         - board2: Second board object (with position and size).
+    #         - connection_method: Type of connection ("wood_dowel", "eccentric", "euro_screw")
+    #         - diameter: Diameter of the drill for the connection method.
+    #         - connection_count: The number of holes to drill (default is 2).
+    #
+    #         Returns: None
+    #         """
+    #     connection_surface = board1.calculate_connection_surface(board2)
+    #     board1_label = board1.__getattribute__("label")
+    #     board2_label = board2.__getattribute__("label")
+    #
+    #     if not connection_surface:
+    #         raise ValueError(f"No valid connection surface found between {board1_label} and {board2_label}.")
+    #     board1_face = connection_surface['board1_face']
+    #     board2_face = connection_surface['board2_face']
+    #     x1_min, x1_max, y1_min, y1_max = connection_surface['board1_dim']
+    #     x2_min, x2_max, y2_min, y2_max = connection_surface['board2_dim']
+    #     connection_length = x1_max - x1_min
+    #     connection_width = y1_max - y1_min
+    #
+    #     if connection_count > 1:
+    #         hole_spacing = connection_length / (connection_count + 1) # Uniformly spaced along the connection length
+    #     else:
+    #         hole_spacing = connection_length / 2 # If only one hole, place it in the middle
+    #
+    #     if assembly_type == "wood_dowel":
+    #
+    #         for i in range(1, connection_count + 1):
+    #             # Calculate positions for both boards using the same spacing and relative alignment
+    #
+    #             # For board1
+    #             hole_x1 = x1_min + (hole_spacing * i)  # Along the length of the connection
+    #             hole_y1 = y1_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
+    #             # hole_z1 = offset1_z  # Adjust the z-coordinate based on the face
+    #
+    #             board1.drill(board1_face, hole_x1, hole_y1, diameter)
+    #
+    #             hole_x2 = x2_min + (hole_spacing * i)  # Along the length of the connection
+    #             hole_y2 = y2_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
+    #
+    #             board2.drill(board2_face, hole_x2, hole_y2, diameter)
+    #
+    #     if assembly_type == "eccentric":
+    #
+    #         for i in range(1, connection_count + 1):
+    #             # Calculate positions for both boards using the same spacing and relative alignment
+    #
+    #             # For board1
+    #             hole_x1 = x1_min + (hole_spacing * i)  # Along the length of the connection
+    #             hole_y1 = y1_min + (connection_width / 2) + 8 # Centered in width + 8 mm (standard for eccentric)
+    #             # hole_z1 = offset1_z  # Adjust the z-coordinate based on the face
+    #
+    #             board1.drill(board1_face, hole_x1, hole_y1, 25)
+    #
+    #             hole_x2 = x2_min + (hole_spacing * i)  # Along the length of the connection
+    #             hole_y2 = y2_min + (connection_width / 2) # - (diameter / 2)  # Centered in width
+    #
+    #             board2.drill(board2_face, hole_x2, hole_y2, 5)
+    #
+    #     else:
+    #         print("Assembly type not valid.")
 
     def get_item_by_type_label(self, typ, lab):
         """
