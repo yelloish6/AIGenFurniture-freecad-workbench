@@ -6,12 +6,12 @@ class Etajera(Cabinet):
     def __init__(self, label, height, width, depth, rules, shelves):
         super().__init__(label, height, width, depth, rules)
 
-        lat1 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal, self.cant_lab, "", "", "")
+        lat1 = BoardPal(self.label + ".lat1", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal, self.cant_lab, "", "", "")
+        lat2 = BoardPal(self.label + ".lat2", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat2.rotate_cw("y")
         lat2.move("x", width)
         self.append(lat2)
