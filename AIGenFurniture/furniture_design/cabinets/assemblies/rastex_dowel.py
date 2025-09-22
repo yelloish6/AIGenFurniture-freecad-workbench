@@ -3,8 +3,32 @@ from AIGenFurniture.furniture_design.cabinets.elements.board import Board
 
 def assemble(board1, board2):
     """
-    Assemble two boards using euro screws.
-    Hole count and placement are calculated automatically based on connection surface.
+    Assemble two boards using one or 2 Hettich Rastex connections and 2 wood dowel connections.
+    The hole spacing is calculated considering the Kraft&Dele drilling jig for edge drilling.
+        Kraft&Dele sizes:
+            109.5 mm distance between centering pin and first drill hole
+            32.5 mm distance between drill holes
+        For boards 100 mm - center alignment
+            1. Center the middle hole of the jig at the middle of the board
+            2. Add fixation pin in the middle hole and drill in left and right drill holes
+        For boards 200 mm - center alignment
+            1. Center the middle hole of the jig at the middle of the board
+            2. Add fixation pin in one of the outer drill holes and use the other one to drill
+            3. Repeat on the other side
+        For boards 300 mm - edge alignment
+            1. Add the fixation pin in the diam 8 hole and align to the edge of the board.
+            2. Drill in the closest fixation hole (109,5 - 4 = 105.5)
+            3. Put the fixation pin in the drilled hole and drill in the next one (105,5 + 109,5 = 215)
+    	    300 edge		300 center		400 edge		    500 edge		600 edge
+	        Hole X	dist	Hole X	dist 	Hole X	dist	    Hole X	dist	Hole X	dist
+1st hole	105.5	105.5	85	    85	    105.5	105.5	    105.5	105.5	105.5	105.5
+2nd hole	170.5	65	    150	    65	    170.5	65	        215	    109.5	215	    109.5
+3rd hole	235.5	65	    215	    65	    235.5	65	        324.5 	109.5	324.5	109.5
+4th hole	300	    64.5	300	    85	    300.5	65	        434	    109.5	434	    109.5
+5th hole					                400	    99.5	    500	    66	    543.5	109.5
+									                                            600	    56.5
+
+
     """
     SCREW_DIAMETER = 6
     connection_surface = board1.calculate_connection_surface(board2)
@@ -51,7 +75,9 @@ if __name__ == "__main__":
 
     # Create two boards
     b1 = Board("Bottom", 600, 500, 18)   # 600 x 500 board, 18 mm thick
+
     b2 = Board("Side", 800, 500, 18)     # Side panel: 720 tall, 500 deep, 18 thick
+
 
     # Move side board to sit on top of bottom board, aligned at (0,0,0)
     b2.rotate("y")
@@ -60,5 +86,5 @@ if __name__ == "__main__":
     # b2.move("x", 200)
 
     assemble(b1, b2)
-    print(b1.__getattribute__("label"), b1.__getattribute__("drill_list"))
-    print(b2.__getattribute__("label"), b2.__getattribute__("drill_list"))
+    b1.debug_print("  ")
+    b2.debug_print("  ")

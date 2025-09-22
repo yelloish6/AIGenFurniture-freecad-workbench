@@ -1,6 +1,7 @@
 Item,Material,Price,Unit,Minimum,pret [ron],furnizor,link
 pal,Alb W908ST2,423,sheet,0.5,423,proficut,PAL MEL Stejar Bardolino Gri H1146 711RON + TVA
 pal,Alb W962ST2,300,sheet,0.5,300,proficut,
+pal,Alb W960ST7,309,sheet,0.5,308,proficut,
 pal,Roz Fuchsia U337 ST9,514,sheet,0.5,514,proficut,Pal Roz Fuchsia  U337 ST9
 pal,Smoke Green K521 SU,475,sheet,1,475,proficut,
 pal,Roz Flamingo U363 ST9,514,sheet,1,514,proficut,Pal Roz Flamingo  U363 ST9
@@ -10,7 +11,7 @@ blat,Stejar Bardolino Natur,320,m,2,319.6578,Holver,"K5577 DP - CER NEGRU DESCHI
 blat,Stejar Halifax 600,347,m,4,382,proficut,Stejar Halifax Alb H1176 ST37 (1377RON/4m) + 35 RON/m aplicare cant
 blat,Stejar Halifax 920,634.25,m,4,634.25,proficut,Stejar Halifax Alb H1176 ST37
 blat,Stejar Alpin Keindl,138.75,m,2,138.75,,
-pfl,Alb,115,sheet,0.5,115,proficut,HDF ALB 100RON + debitare 15RON
+pfl,Alb,115,sheet,0.5,115,proficut,"HDF ALB 96,72 RON + debitare 18,23 RON = 114,95 RON"
 front,A75P AquaBlue Ultramat,493,m2,1,493,protege parol,414RON + TVA => 493 RON/m2
 front,A34R3,309.4,m2,1,309.4,nett front,
 front,Alb W962ST2,55,m2,0.5,55,proficut,

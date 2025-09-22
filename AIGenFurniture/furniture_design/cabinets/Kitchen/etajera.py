@@ -31,4 +31,4 @@ class Etajera(Cabinet):
 
         self.append(Accessory("eurosurub 7x50", 8))
 
-        self.add_pol(shelves, 2)
+        self.add_pol(shelves, 1)
