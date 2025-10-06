@@ -1,6 +1,9 @@
+from AIGenFurniture.furniture_design.cabinets.Kitchen.sink_box import ASSEMBLY_TYPE
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Front
+
+ASSEMBLY_TYPE = "euro_screw"
 
 class BaseCorner(Cabinet):
     def __init__(self, label, height, width, depth, rules, cut_width, cut_depth, l_r, with_polita):

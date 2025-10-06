@@ -8,7 +8,7 @@ import math, json
 
 # TODO default rules must be moved on cabinet level and they don't need to be an argument for the init method.
 #  Replace rules with "cabinet_data" as a dictionary for all generic parameters of a cabinet.
-
+# TODO: assembly type to be given as parameter of the cabinet, also directly in FReeCAD, as drop-down
 
 class Cabinet(DrawersMixin, ShelvesMixin):
     def __init__(self, label, height, width, depth, rules, assembly_type = "euro_screw"):

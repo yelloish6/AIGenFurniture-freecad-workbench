@@ -7,6 +7,10 @@ from reportlab.lib import colors
 MARGIN_MM = 20
 HEADER_HEIGHT_MM = 20
 
+# TODO add support also for boards with cut-outs
+# TODO print origin of the measurement for each board face
+# TODO print the coordinates of the drill for each hole from the edges of the board, not in a standalone table
+# TODO think of a better layout for the drill file. Isometric view is not that useful sometimes.
 
 def normalize_face_code(face):
     if not face:

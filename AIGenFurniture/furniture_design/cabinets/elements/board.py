@@ -151,9 +151,9 @@ class Board:
           board2_face, board2_dim (u,v), board2_offset (u0,v0)
         All dims/offsets are in the *local* coordinates of each board.
         """
-        # print(f"Checking connection between {board1.label} and {board2.label}")
-        # board1.debug_print("  ")
-        # board2.debug_print("  ")
+        print(f"Checking connection between {board1.label} and {board2.label}")
+        board1.debug_print("  ")
+        board2.debug_print("  ")
         FACE_MAP = {
             ("x", +1): "right",
             ("x", -1): "left",
