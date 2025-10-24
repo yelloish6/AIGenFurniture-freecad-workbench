@@ -72,7 +72,8 @@ CABINETS = {
     },
     "CorpCuPicioare": {
         "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
-        "plinta_height": ("App::PropertyInteger", 100, "Height of legs area"),
+        "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
+        "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
     }
 }
 

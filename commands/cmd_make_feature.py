@@ -26,18 +26,18 @@ FEATURES = {
         "box_type": ("App::PropertyString", "a", "(a) lateral assembles on the edge of the front board, or (b) on the back"),
         "bottom": ("App::PropertyString", "pfl", "material of the bottom. Can be (pal) or (pfl) -> (default and not defined)"),
     },
-    "add_drawer_a_pfl": {
-        "height": ("App::PropertyFloat", 100.0, "Drawer height"),
-        "offset": ("App::PropertyFloat", 0.0, "Offset"),
-    },
-    "add_drawer_a_pal": {
-        "height": ("App::PropertyFloat", 100.0, "Drawer height"),
-        "offset": ("App::PropertyFloat", 0.0, "Offset"),
-    },
-    "add_drawer_b_pal": {
-        "height": ("App::PropertyFloat", 100.0, "Drawer height"),
-        "offset": ("App::PropertyFloat", 0.0, "Offset"),
-    },
+    # "add_drawer_a_pfl": {
+    #     "height": ("App::PropertyFloat", 100.0, "Drawer height"),
+    #     "offset": ("App::PropertyFloat", 0.0, "Offset"),
+    # },
+    # "add_drawer_a_pal": {
+    #     "height": ("App::PropertyFloat", 100.0, "Drawer height"),
+    #     "offset": ("App::PropertyFloat", 0.0, "Offset"),
+    # },
+    # "add_drawer_b_pal": {
+    #     "height": ("App::PropertyFloat", 100.0, "Drawer height"),
+    #     "offset": ("App::PropertyFloat", 0.0, "Offset"),
+    # },
     "add_drawer_pal_glass": {
         "height": ("App::PropertyFloat", 100.0, "Drawer height"),
         "offset": ("App::PropertyFloat", 0.0, "Offset"),
@@ -73,7 +73,8 @@ FEATURES = {
         "width": ("App::PropertyFloat", 0.0, "Width"),
         "offset_x": ("App::PropertyFloat", 0.0, "Offset X"),
         "offset_z": ("App::PropertyFloat", 0.0, "Offset Z"),
-        "cant": ("App::PropertyString", "", "Edge type"),
+        "sep_edge": ("App::PropertyString", "", "Edge type"),
+        "edge_gap": ("App::PropertyFloat", 0.0, "Gap between edge of separator and edge of cabinet"),
     },
 }
 

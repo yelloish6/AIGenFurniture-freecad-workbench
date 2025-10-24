@@ -1,4 +1,4 @@
-import csv, os
+import csv, os, math
 # TODO add a method to cut-out boards, and add the effect in all output files
 
 DEFAULT_SHEET_LENGTH = 2800
@@ -9,30 +9,34 @@ DEFAULT_LOSS = 0.1
 class Board:
     def __init__(self, label, length, width, thick, cut_coords=None):
         """
-        :param label: eticheta
-        :param length: lungimea
-        :param width: latimea
-        :param thick: grosimea
+        :param label: label of the board
+        :param length: length
+        :param width: width
+        :param thick: thickness
         :param cut_coords: optional parameter for defining irregular shape boards
         """
 
         self.label = label
+        self.type = ""  # pal, pfl, front
+        self.material = ""
         self.length = length
         self.width = width
         self.thick = thick
-        self.obs = ""
         self.position = [self.length,  # dim x
                          self.width,  # dim y
                          self.thick,  # dim z
                          0,  # offset x
                          0,  # offset y
                          0]  # offset z
-        self.type = ""  # pal, pfl, front
-        self.material = ""
+        self.placement = {
+            "Base": {"x": 0.0, "y": 0.0, "z": 0.0},
+            "Rotation": {"Axis": (0.0, 0.0, 1.0), "Angle": 0.0}
+        }
         self.price = 0
         self.position_list = [] #
         self.cut_coords = cut_coords
         self.drill_list = []
+        self.obs = ""
         self.check_board()
 
     def add_obs(self, text):
@@ -46,10 +50,55 @@ class Board:
     def set_material(self, material):
         self.material = material
 
-    def rotate(self, axis):
+    def _normalize(self, v):
+        mag = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
+        if mag == 0:
+            return (0.0, 0.0, 0.0)
+        return (v[0] / mag, v[1] / mag, v[2] / mag)
+
+    def _rotation_matrix(self, axis, angle_rad):
+        """Return 3x3 rotation matrix for axis-angle."""
+        x, y, z = self._normalize(axis)
+        c = math.cos(angle_rad)
+        s = math.sin(angle_rad)
+        C = 1 - c
+        return [
+            [x * x * C + c, x * y * C - z * s, x * z * C + y * s],
+            [y * x * C + z * s, y * y * C + c, y * z * C - x * s],
+            [z * x * C - y * s, z * y * C + x * s, z * z * C + c]
+        ]
+
+    def _apply_rotation(self, v, M):
+        """Apply 3x3 rotation matrix M to vector v."""
+        return (
+            M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2],
+            M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2],
+            M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2],
+        )
+
+    def _compose_rotations(self, axis1, angle1, axis2, angle2):
+        """Compose two rotations (axis-angle) into one."""
+        # Convert both to matrices
+        R1 = self._rotation_matrix(axis1, angle1)
+        R2 = self._rotation_matrix(axis2, angle2)
+        # Matrix multiply: R = R2 * R1
+        R = [[sum(a * b for a, b in zip(R2_row, R1_col)) for R1_col in zip(*R1)] for R2_row in R2]
+        # Extract new axis-angle from R
+        trace = R[0][0] + R[1][1] + R[2][2]
+        angle = math.acos(max(-1.0, min(1.0, (trace - 1) / 2)))
+        if abs(angle) < 1e-8:
+            return ((0, 0, 1), 0.0)
+        x = (R[2][1] - R[1][2]) / (2 * math.sin(angle))
+        y = (R[0][2] - R[2][0]) / (2 * math.sin(angle))
+        z = (R[1][0] - R[0][1]) / (2 * math.sin(angle))
+        return (self._normalize((x, y, z)), angle)
+
+
+    def rotate(self, axis, angle=90):
         """
-        rotate the plank by 90 deg on the specified axis. dimensions are re-set to match the rotated position
+        rotate the board by 90 deg on the specified axis. dimensions are re-set to match the rotated position
         :param axis: axis to rotate around ("x"/"y"/"z")
+        :param angle: angle in degrees for rotation (default 90 deg)
         :return: n/a
         """
         self.position_list.append(["rotate", axis])
@@ -84,6 +133,21 @@ class Board:
             self.position[1] = init_y
             self.position[2] = init_z
 
+        angle_rad = math.radians(angle)
+
+        if isinstance(axis, str):
+            axis_map = {"x": (1, 0, 0), "y": (0, 1, 0), "z": (0, 0, 1)}
+            axis_vec = axis_map.get(axis.lower(), (0, 0, 1))
+        else:
+            axis_vec = axis
+
+        cur_axis = self.placement["Rotation"]["Axis"]
+        cur_angle = self.placement["Rotation"]["Angle"]
+        new_axis, new_angle = self._compose_rotations(cur_axis, cur_angle, axis_vec, angle_rad)
+
+        self.placement["Rotation"]["Axis"] = new_axis
+        self.placement["Rotation"]["Angle"] = new_angle
+
     def rotate_cw(self, axis):
         self.rotate(axis)
         self.rotate(axis)
@@ -91,7 +155,7 @@ class Board:
 
     def move(self, axis, offset):
         """
-        move a plank on a specified axis, by a specified amount
+        Move board along an axis (string or vector) by offset (mm).
         :param axis: axis to move on
         :param offset: amount to move by
         :return: n/a
@@ -103,6 +167,17 @@ class Board:
             self.position[4] = self.position[4] + int(offset)
         if axis == "z":
             self.position[5] = self.position[5] + int(offset)
+
+        if isinstance(axis, str):
+            dir_map = {"x": (1, 0, 0), "y": (0, 1, 0), "z": (0, 0, 1)}
+            dx, dy, dz = [c * offset for c in dir_map.get(axis.lower(), (0, 0, 0))]
+        else:
+            n = self._normalize(axis)
+            dx, dy, dz = [c * offset for c in n]
+
+        self.placement["Base"]["x"] += dx
+        self.placement["Base"]["y"] += dy
+        self.placement["Base"]["z"] += dz
 
     def get_m2(self):
         return float(self.length * self.width / 1000000)
@@ -122,6 +197,7 @@ class Board:
         print(f"{prefix}Material   : {self.material}")
         print(f"{prefix}Dims (LxWxT): {self.length} x {self.width} x {self.thick}")
         print(f"{prefix}Position   : {self.position} (x,y,z,ox,oy,oz)")
+        print(f"{prefix}Placement   : {self.placement} (Base, Rotation)")
         print(f"{prefix}Obs        : {self.obs}")
         print(f"{prefix}Cut Coords : {self.cut_coords if self.cut_coords else 'None'}")
         print(f"{prefix}Drill List : {self.drill_list if self.drill_list else '[]'}")
@@ -151,9 +227,9 @@ class Board:
           board2_face, board2_dim (u,v), board2_offset (u0,v0)
         All dims/offsets are in the *local* coordinates of each board.
         """
-        print(f"Checking connection between {board1.label} and {board2.label}")
-        board1.debug_print("  ")
-        board2.debug_print("  ")
+        # print(f"Checking connection between {board1.label} and {board2.label}")
+        # board1.debug_print("  ")
+        # board2.debug_print("  ")
         FACE_MAP = {
             ("x", +1): "right",
             ("x", -1): "left",
@@ -400,10 +476,8 @@ class Board:
         this method checks for issues with how a board is defined and prints ERRORS
         :return: None
         """
-        if (self.width or self.length) < 180:
-            print("WARNING: Can't apply cant on " + self.label + ". Width or length < 180mm. Additional costs might apply.")
         if (self.width or self.length) > 2000:
-            print("ERROR: Potential assembly issue: " + self.label + " Can't be transported and is difficult to handle. "
+            print(f"WARNING [board.py/check_board()]: Potential assembly issue: {self.label} Can't be transported and is difficult to handle. "
                                                                      "Use boards shorter than 2 meters")
 
 
@@ -416,7 +490,14 @@ class BoardPal(Board):
         self.type = "pal"
         self.material = ""
 
-        self.check_board()
+        self.check_board_pal()
+
+    def check_board_pal(self):
+        # additionally check if edge is applied on a board that has dimensions smaller than 180 mm
+        if self.length <= 180 and (self.cant_list[0] or self.cant_list[1]) != "":
+            print(f"WARNING [board.py/check_board_pal()]: Can't apply edge on {self.label} length. Length < 180mm. Additional costs might apply.")
+        elif self.width <= 180 and (self.cant_list[2] or self.cant_list[3]) != "":
+            print(f"WARNING: Can't apply cant on {self.label} width. Width < 180mm. Additional costs might apply.")
 
     def get_m_cant(self, cant_type):
         """
@@ -496,8 +577,8 @@ if __name__ == "__main__":
     # b2.move("x", 200)
 
     print("\nBoard positions:")
-    b1.print()
-    b2.print()
+    b1.debug_print()
+    b2.debug_print()
 
     # Check connection surface
     conn = Board.calculate_connection_surface(b1, b2)

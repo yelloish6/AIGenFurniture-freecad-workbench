@@ -25,6 +25,8 @@ def export_stl_order(order, output_folder, is_horizontal_layout = True):
         for element in cabinet.elements_list:
             if isinstance(element, Board):
                 board_mesh = generate_mesh_for_board(element)
+                print(f"DEBUG: export_stl_new.py")
+                element.debug_print()
                 position_mesh(board_mesh, element.position_list)
                 if not cabinet_mesh:
                     cabinet_mesh = board_mesh

@@ -89,8 +89,9 @@ def make_tower_box(label, height, width, depth, rules, box=None):
 
 def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
     """Factory for CorpCuPicioare with extra shelves parameter."""
-    plinta = getattr(box, "plinta", 100)
-    return CorpCuPicioare(label, height, width, depth, rules, plinta=plinta)
+    h_skirt = getattr(box, "skirt_height", 100)
+    has_skirting_board = getattr(box, "skirting_board", True)
+    return CorpCuPicioare(label, height, width, depth, rules, h_skirt=h_skirt, has_skirting_board=has_skirting_board)
 
 def make_corp_dressing(label, height, width, depth, rules, box=None):
     """Factory for Corp Dressing with extra parameter."""

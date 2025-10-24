@@ -63,7 +63,11 @@ class DrawersMixin:
         self.append(Accessory("surub", 8))
         self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
 
-    def add_drawer(self, sert_h, height_offset, box_type="a", bottom="pfl"):
+    def add_drawer(self, height, offset, box_type="a", bottom="pfl"):
+        sert_h = height
+        height_offset = offset
+
+    # def add_drawer(self, sert_h, height_offset, box_type="a", bottom="pfl"):
         """
         adds a drawer
         :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)

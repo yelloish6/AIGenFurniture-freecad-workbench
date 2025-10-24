@@ -113,6 +113,9 @@ def element_handler(cabinet, element_data):
         element = Front(element_data.get("label"), element_data.get("length"), element_data.get("width"), element_data.get("thick"))
         # element.move("z", element.thick + 2)
         cabinet.append(element)
+    elif element_type == "PFL":
+        element = Pfl(element_data.get("label"), element_data.get("length"), element_data.get("width"))
+        cabinet.append(element)
     elif element_type == "Accessory" or "accessory":
         element = Accessory(element_data.get("label"), element_data.get("pieces"))
         cabinet.append(element)
@@ -252,7 +255,7 @@ def cabinet_handler(cabinet_data):
     elif cabinet_type == "Dulap":
         return Dulap(label, height, width, depth, rules)
     elif cabinet_type == "CorpCuPicioare":
-        plinta = cabinet_data.get("plinta_height")
+        plinta = cabinet_data.get("skirt_height")
         return CorpCuPicioare(label, height, width, depth, rules, plinta)
 
     else:

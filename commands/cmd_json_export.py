@@ -63,81 +63,218 @@ def export(doc, output_path):
         # Always serialize; include empty/None as-is
         globals_dict[alias_name] = serialize_property_value(val)
 
+    # ✅ Collect elements and group them by Std_Part parent
+    part_groups = {}   # {part_obj: [element_dicts]}
+    root_elements = [] # elements not inside any Std_Part
 
-    elements = []
     for obj in doc.Objects:
-        if obj.TypeId in ["Part::Box"]:
-            if not hasattr(obj, "ElementType"):
-                continue
+        if obj.TypeId not in ["Part::Box"]:
+            continue
+        if not hasattr(obj, "ElementType"):
+            continue
 
-            placement = obj.Placement
+        # Determine parent Std_Part
+        parent_part = None
+        for parent in doc.Objects:
+            if parent.TypeId == "App::Part" and obj in getattr(parent, "Group", []):
+                parent_part = parent
+                break
+
+        placement = obj.Placement
+        base = placement.Base
+        rot = placement.Rotation
+
+        # Dimensions
+        if obj.TypeId == "Part::Cut":
+            bb = obj.Shape.BoundBox
+            width, depth, height = bb.XLength, bb.YLength, bb.ZLength
+        else:
+            width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
+
+        try:
+            yaw, pitch, roll = rot.toEuler()
+        except Exception:
+            yaw = pitch = roll = 0.0
+
+        element_type = getattr(obj, "ElementType", "Unknown")
+
+        element = {
+            "label": obj.Label,
+            "element_type": element_type,
+            "thick": height,
+            "length": width,
+            "width": depth,
+        }
+
+        # 👉 Positioning
+        positioning = []
+        def add_rot(axis, angle_deg):
+            try:
+                steps = int(round(angle_deg / 90.0)) % 4
+            except Exception:
+                steps = 0
+            for _ in range(abs(steps)):
+                positioning.append({"rotate": axis})
+
+        add_rot("x", roll)
+        add_rot("y", pitch)
+        add_rot("z", yaw)
+
+        if base.y != 0:
+            positioning.append({"move": ["y", base.y]})
+        if base.x != 0:
+            positioning.append({"move": ["x", base.x]})
+        if base.z != 0:
+            positioning.append({"move": ["z", base.z]})
+
+        element["positioning"] = positioning
+
+        # ➕ Export all "Element" group properties
+        element_props = {}
+        for prop in obj.PropertiesList:
+            group = obj.getGroupOfProperty(prop)
+            if group == "Element":
+                val = getattr(obj, prop)
+                element_props[prop] = serialize_property_value(val)
+
+        if element_props:
+            element.update(element_props)
+
+        # ➕ Add to proper group
+        if parent_part:
+            part_groups.setdefault(parent_part, []).append(element)
+        else:
+            root_elements.append(element)
+
+    # ✅ Convert part_groups into cabinet-like entries
+    part_cabinets = []
+    for part, elems in part_groups.items():
+        # Try to read the CabinetType property from the "Cabinet" group
+        if hasattr(part, "PropertiesList"):
+            cabinet_type = None
+            for prop in part.PropertiesList:
+                group = part.getGroupOfProperty(prop)
+                if group == "Cabinet" and prop == "CabinetType":
+                    cabinet_type = getattr(part, prop)
+                    break
+            if not cabinet_type:
+                cabinet_type = getattr(part, "CabinetType", "Unknown")
+        else:
+            cabinet_type = getattr(part, "CabinetType", "Unknown")
+
+        width = getattr(part, "Width", None)
+        depth = getattr(part, "Depth", None)
+        height = getattr(part, "Height", None)
+
+        cabinet = {
+            "label": part.Label,
+            "cabinet_type": cabinet_type,
+            "height": height,
+            "width": width,
+            "depth": depth,
+            "elements": elems
+        }
+        # optional: record Part placement if needed
+        try:
+            placement = part.Placement
             base = placement.Base
             rot = placement.Rotation
-
-            # Dimensions
-            width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
-            if obj.TypeId == "Part::Cut":
-                bb = obj.Shape.BoundBox
-                width, depth, height = bb.XLength, bb.YLength, bb.ZLength
-            else:
-                width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
-
-            try:
-                yaw, pitch, roll = rot.toEuler()
-            except Exception:
-                yaw = pitch = roll = 0.0
-
-            element_type = getattr(obj, "ElementType", "Unknown")
-
-            element = {
-                "label": obj.Label,
-                "element_type": element_type,
-                "thick": height,
-                "length": width,
-                "width": depth,
-            }
-
-            # 👉 Positioning
+            yaw, pitch, roll = rot.toEuler()
             positioning = []
-            # Include rotation for all axes (roll=X, pitch=Y, yaw=Z), in 90° steps
-            def add_rot(axis, angle_deg):
-                try:
-                    # invert direction: FreeCAD +90 (CW) -> 3 CCW steps; -90 (CCW) -> 1 CCW step
-                    #steps = (-int(round(angle_deg / 90.0))) % 4
-                    steps = int(round(angle_deg / 90.0)) % 4
-                except Exception:
-                    steps = 0
+            for axis, angle in zip(["x","y","z"], [roll, pitch, yaw]):
+                steps = int(round(angle / 90.0)) % 4
                 for _ in range(abs(steps)):
                     positioning.append({"rotate": axis})
+            if base.x or base.y or base.z:
+                for axis, val in zip(["x","y","z"], [base.x, base.y, base.z]):
+                    if val != 0:
+                        positioning.append({"move": [axis, val]})
+            if positioning:
+                cabinet["positioning"] = positioning
+        except Exception:
+            pass
 
-            add_rot("x", roll)
-            add_rot("y", pitch)
-            add_rot("z", yaw)
+        part_cabinets.append(cabinet)
 
-            if base.y != 0:
-                positioning.append({"move": ["y", base.y]})
-            if base.x != 0:
-                positioning.append({"move": ["x", base.x]})
-            if base.z != 0:
-                positioning.append({"move": ["z", base.z]})
+    # ✅ Final elements and cabinets
+    elements = root_elements
+    cabinets = part_cabinets
 
-            element["positioning"] = positioning
+    # elements = []
+    # for obj in doc.Objects:
 
-            # ➕ Export all "Element" group properties (generic, any type)
-            element_props = {}
-            for prop in obj.PropertiesList:
-                group = obj.getGroupOfProperty(prop)
-                if group == "Element":
-                    val = getattr(obj, prop)
-                    element_props[prop] = serialize_property_value(val)
-
-            if element_props:
-                element.update(element_props)
-
-            elements.append(element)
+        # if obj.TypeId in ["Part::Box"]:
+        #     if not hasattr(obj, "ElementType"):
+        #         continue
+        #
+        #     placement = obj.Placement
+        #     base = placement.Base
+        #     rot = placement.Rotation
+        #
+        #     # Dimensions
+        #     width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
+        #     if obj.TypeId == "Part::Cut":
+        #         bb = obj.Shape.BoundBox
+        #         width, depth, height = bb.XLength, bb.YLength, bb.ZLength
+        #     else:
+        #         width, depth, height = obj.Length.Value, obj.Width.Value, obj.Height.Value
+        #
+        #     try:
+        #         yaw, pitch, roll = rot.toEuler()
+        #     except Exception:
+        #         yaw = pitch = roll = 0.0
+        #
+        #     element_type = getattr(obj, "ElementType", "Unknown")
+        #
+        #     element = {
+        #         "label": obj.Label,
+        #         "element_type": element_type,
+        #         "thick": height,
+        #         "length": width,
+        #         "width": depth,
+        #     }
+        #
+        #     # 👉 Positioning
+        #     positioning = []
+        #     # Include rotation for all axes (roll=X, pitch=Y, yaw=Z), in 90° steps
+        #     def add_rot(axis, angle_deg):
+        #         try:
+        #             # invert direction: FreeCAD +90 (CW) -> 3 CCW steps; -90 (CCW) -> 1 CCW step
+        #             #steps = (-int(round(angle_deg / 90.0))) % 4
+        #             steps = int(round(angle_deg / 90.0)) % 4
+        #         except Exception:
+        #             steps = 0
+        #         for _ in range(abs(steps)):
+        #             positioning.append({"rotate": axis})
+        #
+        #     add_rot("x", roll)
+        #     add_rot("y", pitch)
+        #     add_rot("z", yaw)
+        #
+        #     if base.y != 0:
+        #         positioning.append({"move": ["y", base.y]})
+        #     if base.x != 0:
+        #         positioning.append({"move": ["x", base.x]})
+        #     if base.z != 0:
+        #         positioning.append({"move": ["z", base.z]})
+        #
+        #     element["positioning"] = positioning
+        #
+        #     # ➕ Export all "Element" group properties (generic, any type)
+        #     element_props = {}
+        #     for prop in obj.PropertiesList:
+        #         group = obj.getGroupOfProperty(prop)
+        #         if group == "Element":
+        #             val = getattr(obj, prop)
+        #             element_props[prop] = serialize_property_value(val)
+        #
+        #     if element_props:
+        #         element.update(element_props)
+        #
+        #     elements.append(element)
 
     # ✅ Extract cabinets
-    cabinets = []
+    # cabinets = []
     for obj in doc.Objects:
         if obj.TypeId in ["Part::Box", "Part::Cut"]:
             if not hasattr(obj, "CabinetType"):

@@ -109,8 +109,44 @@ def explode_box_to_cabinet(box):
         App.Console.PrintError(f"⚠ Unknown CabinetType '{cab_type}', using BaseBox.\n")
         cabinet = CABINETS["BaseBox"](box.Label, height, width, depth, rules)
 
+    import re
+    from collections import defaultdict
+
+    # === AUTO-APPLY BOX FEATURES ===
+    feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
+    features = defaultdict(lambda: defaultdict(dict))
+
+    # Collect features grouped by (feature_name, index)
+    for prop in box.PropertiesList:
+        match = feature_pattern.match(prop)
+        if not match:
+            continue
+        feature_name, index, param = match.groups()
+        value = getattr(box, prop)
+        features[feature_name][index][param] = value
+
+    # Execute feature methods dynamically
+    for feature_name, instances in features.items():
+        if not hasattr(cabinet, feature_name):
+            App.Console.PrintWarning(f"⚠ Cabinet has no method '{feature_name}' (skipping)\n")
+            continue
+        method = getattr(cabinet, feature_name)
+        for index, params in instances.items():
+            try:
+                # Call with ordered parameters (by function signature if possible)
+                method(**params)
+                App.Console.PrintMessage(f"✅ Applied feature '{feature_name}' #{index} with {params}\n")
+            except TypeError as e:
+                App.Console.PrintError(f"❌ Error applying feature '{feature_name}' #{index}: {e}\n")
+
     # Create container group
     cab_group = doc.addObject("App::Part", cabinet.label)
+
+    # Transfer cabinet properties to part
+    cab_group.addProperty("App::PropertyString", "CabinetType", "Cabinet", "Type of cabinet").CabinetType = cab_type
+    cab_group.addProperty("App::PropertyFloat", "Height", "Box", "Cabinet Height").Height = height
+    cab_group.addProperty("App::PropertyFloat", "Width", "Box", "Cabinet Height").Width = width
+    cab_group.addProperty("App::PropertyFloat", "Depth", "Box", "Cabinet Height").Depth = depth
 
     # Add accessories properties (parallel arrays: names + counts)
     cab_group.addProperty("App::PropertyStringList", "AccessoryTypes", "Cabinet",
@@ -129,6 +165,31 @@ def explode_box_to_cabinet(box):
             part.Width  = elem.width
             part.Height = elem.thick
 
+            part.addProperty("App::PropertyString", "ElementType", "Element", "Type of element")
+
+            # Map legacy code elem.type to FreeCAD ElementType definitions
+            element_type_map = {
+                "pal": "BoardPal",
+                "pfl": "PFL",
+                "front": "Front",
+                "blat": "Countertop"
+            }
+
+            try:
+                part.ElementType = element_type_map[elem.type]
+            except KeyError:
+                App.Console.PrintError(f"❌ Unknown board type '{elem.type}' in cabinet {cabinet.label}\n")
+                continue  # skip adding placement and attaching it
+
+            # --- Specific parameters for "pal" boards ---
+            if elem.type == "pal":
+                # Add four edge-related numeric properties under group "Element"
+                cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
+                for name, value in zip(cant_names, elem.cant_list):
+                    part.addProperty("App::PropertyString", name, "Element", f"Edge {name} flag")
+                    setattr(part, name, str(value))
+
+
             # Apply recorded transformations of the element (match STL)
             part.Placement = placement_from_position_list(elem.position_list)
             cab_group.addObject(part)
@@ -142,7 +203,8 @@ def explode_box_to_cabinet(box):
 
         elif elem.type == "accessory":  # lowercase type
             accessory_types.append(elem.label)
-            accessory_counts.append(int(getattr(elem, "count", 1)))
+            accessory_counts.append(int(elem.pieces))
+            # accessory_counts.append(int(getattr(elem, "count", 1)))
 
         else:
             App.Console.PrintError(f"❌ Unknown element type: {elem.type}\n")

@@ -17,6 +17,9 @@ ELEMENTS = {
     },
     "Front": {
         "tooltip": "Add a front board",
+    },
+    "PFL": {
+        "tooltip": "Add a thin HDF board"
     }
 }
 
@@ -40,10 +43,14 @@ def make_element_command(element_name, params):
             box.Label = element_name
             box.Length = 600
             box.Width = 500
-            box.Height = 18
+            if element_name == "PFL":
+                box.Height = 4
+            else:
+                box.Height = 18
 
             # Add a ElementType property
             box.addProperty("App::PropertyString", "ElementType", "Element", "Type of element").ElementType = element_name
+            box.addProperty("App::PropertyString", "BoardType", "Board", "Type of board").BoardType = element_name
 
             # Add parameters as properties
             for pname, value in params.items():
