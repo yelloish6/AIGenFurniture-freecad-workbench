@@ -47,7 +47,7 @@ def design_furniture(customer_data):
             for feature in additional_features:
                 feature_handler(designed_cabinet, feature)
         else:
-            print(f"No additional features implemented in {cabinet_label}.")
+            print(f"[WARNING] design_engine.py: No additional features implemented in {cabinet_label}.")
 
         # handling of "positioning" when positioning[{"move": ["x", 100]}, {"rotate": "x"}]
         if "positioning" in cabinet_data:
@@ -69,7 +69,7 @@ def design_furniture(customer_data):
             for element in additional_elements:
                 element_handler(designed_cabinet, element)
         else:
-            print(f"No additional elements in {cabinet_label}")
+            print(f"[WARNING] design_engine.py: No additional elements in {cabinet_label}")
         order.append(designed_cabinet)
     # define dummy cabinet for additional elements
     rules = load_default_rules(DEFAULT_RULES_PATH)

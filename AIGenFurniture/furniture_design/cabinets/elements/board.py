@@ -1,4 +1,5 @@
 import csv, os, math
+from AIGenFurniture.furniture_design.pricing.price_manager import PriceManager as pm
 # TODO add a method to cut-out boards, and add the effect in all output files
 
 DEFAULT_SHEET_LENGTH = 2800
@@ -420,40 +421,42 @@ class Board:
         """
         self.drill_list.append([diameter, face, int(x), int(y)])
 
-    def get_price_for_item(self, item_type, material):
-        """
-        this method searches the price_list.csv file for a matching accessory name and returns the matching price.
-        :return: price of the accessory
-        """
-        price_list_path = os.path.join(os.path.dirname(__file__), "price_list.csv")
-        with open(price_list_path) as price_list_file:
-            price_reader = csv.DictReader(price_list_file, delimiter=',')
-            found = False
-            for row in price_reader:
-                if row["Item"] == item_type and row["Material"] == material:
-                    found = True
-                    return float(row["Price"])
-            if not found:
-                print("ERROR: Price for " + item_type + ":" + material + " not found. Setting to 0 RON.")
-                return 0
 
-    def get_unit_for_item(self, type, material):
-    # TODO wrong implementation of unit management. To be corrected
-        """
-        this method searches the price_list.csv file for a matching accessory name and returns the matching price.
-        :return: price of the accessory
-        """
-        price_list_path = os.path.join(os.path.dirname(__file__), "price_list.csv")
-        with open(price_list_path) as price_list_file:
-            price_reader = csv.DictReader(price_list_file, delimiter=',')
-            found = False
-            for row in price_reader:
-                if row["Item"] == type and row["Material"] == material:
-                    found = True
-                    return row["Unit"]
-            if not found:
-                print("ERROR: Unit for " + type + ":" + material + " not found.")
-                return 0
+    # def get_price_for_item(self, item_type, material):
+    #     """
+    #     this method searches the price_list.csv file for a matching accessory name and returns the matching price.
+    #     :return: price of the accessory
+    #     """
+    #     # print(f"DEBUG board.py(get_price_for_item): {self.label}, {item_type}, {material}")
+    #     price_list_path = os.path.join(os.path.dirname(__file__), "price_list.csv")
+    #     with open(price_list_path) as price_list_file:
+    #         price_reader = csv.DictReader(price_list_file, delimiter=',')
+    #         found = False
+    #         for row in price_reader:
+    #             if row["Item"] == str(item_type) and row["Material"] == str(material):
+    #                 found = True
+    #                 return float(row["Price"])
+    #         if not found:
+    #             print("ERROR: Price for " + item_type + ": " + material + " not found. Setting to 0 RON.")
+    #             return 0
+
+    # def get_unit_for_item(self, type, material):
+    #       # TODO wrong implementation of unit management. To be corrected
+    #     """
+    #     this method searches the price_list.csv file for a matching accessory name and returns the matching price.
+    #     :return: price of the accessory
+    #     """
+    #     price_list_path = os.path.join(os.path.dirname(__file__), "price_list.csv")
+    #     with open(price_list_path) as price_list_file:
+    #         price_reader = csv.DictReader(price_list_file, delimiter=',')
+    #         found = False
+    #         for row in price_reader:
+    #             if row["Item"] == type and row["Material"] == material:
+    #                 found = True
+    #                 return row["Unit"]
+    #         if not found:
+    #             print("ERROR: Unit for " + type + ":" + material + " not found.")
+    #             return 0
 
     def get_price(self):
         """
@@ -462,14 +465,22 @@ class Board:
         :return: price of the accessory
         """
         board_size = self.get_m2()
-        price = self.get_price_for_item(self.type, self.material)
-        unit = self.get_unit_for_item(self.type, self.material)
+        price = pm.get_price_for_item(self.type, self.material)
+        unit = pm.get_unit_for_item(self.type, self.material)
         if unit == "m2":
             return int(board_size * price)
         elif unit == "m":
             return int(self.length / 1000 * price)
         elif unit == "sheet":
             return int(price / ((DEFAULT_SHEET_LENGTH * DEFAULT_SHEET_WIDTH / 1000000) * (1 - DEFAULT_LOSS)) * board_size)
+        elif unit == "piece":
+            return price
+        else:
+            print(f"WARNING [board.py]: Unknown unit '{unit}' for {self.type}/{self.material}. Returning 0.")
+            return 0
+
+    def get_unit(self):
+        return pm.get_unit_for_item(self.type, self.material)
 
     def check_board(self):
         """
@@ -532,10 +543,11 @@ class BoardPal(Board):
         :return:
         """
         price = super().get_price()
+
         m_cant_1 = self.get_m_cant("0.4")
-        price_cant1 = self.get_price_for_item("cant", "0.4")
+        price_cant1 = pm.get_price_for_item("cant", "0.4")
         m_cant_2 = self.get_m_cant("2")
-        price_cant2 = self.get_price_for_item("cant", "2")
+        price_cant2 = pm.get_price_for_item("cant", "2")
         return price + (m_cant_1 * price_cant1) + (m_cant_2 * price_cant2)
 
 

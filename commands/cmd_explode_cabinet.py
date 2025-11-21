@@ -78,7 +78,7 @@ def placement_from_position_list(position_list):
 def explode_box_to_cabinet(box):
     doc = App.ActiveDocument
     if not box:
-        App.Console.PrintError("⚠ No box selected.\n")
+        App.Console.PrintError("[WARNING] cmd_explode_cabinet.py: No box selected.\n")
         return
 
     # Get box dimensions
@@ -103,10 +103,10 @@ def explode_box_to_cabinet(box):
                 # For simple class constructors
                 cabinet = CabinetFactory(box.Label, height, width, depth, rules)
         else:
-            App.Console.PrintError(f"❌ Invalid cabinet factory for {cab_type}\n")
+            App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Invalid cabinet factory for {cab_type}\n")
             return
     else:
-        App.Console.PrintError(f"⚠ Unknown CabinetType '{cab_type}', using BaseBox.\n")
+        App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown CabinetType '{cab_type}', using BaseBox.\n")
         cabinet = CABINETS["BaseBox"](box.Label, height, width, depth, rules)
 
     import re
@@ -128,16 +128,16 @@ def explode_box_to_cabinet(box):
     # Execute feature methods dynamically
     for feature_name, instances in features.items():
         if not hasattr(cabinet, feature_name):
-            App.Console.PrintWarning(f"⚠ Cabinet has no method '{feature_name}' (skipping)\n")
+            App.Console.PrintWarning(f"[WARNING] cmd_explode_cabinet.py: Cabinet has no method '{feature_name}' (skipping)\n")
             continue
         method = getattr(cabinet, feature_name)
         for index, params in instances.items():
             try:
                 # Call with ordered parameters (by function signature if possible)
                 method(**params)
-                App.Console.PrintMessage(f"✅ Applied feature '{feature_name}' #{index} with {params}\n")
+                App.Console.PrintMessage(f"[OK] cmd_explode_cabinet.py: Applied feature '{feature_name}' #{index} with {params}\n")
             except TypeError as e:
-                App.Console.PrintError(f"❌ Error applying feature '{feature_name}' #{index}: {e}\n")
+                App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
 
     # Create container group
     cab_group = doc.addObject("App::Part", cabinet.label)
@@ -178,7 +178,7 @@ def explode_box_to_cabinet(box):
             try:
                 part.ElementType = element_type_map[elem.type]
             except KeyError:
-                App.Console.PrintError(f"❌ Unknown board type '{elem.type}' in cabinet {cabinet.label}\n")
+                App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown board type '{elem.type}' in cabinet {cabinet.label}\n")
                 continue  # skip adding placement and attaching it
 
             # --- Specific parameters for "pal" boards ---
@@ -207,7 +207,7 @@ def explode_box_to_cabinet(box):
             # accessory_counts.append(int(getattr(elem, "count", 1)))
 
         else:
-            App.Console.PrintError(f"❌ Unknown element type: {elem.type}\n")
+            App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown element type: {elem.type}\n")
 
     # Store accessories
     cab_group.AccessoryTypes = accessory_types
@@ -217,7 +217,7 @@ def explode_box_to_cabinet(box):
     box.ViewObject.Visibility = False
 
     doc.recompute()
-    App.Console.PrintMessage(f"✅ Exploded {box.Label} into cabinet {cabinet.label}\n")
+    App.Console.PrintMessage(f"[OK] Exploded {box.Label} into cabinet {cabinet.label}\n")
 
 
 class ExplodeBoxCommand:
@@ -236,7 +236,7 @@ class ExplodeBoxCommand:
     def Activated(self):
         sel = Gui.Selection.getSelection()
         if not sel:
-            App.Console.PrintError("⚠ Please select a box first.\n")
+            App.Console.PrintError("[WARNING] cmd_explode_cabinet.py: Please select a box first.\n")
             return
         explode_box_to_cabinet(sel[0])
 

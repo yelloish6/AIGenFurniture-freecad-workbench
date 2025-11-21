@@ -25,8 +25,6 @@ def export_stl_order(order, output_folder, is_horizontal_layout = True):
         for element in cabinet.elements_list:
             if isinstance(element, Board):
                 board_mesh = generate_mesh_for_board(element)
-                print(f"DEBUG: export_stl_new.py")
-                element.debug_print()
                 position_mesh(board_mesh, element.position_list)
                 if not cabinet_mesh:
                     cabinet_mesh = board_mesh
@@ -145,17 +143,10 @@ def generate_mesh(x, y, z, ox, oy, oz, cut_coords=None):
 
     faces = numpy.concatenate([faces, final_face])
 
-    # print(faces)
-    #
-    # print(vertices)
-
     meshes = mesh.Mesh(numpy.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
     for i, f in enumerate(faces):
         for j in range(3):
             meshes.vectors[i][j] = vertices[f[j], :]
-            # print(meshes.vectors)
-
-    # meshes.save('my_board.stl')
     return meshes
 
 
@@ -210,7 +201,7 @@ def rotate_mesh(my_mesh, axis):
     elif axis == "z":
         my_mesh.rotate([0.0, 0.0, 0.5], math.radians(-90))
     else:
-        print(f"ERROR: Unknown axis {axis}. Value must be x, y or z.")
+        print(f"[ERROR] export_stl_new.py: Unknown axis {axis}. Value must be x, y or z.")
 
 
 def move_mesh(my_mesh, axis, offset):
@@ -221,7 +212,7 @@ def move_mesh(my_mesh, axis, offset):
     elif axis == "z":
         my_mesh.z += offset
     else:
-        print(f"ERROR: Unknown axis {axis}. Value must be x, y or z.")
+        print(f"[ERROR] export_stl_new.py: Unknown axis {axis}. Value must be x, y or z.")
 
 
 def cabinet_rotate(cabinet, axis):
