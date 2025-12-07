@@ -17,8 +17,8 @@ FEATURES = {
 
     # drawers
     "add_tandem_box": {
-        "type": ("App::PropertyString", "", "Box type"),
-        "offset": ("App::PropertyFloat", 0.0, "Offset"),
+        "tandembox_type": ("App::PropertyString", "", "Box type"),
+        "height_offset": ("App::PropertyFloat", 0.0, "Offset"),
     },
     "add_drawer": {
         "height": ("App::PropertyFloat", 100.0, "Drawer height"),

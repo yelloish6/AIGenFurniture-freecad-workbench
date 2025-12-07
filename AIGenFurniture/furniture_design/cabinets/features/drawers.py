@@ -6,10 +6,11 @@ from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Pf
 
 class DrawersMixin:
 
-    def add_tandem_box(self, tip, height_offset):
+    def add_tandem_box(self, tandembox_type, height_offset):
         """
         method to add a BLUM TandemBox drawer in a Cabinet
-        :param tip:
+        :param tandembox_type: "M", "D"
+        :param height_offset: height of the drawer in the cabinet
         :return:
         """
         fund_label = self.label + ".ser.jos"
@@ -18,9 +19,9 @@ class DrawersMixin:
         spate_lung = self.width - 2 * 18 - 87
         fund_lat = self.depth - 20
         spate_lat = 0
-        if tip == "M":
+        if tandembox_type == "M":
             spate_lat = 68
-        elif tip == "D":
+        elif tandembox_type == "D":
             spate_lat = 183
         fund = BoardPal(fund_label, fund_lung, fund_lat, 16, "", "", "", "")
         fund.add_obs("PAL 16")
@@ -35,7 +36,7 @@ class DrawersMixin:
         spate.move("y", fund.width + spate.thick)
         spate.move("z", height_offset + fund.thick)
         self.append(spate)
-        self.append(Accessory("tandembox " + tip, 1))
+        self.append(Accessory("tandembox " + tandembox_type, 1))
         self.append(Accessory("surub 3.5x16", 18))
 
     def add_drawer_a_pfl(self, sert_h, height_offset):
@@ -64,35 +65,36 @@ class DrawersMixin:
         self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
 
     def add_drawer(self, height, offset, box_type="a", bottom="pfl"):
-        sert_h = height
-        height_offset = offset
+
 
     # def add_drawer(self, sert_h, height_offset, box_type="a", bottom="pfl"):
         """
         adds a drawer
-        :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)
-        :param height_offset: positioning of the drawer in the cabinet
+        :param height: height of the drawer (cuttlery drawer 100, regular drawers 200)
+        :param offset: height offset of the drawer in the cabinet
         :param box_type: "a" lateral assembles on the edge of the front board, or "b" on the back
         :param bottom: material of the bottom. Can be "pal" or "pfl"(default and not defined)
         :return:
         """
+        sert_h = height
+        height_offset = offset
 
-        gap_glisiera = 13
+        gap_slide = 13
         sert_height = sert_h
-        sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
-        sert_depth = self.depth - gap_glisiera
+        sert_width = self.width - (2 * self.thick_pal) - (2 * gap_slide)
+        sert_depth = self.depth - gap_slide
 
         if box_type == "a":
-            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
                                      height_offset)
         else:
-            self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+            self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
                                      height_offset)
 
         if bottom == "pal":
             fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                             self.thick_pal, "", "", "", "")
-            fund.move("x", (2 * self.thick_pal) + gap_glisiera)
+            fund.move("x", (2 * self.thick_pal) + gap_slide)
             fund.move("y", self.thick_pal)
             fund.move("z", height_offset)
 
@@ -104,7 +106,7 @@ class DrawersMixin:
             self.append(fund)
         else:
             pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
-            pfl.move("x", self.thick_pal + gap_glisiera + 2)
+            pfl.move("x", self.thick_pal + gap_slide + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
             self.append(pfl)
@@ -399,17 +401,33 @@ class DrawersMixin:
         # ASSEMBLIES[ASSEMBLY_TYPE](right, front)
         # ASSEMBLIES[ASSEMBLY_TYPE](right, back)
 
+    # def get_standard_slide_length(self, drawer_depth):
+    #     """
+    #     returns the standard drawer slider length based on given drawer depth
+    #     :param drawer_depth:
+    #     :return:
+    #     """
+    #     standard_slide_length = [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100]
+    #     if drawer_depth < standard_slide_length[0] or drawer_depth > standard_slide_length[len(standard_slide_length)-1] + 100:
+    #         print(f"ERROR: {self.label} drawer slide length our of limits!")
+    #     for i in range(len(standard_slide_length)-1):
+    #         if standard_slide_length[i] < drawer_depth < standard_slide_length[i + 1]:
+    #             # print(f"DEBUG: Std length for {drawer_depth} is {standard_slide_length[i]}")
+    #             return standard_slide_length[i]
+
     def get_standard_slide_length(self, drawer_depth):
         """
-        returns the standard drawer slider length based on given drawer depth
-        :param drawer_depth:
-        :return:
+        Return the closest lower standard drawer slide length for a given drawer depth.
         """
-        standard_slide_length = [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100]
-        if drawer_depth < standard_slide_length[0] or drawer_depth > standard_slide_length[len(standard_slide_length)-1] + 100:
-            print(f"ERROR: {self.label} drawer slide length our of limits!")
-        for i in range(len(standard_slide_length)-1):
-            if standard_slide_length[i] < drawer_depth < standard_slide_length[i + 1]:
-                # print(f"DEBUG: Std length for {drawer_depth} is {standard_slide_length[i]}")
-                return standard_slide_length[i]
+        standard_lengths = [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100]
 
+        # Optional warning
+        if drawer_depth < standard_lengths[0] or drawer_depth > standard_lengths[-1] + 100:
+            print(f"ERROR: {self.label} drawer slide length out of limits!")
+
+        # Find the largest standard length ≤ drawer_depth
+        for length in reversed(standard_lengths):
+            if drawer_depth >= length:
+                return length
+
+        return None
