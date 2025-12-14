@@ -1,4 +1,4 @@
-from AIGenFurniture.furniture_design.cabinets.Kitchen.sink_box import ASSEMBLY_TYPE
+from AIGenFurniture.furniture_design.cabinets.architectures.sink_box import ASSEMBLY_TYPE
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Front

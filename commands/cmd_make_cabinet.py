@@ -4,24 +4,28 @@ import FreeCADGui as Gui
 # -------------------------
 # Define the CABINETS dict
 # -------------------------
+
+# TODO clean-up the cabinet toolbar, rename the cabinets. This CABINETS list needs to come from the init.py where architectures are defined.
 CABINETS = {
+    # BaseCabinet
     "BaseBox": {
         "tooltip": "Add a base box cabinet",
     },
     "BaseCorner": {
         "tooltip": "Add a base corner cabinet",
-        "cut_width": ("App::PropertyInteger", 0, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 0, "Cut Depth"),
-        "l_r": ("App::PropertyString", "", "left or right Corner"),
+        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+        "l_r": ("App::PropertyString", "right", "left or right Corner"),
         "with_polita": ("App::PropertyBool", True, "Has a shelf")
     },
     "TopCorner": {
         "tooltip": "Add a top corner cabinet",
-        "cut_width": ("App::PropertyInteger", 0, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 0, "Cut Depth"),
-        "l_r": ("App::PropertyString", "", "Left or Right Corner"),
+        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+        "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
         "polite": ("App::PropertyInteger", 1, "Number of shelves included")
     },
+    #BaseShelf
     "Raft": {
         "tooltip": "Add a shelf unit (Raft)",
         "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
@@ -29,21 +33,26 @@ CABINETS = {
     "Bar": {
         "tooltip": "Add a bar cabinet",
     },
+    #BaseJolly
     "JollyBox": {
         "tooltip": "Add a JollyBox cabinet",
     },
+    #TopCabinet
     "TopBox": {
         "tooltip": "Add a top box cabinet",
     },
+    #BaseSink
     "SinkBox": {
         "tooltip": "Add a sink cabinet",
     },
+    #Tower
     "TowerBox": {
         "tooltip": "Add a tower cabinet",
-        "gap_list": ("App::PropertyIntegerList", [20, 40], "Gap List"),
+        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
         "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
         "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
     },
+    #Dishwasher
     "MsVBox": {
         "tooltip": "Add a MsVBox cabinet",
     },
@@ -52,24 +61,27 @@ CABINETS = {
         "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
         "rounded": ("App::PropertyBool", False, "Rounded shelves"),
     },
+    #Bench
     "Banca": {
         "tooltip": "Add a bench cabinet",
         "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
         "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
         "height_base": ("App::PropertyInteger", 100, "Height of base"),
     },
-    "Etajera": {
-        "tooltip": "Add an Etajera (shelf unit)",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
-    },
+    # "Etajera": {
+    #     "tooltip": "Add an Etajera (shelf unit)",
+    #     "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+    # },
+    #Tower with Skirt
     "CorpDressing": {
         "tooltip": "Add a wardrobe cabinet",
-        "gap_list": ("App::PropertyIntegerList", [20, 40], "Gap List"),
+        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
         "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
     },
-    "Dulap": {
-        "tooltip": "Add a simple closet (Dulap)",
-    },
+    # "Dulap": {
+    #     "tooltip": "Add a simple closet (Dulap)",
+    # },
+    # Base Shelf with Skirt
     "CorpCuPicioare": {
         "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
         "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),

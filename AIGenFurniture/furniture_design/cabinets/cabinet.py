@@ -203,11 +203,11 @@ class Cabinet(DrawersMixin, ShelvesMixin):
         else:
             raise NameError("ERROR: element ", lab, " of type ", typ, " not found.")
 
-    def add_front(self, split_list, tip):
+    def add_front(self, split_list, front_type):
         """
 
         :param split_list: [[front1_%height,front1_%width][front2_%height,front2_%width]]
-        :param tip: "door" "drawer" "cover"
+        :param front_type: "door" "drawer" "cover"
         :return: none
         """
 
@@ -237,7 +237,7 @@ class Cabinet(DrawersMixin, ShelvesMixin):
                         h_count += split[0]
 
             self.append(usa)
-            if tip == "door":
+            if front_type == "door":
                 if (h * w) > 280000:
                     self.append(Accessory("balama aplicata", 3))
                     self.append(Accessory("amortizor", 2))
@@ -247,9 +247,9 @@ class Cabinet(DrawersMixin, ShelvesMixin):
                     self.append(Accessory("amortizor", 1))
                     self.append(Accessory("surub 3.5x16", 8))
                 self.append(Accessory("maner", 1))
-            elif tip == "cover":
+            elif front_type == "cover":
                 self.append(Accessory("surub intre corpuri", math.ceil(h * w / 40000)))
-            elif tip == "drawer":
+            elif front_type == "drawer":
                 self.append(Accessory("maner", 1))
 
     def add_front_lateral(self, left_right):

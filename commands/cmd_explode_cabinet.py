@@ -2,16 +2,12 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 
-from AIGenFurniture.furniture_design.cabinets.Kitchen.base_box import BaseBox
+from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat, Front, Pfl
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
-from AIGenFurniture.furniture_design.cabinets.Kitchen import CABINETS
+from AIGenFurniture.furniture_design.cabinets.architectures import CABINETS
 
 # TODO generate also the features for each cabinet, not only the cabinet
-
-# def get_icon(filename):
-#     base_dir = os.path.dirname(os.path.dirname(__file__))  # goes up from Resources/ to CabinetWorkbench/
-#     return os.path.join(base_dir, "Resources", "icons", filename)
 
 def apply_movements_to_part(part, position_list):
     pl = App.Placement()  # identity

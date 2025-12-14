@@ -1,7 +1,6 @@
 import os, sys
 import json
 import argparse
-# from furniture_design.cabinets.kitchen_cabinet import KitchenCabinet # Import specific cabinet type
 
 # TODO vendor-lock dependencies in a requirements.txt file
 

@@ -1,8 +1,15 @@
 FEATURES = {
     # direct cabinet features
-    "front": {
+    "add_front": {
         "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
         "front_type": ("App::PropertyString", "", "Front type"),
+    },
+
+    "add_front_manual": {
+        "height": ("App::PropertyFloat", 0.0, "Height"),
+        "width": ("App::PropertyFloat", 0.0, "Width"),
+        "offset_x": ("App::PropertyFloat", 0.0, "Offset X"),
+        "offset_z": ("App::PropertyFloat", 0.0, "Offset Z"),
     },
 
     "remove_all_pfl": {

@@ -1,13 +1,5 @@
-# from .furniture_design.cabinets.Kitchen.sink_box import SinkBox
-# from .furniture_design.cabinets.Kitchen.raft import Raft
-# from .furniture_design.cabinets.Kitchen.top_corner import TopCorner
-# from .furniture_design.cabinets.Dressing.corp_cu_picioare import CorpCuPicioare
-# from .scipy.special import kwargs
-
 from .order import Order
-# from .cabinets.Kitchen.kitchen import *
-# from .cabinets.Dressing import (Banca, CorpCuPicioare, CorpDressing, Dulap, Etajera)
-from .cabinets.Kitchen import *
+from .cabinets.architectures import *
 from .cabinets.cabinet import Cabinet
 from .cabinets.elements.board import *
 from .cabinets.elements.accessory import *

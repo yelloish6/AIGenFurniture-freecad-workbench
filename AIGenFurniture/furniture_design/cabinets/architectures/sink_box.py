@@ -1,4 +1,4 @@
-from AIGenFurniture.furniture_design.cabinets.Kitchen.base_box import BaseBox
+from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal
 from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
