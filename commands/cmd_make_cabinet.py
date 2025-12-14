@@ -1,94 +1,6 @@
 import FreeCAD as App
 import FreeCADGui as Gui
-
-# -------------------------
-# Define the CABINETS dict
-# -------------------------
-
-# TODO clean-up the cabinet toolbar, rename the cabinets. This CABINETS list needs to come from the init.py where architectures are defined.
-CABINETS = {
-    # BaseCabinet
-    "BaseBox": {
-        "tooltip": "Add a base box cabinet",
-    },
-    "BaseCorner": {
-        "tooltip": "Add a base corner cabinet",
-        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-        "l_r": ("App::PropertyString", "right", "left or right Corner"),
-        "with_polita": ("App::PropertyBool", True, "Has a shelf")
-    },
-    "TopCorner": {
-        "tooltip": "Add a top corner cabinet",
-        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-        "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
-        "polite": ("App::PropertyInteger", 1, "Number of shelves included")
-    },
-    #BaseShelf
-    "Raft": {
-        "tooltip": "Add a shelf unit (Raft)",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
-    },
-    "Bar": {
-        "tooltip": "Add a bar cabinet",
-    },
-    #BaseJolly
-    "JollyBox": {
-        "tooltip": "Add a JollyBox cabinet",
-    },
-    #TopCabinet
-    "TopBox": {
-        "tooltip": "Add a top box cabinet",
-    },
-    #BaseSink
-    "SinkBox": {
-        "tooltip": "Add a sink cabinet",
-    },
-    #Tower
-    "TowerBox": {
-        "tooltip": "Add a tower cabinet",
-        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-        "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
-        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
-    },
-    #Dishwasher
-    "MsVBox": {
-        "tooltip": "Add a MsVBox cabinet",
-    },
-    "BaseCornerShelf": {
-        "tooltip": "Add a base corner shelf cabinet",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
-        "rounded": ("App::PropertyBool", False, "Rounded shelves"),
-    },
-    #Bench
-    "Banca": {
-        "tooltip": "Add a bench cabinet",
-        "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
-        "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
-        "height_base": ("App::PropertyInteger", 100, "Height of base"),
-    },
-    # "Etajera": {
-    #     "tooltip": "Add an Etajera (shelf unit)",
-    #     "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
-    # },
-    #Tower with Skirt
-    "CorpDressing": {
-        "tooltip": "Add a wardrobe cabinet",
-        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
-    },
-    # "Dulap": {
-    #     "tooltip": "Add a simple closet (Dulap)",
-    # },
-    # Base Shelf with Skirt
-    "CorpCuPicioare": {
-        "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
-        "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
-        "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
-    }
-}
-
+from AIGenFurniture.furniture_design.cabinets.architectures import UI_CABINETS, META_KEYS
 
 # -------------------------
 # Command class generator
@@ -96,9 +8,10 @@ CABINETS = {
 def make_cabinet_command(cabinet_name, params):
     class CabinetCommand:
         def GetResources(self):
+            display_name = params.get("label", cabinet_name)
             return {
                 "Pixmap": "",  # put path to icon if you have one
-                "MenuText": f"{cabinet_name}",
+                "MenuText": f"{display_name}",
                 "ToolTip": params.get("tooltip", f"Add {cabinet_name}"),
             }
 
@@ -117,7 +30,8 @@ def make_cabinet_command(cabinet_name, params):
 
             # Add parameters as properties
             for pname, value in params.items():
-                if pname == "tooltip":  # skip tooltip
+                # skip META_KEYS from creating parameters
+                if pname in META_KEYS:
                     continue
                 ptype, default, desc = value
                 if not hasattr(box, pname):
@@ -132,5 +46,9 @@ def make_cabinet_command(cabinet_name, params):
 # -------------------------
 # Register commands in FreeCAD
 # -------------------------
-for cab_name, cab_data in CABINETS.items():
+REGISTERED_CABINETS = []
+for cab_name, cab_data in UI_CABINETS.items():
+    if not cab_data.get("active", True):
+        continue # skip inactive cabinets
     Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data))
+    REGISTERED_CABINETS.append(cab_name)

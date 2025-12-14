@@ -18,6 +18,123 @@ from .top_corner import TopCorner
 from .tower_box import TowerBox
 
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
+META_KEYS = {"label", "active", "tooltip"} # all keys in the UI_CABINETS that are not parameters of the cabinets
+
+UI_CABINETS = {
+    # BaseCabinet
+    "BaseBox": {
+        "label": "Base Cabinet",
+        "active": True,
+        "tooltip": "Add a base cabinet",
+    },
+    "BaseCorner": {
+        "label": "Base Corner",
+        "active": True,
+        "tooltip": "Add a base corner cabinet",
+        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+        "l_r": ("App::PropertyString", "right", "left or right Corner"),
+        "with_polita": ("App::PropertyBool", True, "Has a shelf")
+    },
+    #BaseShelf
+    "Raft": {
+        "label": "Base Shelf",
+        "active": True,
+        "tooltip": "Add a shelf unit (Raft)",
+        "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
+    },
+    # Base Shelf with Skirt
+    "CorpCuPicioare": {
+        "label": "Base Shelf with Skirt",
+        "active": True,
+        "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
+        "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
+        "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
+    },
+    #BaseJolly
+    "JollyBox": {
+        "label": "Base Jolly",
+        "active": True,
+        "tooltip": "Add a JollyBox cabinet",
+    },
+    # BaseSink
+    "SinkBox": {
+        "label": "Base Sink",
+        "active": True,
+        "tooltip": "Add a sink cabinet",
+    },
+    "BaseCornerShelf": {
+        "label": "Base Corner Shelf",
+        "active": True,
+        "tooltip": "Add a base corner shelf cabinet",
+        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+        "rounded": ("App::PropertyBool", False, "Rounded shelves"),
+    },
+    # Dishwasher
+    "MsVBox": {
+        "label": "Dishwasher",
+        "active": True,
+        "tooltip": "Add a MsVBox cabinet",
+    },
+    #TopCabinet
+    "TopBox": {
+        "label": "Top Cabinet",
+        "active": True,
+        "tooltip": "Add a top box cabinet",
+    },
+    "TopCorner": {
+        "label": "Top Corner",
+        "active": True,
+        "tooltip": "Add a top corner cabinet",
+        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+        "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
+        "polite": ("App::PropertyInteger", 1, "Number of shelves included")
+    },
+    #Tower
+    "TowerBox": {
+        "label": "Tower",
+        "active": True,
+        "tooltip": "Add a tower cabinet",
+        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
+        "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
+        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
+    },
+    "Etajera": {
+        "label": "Etajera (n.a)",
+        "active": False,
+        "tooltip": "Add an Etajera (shelf unit)",
+        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+    },
+    #Tower with Skirt
+    "CorpDressing": {
+        "label": "Tower with skirt",
+        "active": True,
+        "tooltip": "Add a wardrobe cabinet",
+        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
+        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
+    },
+    "Dulap": {
+        "label": "Base Cabinet",
+        "active": False,
+        "tooltip": "Add a simple closet (Dulap)",
+    },
+
+    "Bar": {
+        "label": "Bar",
+        "active": True,
+        "tooltip": "Add a bar cabinet",
+    },
+    # Bench
+    "Banca": {
+        "label": "Bench",
+        "active": True,
+        "tooltip": "Add a bench cabinet",
+        "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
+        "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
+        "height_base": ("App::PropertyInteger", 100, "Height of base"),
+    }
+}
 
 __all__ = [
     "Banca",

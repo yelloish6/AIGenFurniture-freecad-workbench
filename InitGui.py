@@ -37,7 +37,7 @@ class CabinetWorkbench (Gui.Workbench):
         # Gui.activateWorkbench("CabinetWorkbench")
 
         self.appendToolbar("Features", [f"Cmd_Add_{f}" for f in commands.cmd_make_feature.FEATURES])
-        self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in commands.cmd_make_cabinet.CABINETS])
+        self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in commands.cmd_make_cabinet.REGISTERED_CABINETS])
         self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in commands.cmd_make_element.ELEMENTS])
         self.appendToolbar("Cabinet Tools", [
                                     "Export_JSON",
@@ -55,8 +55,9 @@ class CabinetWorkbench (Gui.Workbench):
         pass
 
     def ContextMenu(self, recipient):
-        self.appendContextMenu("Cabinets", ["Cmd_Base_Box"])
-        self.appendContextMenu("Features", ["Cmd_Add_Shelf"])
+        # self.appendContextMenu("Cabinets", ["Cmd_Base_Box"])
+        # self.appendContextMenu("Features", ["Cmd_Add_Shelf"])
+        pass
 
     def GetClassName(self):
         return "Gui::PythonWorkbench"
