@@ -18,7 +18,6 @@ from .top_corner import TopCorner
 from .tower_box import TowerBox
 
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
-# TODO: Rename folder from Kitchen to architectures and refactor
 
 __all__ = [
     "Banca",
