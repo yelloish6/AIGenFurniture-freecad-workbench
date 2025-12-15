@@ -38,7 +38,7 @@ class Board:
         self.cut_coords = cut_coords
         self.drill_list = []
         self.obs = ""
-        self.check_board()
+        # self.check_board() # disabled for MVP, to be reactivated once check board feature is implemented
 
     def add_obs(self, text):
         """
@@ -501,7 +501,7 @@ class BoardPal(Board):
         self.type = "pal"
         self.material = ""
 
-        self.check_board_pal()
+        # self.check_board_pal() # disabled in MVP, to be added once feature is implemented
 
     def check_board_pal(self):
         # additionally check if edge is applied on a board that has dimensions smaller than 180 mm

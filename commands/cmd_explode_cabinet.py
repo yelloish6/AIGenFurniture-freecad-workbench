@@ -5,7 +5,7 @@ import os
 from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat, Front, Pfl
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
-from AIGenFurniture.furniture_design.cabinets.architectures import CABINETS
+from AIGenFurniture.furniture_design.cabinets.architectures import get_cabinet_factory
 
 # TODO generate also the features for each cabinet, not only the cabinet
 
@@ -88,22 +88,14 @@ def explode_box_to_cabinet(box):
     # Rules (normally from spreadsheet / OrderVar)
     rules = load_default_rules(DEFAULT_RULES_PATH)
 
-    # Lookup cabinet factory
-    if cab_type in CABINETS:
-        CabinetFactory = CABINETS[cab_type]
-        # Handle special factories (functions) vs normal classes
-        if callable(CabinetFactory):
-            try:
-                cabinet = CabinetFactory(box.Label, height, width, depth, rules, box=box)
-            except TypeError:
-                # For simple class constructors
-                cabinet = CabinetFactory(box.Label, height, width, depth, rules)
-        else:
-            App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Invalid cabinet factory for {cab_type}\n")
-            return
-    else:
-        App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown CabinetType '{cab_type}', using BaseBox.\n")
-        cabinet = CABINETS["BaseBox"](box.Label, height, width, depth, rules)
+    factory = get_cabinet_factory(cab_type)
+    if not factory:
+        App.Console.PrintError(
+            f"[ERROR] Unknown or inactive CabinetType '{cab_type}'. Falling back to BaseBox.\n"
+        )
+        factory = get_cabinet_factory("BaseBox")
+
+    cabinet = factory(box.Label, height, width, depth, rules, box=box)
 
     import re
     from collections import defaultdict
@@ -189,11 +181,6 @@ def explode_box_to_cabinet(box):
             # Apply recorded transformations of the element (match STL)
             part.Placement = placement_from_position_list(elem.position_list)
             cab_group.addObject(part)
-            # apply_movements_to_part(part, elem.position_list)
-            # # ... existing code ...
-            # # Also apply cabinet-level transforms (match STL applying cabinet.position_list)
-            # if getattr(cabinet, "position_list", None):
-            #     apply_movements_to_part(part, cabinet.position_list)
 
             cab_group.addObject(part)
 

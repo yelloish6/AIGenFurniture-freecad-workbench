@@ -18,153 +18,6 @@ from .top_corner import TopCorner
 from .tower_box import TowerBox
 
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
-META_KEYS = {"label", "active", "tooltip"} # all keys in the UI_CABINETS that are not parameters of the cabinets
-
-UI_CABINETS = {
-    # BaseCabinet
-    "BaseBox": {
-        "label": "Base Cabinet",
-        "active": True,
-        "tooltip": "Add a base cabinet",
-    },
-    "BaseCorner": {
-        "label": "Base Corner",
-        "active": True,
-        "tooltip": "Add a base corner cabinet",
-        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-        "l_r": ("App::PropertyString", "right", "left or right Corner"),
-        "with_polita": ("App::PropertyBool", True, "Has a shelf")
-    },
-    #BaseShelf
-    "Raft": {
-        "label": "Base Shelf",
-        "active": True,
-        "tooltip": "Add a shelf unit (Raft)",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
-    },
-    # Base Shelf with Skirt
-    "CorpCuPicioare": {
-        "label": "Base Shelf with Skirt",
-        "active": True,
-        "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
-        "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
-        "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
-    },
-    #BaseJolly
-    "JollyBox": {
-        "label": "Base Jolly",
-        "active": True,
-        "tooltip": "Add a JollyBox cabinet",
-    },
-    # BaseSink
-    "SinkBox": {
-        "label": "Base Sink",
-        "active": True,
-        "tooltip": "Add a sink cabinet",
-    },
-    "BaseCornerShelf": {
-        "label": "Base Corner Shelf",
-        "active": True,
-        "tooltip": "Add a base corner shelf cabinet",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
-        "rounded": ("App::PropertyBool", False, "Rounded shelves"),
-    },
-    # Dishwasher
-    "MsVBox": {
-        "label": "Dishwasher",
-        "active": True,
-        "tooltip": "Add a MsVBox cabinet",
-    },
-    #TopCabinet
-    "TopBox": {
-        "label": "Top Cabinet",
-        "active": True,
-        "tooltip": "Add a top box cabinet",
-    },
-    "TopCorner": {
-        "label": "Top Corner",
-        "active": True,
-        "tooltip": "Add a top corner cabinet",
-        "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
-        "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-        "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
-        "polite": ("App::PropertyInteger", 1, "Number of shelves included")
-    },
-    #Tower
-    "TowerBox": {
-        "label": "Tower",
-        "active": True,
-        "tooltip": "Add a tower cabinet",
-        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-        "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
-        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
-    },
-    "Etajera": {
-        "label": "Etajera (n.a)",
-        "active": False,
-        "tooltip": "Add an Etajera (shelf unit)",
-        "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
-    },
-    #Tower with Skirt
-    "CorpDressing": {
-        "label": "Tower with skirt",
-        "active": True,
-        "tooltip": "Add a wardrobe cabinet",
-        "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-        "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
-    },
-    "Dulap": {
-        "label": "Base Cabinet",
-        "active": False,
-        "tooltip": "Add a simple closet (Dulap)",
-    },
-
-    "Bar": {
-        "label": "Bar",
-        "active": True,
-        "tooltip": "Add a bar cabinet",
-    },
-    # Bench
-    "Banca": {
-        "label": "Bench",
-        "active": True,
-        "tooltip": "Add a bench cabinet",
-        "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
-        "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
-        "height_base": ("App::PropertyInteger", 100, "Height of base"),
-    }
-}
-
-__all__ = [
-    "Banca",
-    "Bar",
-    "BaseBox",
-    "BaseCorner",
-    "BaseCornerShelf",
-    "CorpCuPicioare",
-    "CorpDressing",
-    "Dulap",
-    "Etajera",
-    "JollyBox",
-    "MsVBox",
-    "Raft",
-    "SinkBox",
-    "TopBox",
-    "TopCorner",
-    "TowerBox",
-]
-
-# Generic registry: all cabinets that follow the standard constructor
-_GENERIC_CABINETS = {
-    "Bar": Bar,
-    "BaseBox": BaseBox,
-    "Dulap": Dulap,
-    "JollyBox": JollyBox,
-    "MsVBox": MsVBox,
-    "SinkBox": SinkBox,
-    "TopBox": TopBox,
-}
 
 # Special cases: cabinets that require extra arguments
 def make_base_corner_shelf(label, height, width, depth, rules, box=None):
@@ -228,19 +81,240 @@ def make_bench(label, height, width, depth, rules, box=None):
     height_base = getattr(box, "height_base")
     return Banca(label, height, width, depth, rules, gap_front = gap_front, gap_lat = gap_lat, height_base = height_base)
 
-_SPECIAL_CABINETS = {
-    "Banca": make_bench,
-    "BaseCorner": make_base_corner,
-    "BaseCornerShelf": make_base_corner_shelf,
-    "CorpCuPicioare": make_corp_cu_picioare,
-    "CorpDressing": make_corp_dressing,
-    "Etajera": make_etajera,
-    "Raft": make_raft,
-    "TopCorner": make_top_corner,
-    "TowerBox": make_tower_box,
+CABINET_DEFINITIONS = {
+    "BaseBox": {
+        "class": BaseBox,
+        "factory": None,
+        "ui": {
+            "label": "Base Cabinet",
+            "enabled": True,
+            "tooltip": "Add a base cabinet",
+        },
+        "params": {}
+
+    },
+    "BaseCorner": {
+        "class": BaseCorner,
+        "factory": make_base_corner,
+        "ui": {
+            "label": "Base Corner",
+            "enabled": True,
+            "tooltip": "Add a base corner cabinet",
+        },
+        "params": {
+            "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+            "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+            "l_r": ("App::PropertyString", "right", "left or right Corner"),
+            "with_polita": ("App::PropertyBool", True, "Has a shelf")
+        }
+    },
+    "Raft": {
+        "class": Raft,
+        "factory": make_raft,
+        "ui": {
+            "label": "Base Shelf",
+            "enabled": True,
+            "tooltip": "Add a shelf unit (Raft)",
+        },
+        "params":{
+            "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
+        }
+    },
+    "CorpCuPicioare": {
+        "class": CorpCuPicioare,
+        "factory": make_corp_cu_picioare,
+        "ui": {
+            "label": "Base Shelf with Skirt",
+            "enabled": True,
+            "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
+        },
+        "params": {
+            "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
+            "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
+        }
+    },
+    "JollyBox": {
+        "class": JollyBox,
+        "factory": None,
+        "ui": {
+            "label": "Base Jolly",
+            "enabled": True,
+            "tooltip": "Add a JollyBox cabinet",
+        },
+        "params": {}
+    },
+    "SinkBox": {
+        "class": SinkBox,
+        "factory": None,
+        "ui": {
+            "label": "Base Sink",
+            "enabled": True,
+            "tooltip": "Add a sink cabinet",
+        },
+        "params": {}
+    },
+    "BaseCornerShelf": {
+        "class": BaseCornerShelf,
+        "factory": make_base_corner_shelf,
+        "ui": {
+            "label": "Base Corner Shelf",
+            "enabled": True,
+            "tooltip": "Add a base corner shelf cabinet",
+        },
+        "params": {
+            "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+            "rounded": ("App::PropertyBool", False, "Rounded shelves"),
+        }
+    },
+    "MsVBox": {
+        "class": MsVBox,
+        "factory": None,
+        "ui": {
+            "label": "Dishwasher",
+            "enabled": True,
+            "tooltip": "Add a MsVBox cabinet",
+        },
+        "params": {}
+    },
+    "TopBox": {
+        "class": TopBox,
+        "factory": None,
+        "ui": {
+            "label": "Top Cabinet",
+            "enabled": True,
+            "tooltip": "Add a top box cabinet",
+        },
+        "params": {}
+    },
+    "TopCorner": {
+        "class": TopCorner,
+        "factory": make_top_corner,
+        "ui": {
+            "label": "Top Corner",
+            "enabled": True,
+            "tooltip": "Add a top corner cabinet",
+        },
+        "params": {
+            "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
+            "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
+            "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
+            "polite": ("App::PropertyInteger", 1, "Number of shelves included")
+        }
+
+    },
+    "TowerBox": {
+        "class": TowerBox,
+        "factory": make_tower_box,
+        "ui": {
+            "label": "Tower",
+            "enabled": True,
+            "tooltip": "Add a tower cabinet",
+        },
+        "params": {
+            "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
+            "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
+        },
+    },
+    "Etajera": {
+        "class": Etajera,
+        "factory": make_etajera,
+        "ui": {
+            "label": "Etajera (n.a)",
+            "enabled": True,
+            "tooltip": "Add an Etajera (shelf unit)",
+        },
+        "params": {
+            "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
+        }
+
+
+    },
+    "CorpDressing": {
+        "class": CorpDressing,
+        "factory": make_corp_dressing,
+        "ui": {
+            "label": "Tower with skirt",
+            "enabled": True,
+            "tooltip": "Add a wardrobe cabinet",
+        },
+        "params": {
+            "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
+        }
+    },
+    "Dulap": {
+        "class": Dulap,
+        "factory": None,
+        "ui": {
+            "label": "Base Cabinet (n.a)",
+            "enabled": True,
+            "tooltip": "Add a simple closet (Dulap)",
+        },
+        "params": {}
+    },
+
+    "Bar": {
+        "class": Bar,
+        "factory": None,
+        "ui": {
+            "label": "Bar",
+            "enabled": True,
+            "tooltip": "Add a bar cabinet",
+        },
+        "params": {}
+
+    },
+    "Banca": {
+        "class": Banca,
+        "factory": make_bench,
+        "ui": {
+            "label": "Bench",
+            "enabled": True,
+            "tooltip": "Add a bench cabinet",
+        },
+        "params": {
+            "gap_front": ("App::PropertyInteger", 50, "Gap for front"),
+            "gap_lat": ("App::PropertyInteger", 50, "Gap for lateral"),
+            "height_base": ("App::PropertyInteger", 100, "Height of base"),
+        }
+    }
 }
 
-# Unified registry
-CABINETS = {}
-CABINETS.update(_GENERIC_CABINETS)
-CABINETS.update(_SPECIAL_CABINETS)
+__all__ = list(CABINET_DEFINITIONS.keys())
+CABINETS = list(CABINET_DEFINITIONS.keys(), )
+
+def get_enabled_ui_cabinets():
+    return {
+        name: data
+        for name, data in CABINET_DEFINITIONS.items()
+        if data["ui"].get("enabled", False)
+    }
+
+def get_cabinet_factory(cab_type):
+    """
+    Return a callable that creates a cabinet instance.
+    The callable ALWAYS accepts (label, height, width, depth, rules, box=None)
+    """
+    data = CABINET_DEFINITIONS.get(cab_type)
+    if not data:
+        return None
+
+    if not data["ui"].get("enabled", False):
+        return None
+
+    factory = data.get("factory")
+    if factory:
+        return factory
+
+    # Default: wrap class constructor
+    cls = data["class"]
+
+    def _default_factory(label, height, width, depth, rules, box=None):
+        return cls(label, height, width, depth, rules)
+
+    return _default_factory
+
+
+def get_cabinet_params(name):
+    return CABINET_DEFINITIONS[name].get("params", {})

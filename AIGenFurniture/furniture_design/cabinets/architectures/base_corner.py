@@ -320,7 +320,6 @@ class BaseCorner(Cabinet):
         self.append(Accessory("surub blat", 4))
         self.append(Accessory("L", 2))
         self.append(Accessory("surub", 19))
-        print(f"DEBUG base_corner.py: {self.label}, {cut_width}, {cut_depth}")
         self.append(Accessory("plinta", (cut_width + cut_depth) / 1000))
         self.append(Accessory("sipca apa", (self.width + self.depth) / 1000))
 

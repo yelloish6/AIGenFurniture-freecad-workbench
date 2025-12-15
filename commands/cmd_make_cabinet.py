@@ -1,18 +1,18 @@
 import FreeCAD as App
 import FreeCADGui as Gui
-from AIGenFurniture.furniture_design.cabinets.architectures import UI_CABINETS, META_KEYS
+from AIGenFurniture.furniture_design.cabinets.architectures import get_enabled_ui_cabinets
 
 # -------------------------
 # Command class generator
 # -------------------------
-def make_cabinet_command(cabinet_name, params):
+def make_cabinet_command(cabinet_name, ui, params):
     class CabinetCommand:
         def GetResources(self):
-            display_name = params.get("label", cabinet_name)
+            display_name = ui.get("label", cabinet_name)
             return {
                 "Pixmap": "",  # put path to icon if you have one
-                "MenuText": f"{display_name}",
-                "ToolTip": params.get("tooltip", f"Add {cabinet_name}"),
+                "MenuText": ui.get("label", f"{cabinet_name}"),       # f"{display_name}",
+                "ToolTip": ui.get("tooltip", f"Add {cabinet_name}"),
             }
 
         def Activated(self):
@@ -30,9 +30,6 @@ def make_cabinet_command(cabinet_name, params):
 
             # Add parameters as properties
             for pname, value in params.items():
-                # skip META_KEYS from creating parameters
-                if pname in META_KEYS:
-                    continue
                 ptype, default, desc = value
                 if not hasattr(box, pname):
                     box.addProperty(ptype, pname, "Cabinet", desc)
@@ -47,8 +44,6 @@ def make_cabinet_command(cabinet_name, params):
 # Register commands in FreeCAD
 # -------------------------
 REGISTERED_CABINETS = []
-for cab_name, cab_data in UI_CABINETS.items():
-    if not cab_data.get("active", True):
-        continue # skip inactive cabinets
-    Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data))
+for cab_name, cab_data in get_enabled_ui_cabinets().items():
+    Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data["ui"], cab_data["params"]))
     REGISTERED_CABINETS.append(cab_name)
