@@ -1,5 +1,7 @@
 from .drawers import DrawersMixin
 from .shelves import ShelvesMixin
+from .fronts import FrontMixin
+from .backs import BackMixin
 
 # FEATURE REGISTRY
 FEATURES = {
@@ -9,13 +11,13 @@ FEATURES = {
         "tooltip": "Add a drawer",
         "params": {
             "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
-            "front_type": ("App::PropertyString", "", "Front type"),
+            "front_type": ("App::PropertyString", "door", "Front type"),
         }
     },
 
     "add_front_manual": {
         "label": "Manual Front",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a manual front",
         "params": {
             "height": ("App::PropertyFloat", 300.0, "Height"),
@@ -27,7 +29,7 @@ FEATURES = {
 
     "remove_all_pfl": {
         "label": "Remove all HDF",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Remove all HDF elements",
         "params": {
             "remove_all_pfl": ("App::PropertyBool", True, "Remove HDF"),
@@ -45,7 +47,7 @@ FEATURES = {
     },
     "add_pfl": {
         "label": "Add HDF",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add HDF on the back of the cabinet",
         "params": {}
     },
@@ -93,7 +95,7 @@ FEATURES = {
     },
     "add_pol_2": {
         "label": "Shelf - configurable",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a shelf that can be configured",
         "params": {
             "orient": ("App::PropertyString", "h", "orientation [h or v]"),
@@ -104,7 +106,7 @@ FEATURES = {
     },
     "add_separator": {
         "label": "Separator",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a separator",
         "params": {
             "orient": ("App::PropertyString", "V", "Orientation"),
@@ -113,7 +115,7 @@ FEATURES = {
     },
     "add_wine_shelf": {
         "label": "Wine rack",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a wine rack inside the cabinet",
         "params": {
             "goluri": ("App::PropertyInteger", 4, "Number of slots"),
@@ -123,7 +125,7 @@ FEATURES = {
     },
     "add_sep_v": {
         "label": "Vertical Separator",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a vertical separator",
         "params": {
             "height": ("App::PropertyFloat", 0.0, "Height"),
@@ -134,7 +136,7 @@ FEATURES = {
     },
     "add_sep_h": {
         "label": "Horizontal separator",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a horizontal separator",
         "params": {
             "width": ("App::PropertyFloat", 0.0, "Width"),

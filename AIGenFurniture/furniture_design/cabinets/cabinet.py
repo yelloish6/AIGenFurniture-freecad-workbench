@@ -1,16 +1,15 @@
-from AIGenFurniture.furniture_design.cabinets.elements.board import *
-from AIGenFurniture.furniture_design.cabinets.elements.accessory import *
 
 from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 from AIGenFurniture.furniture_design.cabinets.features.drawers import DrawersMixin
 from AIGenFurniture.furniture_design.cabinets.features.shelves import ShelvesMixin
-import math, json
+from AIGenFurniture.furniture_design.cabinets.features.fronts import FrontMixin
+from AIGenFurniture.furniture_design.cabinets.features.backs import BackMixin
 
 # TODO default rules must be moved on cabinet level and they don't need to be an argument for the init method.
 #  Replace rules with "cabinet_data" as a dictionary for all generic parameters of a cabinet.
-# TODO: assembly type to be given as parameter of the cabinet, also directly in FReeCAD, as drop-down
+# TODO: assembly type to be given as parameter of the cabinet, also directly in FreeCAD, as drop-down
 
-class Cabinet(DrawersMixin, ShelvesMixin):
+class Cabinet(DrawersMixin, ShelvesMixin, FrontMixin, BackMixin):
     def __init__(self, label, height, width, depth, rules, assembly_type = "euro_screw"):
         """
         collection of boards forming one cabinet
@@ -62,24 +61,6 @@ class Cabinet(DrawersMixin, ShelvesMixin):
             if self.elements_list[i].type == item_type and self.elements_list[i].label == label:
                 index = i
         self.elements_list.pop(index)
-
-    def remove_all_pfl(self):
-    #TODO BUGFIX - scoate doar ultimul PFL, nu toate.
-        index = 0
-        for i in range(len(self.elements_list)):
-            if self.elements_list[i].type == "pfl":
-                index = i
-        if index != 0:
-            self.elements_list.pop(index)
-
-    def add_pfl(self):
-        placa = Pfl(self.label + ".pfl", self.width - 4, self.height - 4)
-        placa.rotate("x")
-        placa.move("y", self.depth + 1 + 4)
-        placa.move("x", 2)
-        placa.move("z", 2)
-        self.append(placa)
-        self.append(Accessory("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150)))
 
     def get_element_list_by_type(self, element_type):
         sub_list = []
@@ -202,77 +183,6 @@ class Cabinet(DrawersMixin, ShelvesMixin):
             return self.elements_list.__getitem__(index)
         else:
             raise NameError("ERROR: element ", lab, " of type ", typ, " not found.")
-
-    def add_front(self, split_list, front_type):
-        """
-
-        :param split_list: [[front1_%height,front1_%width][front2_%height,front2_%width]]
-        :param front_type: "door" "drawer" "cover"
-        :return: none
-        """
-
-        h_tot = self.height - self.front_gap
-        h_count = 0
-        w_count = 0
-        w_tot = self.width - self.front_gap
-        origin = [self.front_gap, self.front_gap]
-        for i in range(len(split_list)):
-            split = split_list[i]
-            h = int((h_tot * split[0] / 100) - self.front_gap)
-            w = int((w_tot * split[1] / 100) - self.front_gap)
-            usa = Front(self.label + "_" + str(i + 1), h, w, self.thick_front)
-            usa.rotate("x")
-            usa.rotate_cw("y")
-            usa.move("x", origin[0])
-            usa.move("z", origin[1])
-            usa.move("x", usa.width)
-            if w_count != 100:
-                origin[0] += usa.width + int(self.front_gap / 2)
-                w_count += split[1]
-                if w_count == 100:
-                    origin[0] = self.front_gap
-                    w_count = 0
-                    if h_count != 100:
-                        origin[1] += usa.length + int(self.front_gap / 2)
-                        h_count += split[0]
-
-            self.append(usa)
-            if front_type == "door":
-                if (h * w) > 280000:
-                    self.append(Accessory("balama aplicata", 3))
-                    self.append(Accessory("amortizor", 2))
-                    self.append(Accessory("surub 3.5x16", 12))
-                else:
-                    self.append(Accessory("balama aplicata", 2))
-                    self.append(Accessory("amortizor", 1))
-                    self.append(Accessory("surub 3.5x16", 8))
-                self.append(Accessory("maner", 1))
-            elif front_type == "cover":
-                self.append(Accessory("surub intre corpuri", math.ceil(h * w / 40000)))
-            elif front_type == "drawer":
-                self.append(Accessory("maner", 1))
-
-    def add_front_lateral(self, left_right):
-        front = Front(self.label + ".fr_lat", self.height, self.depth + self.thick_front, self.thick_front)
-        if left_right == "left":
-            front.rotate_cw("y")
-            front.move("y", -self.thick_front)
-        elif left_right == "right":
-            front.rotate_cw("y")
-            front.move("x", self.width)
-        self.append(front)
-
-    def add_front_manual(self, height, width, offset_x, offset_z):
-        fr = Front(self.label + ".man", height, width, self.thick_front)
-        fr.rotate("x")
-        fr.rotate_cw("y")
-        fr.move("x", fr.width)
-        fr.move("x", self.front_gap)
-        # fr.move("z", self.front_gap)
-        fr.move("x", offset_x)
-        fr.move("z", offset_z)
-        # fr.move("y", - self.thick_front)
-        self.append(fr)
 
     def print(self):
         print(f"[cabinet.py] Printing cabinet:")
