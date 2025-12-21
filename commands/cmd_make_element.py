@@ -1,38 +1,18 @@
 import FreeCAD as App
 import FreeCADGui as Gui
+from AIGenFurniture.furniture_design.cabinets.elements import ELEMENTS
 
-# -------------------------
-# Define the ELEMENTS dict
-# -------------------------
-ELEMENTS = {
-    "BoardPal": {
-        "tooltip": "Add a standard chipboard",
-        "cant_L1": ("App::PropertyString", "", "Edge length 1"),
-        "cant_L2": ("App::PropertyString", "", "Edge length 2"),
-        "cant_l1": ("App::PropertyString", "", "Edge width 1"),
-        "cant_l2": ("App::PropertyString", "", "Edge width 2"),
-    },
-    "Countertop": {
-        "tooltip": "Add a countertop board",
-    },
-    "Front": {
-        "tooltip": "Add a front board",
-    },
-    "PFL": {
-        "tooltip": "Add a thin HDF board"
-    }
-}
 
 # -------------------------
 # Command class generator
 # -------------------------
-def make_element_command(element_name, params):
+def make_element_command(element_name, data):
     class ElementCommand:
         def GetResources(self):
             return {
                 "Pixmap": "",  # put path to icon if you have one
-                "MenuText": f"{element_name}",
-                "ToolTip": params.get("tooltip", f"Add {element_name}"),
+                "MenuText": data.get("label", f"{element_name}"),
+                "ToolTip": data.get("tooltip", f"{element_name}"),
             }
 
         def Activated(self):
@@ -45,6 +25,8 @@ def make_element_command(element_name, params):
             box.Width = 500
             if element_name == "PFL":
                 box.Height = 4
+            elif element_name == "Countertop":
+                box.Height = 38
             else:
                 box.Height = 18
 
@@ -53,9 +35,8 @@ def make_element_command(element_name, params):
             box.addProperty("App::PropertyString", "BoardType", "Board", "Type of board").BoardType = element_name
 
             # Add parameters as properties
+            params = data.get("params", element_name)
             for pname, value in params.items():
-                if pname == "tooltip":  # skip tooltip
-                    continue
                 ptype, default, desc = value
                 if not hasattr(box, pname):
                     box.addProperty(ptype, pname, "Element", desc)

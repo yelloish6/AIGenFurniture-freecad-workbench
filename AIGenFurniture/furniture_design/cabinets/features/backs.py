@@ -14,7 +14,7 @@ class BackMixin:
 
 
     def add_pfl(self):
-        placa = Pfl(self.label + ".pfl", self.width - 4, self.height - 4)
+        placa = Pfl(self.label + ".hdf", self.width - 4, self.height - 4)
         placa.rotate("x")
         placa.move("y", self.depth + 1 + 4)
         placa.move("x", 2)

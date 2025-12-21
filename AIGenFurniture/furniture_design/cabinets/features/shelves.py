@@ -15,7 +15,7 @@ class ShelvesMixin:
         pol_lung = self.width - (2 * self.thick_pal)
         pol_lat = (self.depth - 20)
         for i in range(nr):
-            pol = BoardPal(self.label + ".pol", pol_lung, pol_lat, self.thick_pal, cant, "", "", "")
+            pol = BoardPal(self.label + ".shelf", pol_lung, pol_lat, self.thick_pal, cant, "", "", "")
             pol.move("x", self.thick_pal)
             pol.move("z", round(self.height / (nr + 1)) * (i + 1))
             pol.move("y", 20)

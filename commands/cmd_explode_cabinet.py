@@ -7,8 +7,6 @@ from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Bl
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from AIGenFurniture.furniture_design.cabinets.architectures import get_cabinet_factory
 
-# TODO generate also the features for each cabinet, not only the cabinet
-
 def apply_movements_to_part(part, position_list):
     pl = App.Placement()  # identity
     for movement in position_list:
@@ -123,12 +121,12 @@ def explode_box_to_cabinet(box):
             try:
                 # Call with ordered parameters (by function signature if possible)
                 method(**params)
-                App.Console.PrintMessage(f"[OK] cmd_explode_cabinet.py: Applied feature '{feature_name}' #{index} with {params}\n")
+                App.Console.PrintMessage(f"[OK] Applied feature '{feature_name}' #{index} with {params}\n")
             except TypeError as e:
                 App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
 
     # Create container group
-    cab_group = doc.addObject("App::Part", cabinet.label)
+    cab_group = doc.addObject("App::Part", f'Assy_{cabinet.label}')
 
     # Transfer cabinet properties to part
     cab_group.addProperty("App::PropertyString", "CabinetType", "Cabinet", "Type of cabinet").CabinetType = cab_type
@@ -200,7 +198,7 @@ def explode_box_to_cabinet(box):
     box.ViewObject.Visibility = False
 
     doc.recompute()
-    App.Console.PrintMessage(f"[OK] Exploded {box.Label} into cabinet {cabinet.label}\n")
+    App.Console.PrintMessage(f"[OK] Generated {cabinet.label} from {box.Label}.\n")
 
 
 class ExplodeBoxCommand:
@@ -209,8 +207,8 @@ class ExplodeBoxCommand:
         base_dir = os.path.dirname(os.path.dirname(__file__))  # goes up from Resources/ to CabinetWorkbench/
         return {
             "Pixmap": os.path.join(base_dir, "Resources", "icons", "icon_explode_box.png"),
-            "MenuText": "Explode Box to Cabinet",
-            "ToolTip": "Explode a simple box into a Cabinet architecture"
+            "MenuText": "Generate Cabinet",
+            "ToolTip": "Generate cabinet structure based on the parameters of the cabinet box"
         }
 
     def IsActive(self):

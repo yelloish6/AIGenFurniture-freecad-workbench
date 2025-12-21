@@ -10,17 +10,12 @@ class FrontMixin:
         :param front_type: "door" "drawer" "cover"
         :return: none
         """
-        print(type(split_list), split_list)
-        print(type(front_type), front_type)
-
         def parse_split_list(split_list):
             if isinstance(split_list, str):
                 return ast.literal_eval(split_list)
             return split_list
 
         split_list = parse_split_list(split_list)
-
-        print(type(split_list), split_list)
 
         h_tot = self.height - self.front_gap
         h_count = 0
@@ -31,7 +26,7 @@ class FrontMixin:
             split = split_list[i]
             h = int((h_tot * split[0] / 100) - self.front_gap)
             w = int((w_tot * split[1] / 100) - self.front_gap)
-            usa = Front(self.label + "_" + str(i + 1), h, w, self.thick_front)
+            usa = Front(self.label + "_front" + str(i + 1), h, w, self.thick_front)
             usa.rotate("x")
             usa.rotate_cw("y")
             usa.move("x", origin[0])
@@ -76,7 +71,7 @@ class FrontMixin:
 
 
     def add_front_manual(self, height, width, offset_x, offset_z):
-        fr = Front(self.label + ".man", height, width, self.thick_front)
+        fr = Front(self.label + ".front", height, width, self.thick_front)
         fr.rotate("x")
         fr.rotate_cw("y")
         fr.move("x", fr.width)

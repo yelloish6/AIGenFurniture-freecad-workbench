@@ -21,12 +21,12 @@ class BaseBox(Cabinet):
 
         # arhitectura
         # jos
-        jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal,
+        jos = BoardPal(self.label + ".down", self.width, self.depth, self.thick_pal,
                        self.cant_lab,"", self.cant_lab, self.cant_lab)
         self.append(jos)
 
         # lat rotit pe Y si ridicat pe z cu grosimea lui jos
-        lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth, self.thick_pal,
+        lat1 = BoardPal(self.label + ".lat_l", self.height - self.thick_pal, self.depth, self.thick_pal,
                         self.cant_lab,"", "", "")
         lat1.rotate("y")
         lat1.rotate("y")
@@ -38,7 +38,7 @@ class BaseBox(Cabinet):
         # ASSEMBLIES[ASSEMBLY_TYPE](jos, lat1)
 
         # lat rotit pe y, translatat pe x cu (jos - grosime), translatat pe z cu grosime jos
-        lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        lat2 = BoardPal(self.label + ".lat_r", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat2.rotate("y")
         lat2.rotate("y")
@@ -51,7 +51,7 @@ class BaseBox(Cabinet):
         # ASSEMBLIES[ASSEMBLY_TYPE](jos, lat2)
 
         # leg translatat pe z cu (lungimea lat + offset lat - grosime leg), si pe x cu grosime lat
-        leg1 = BoardPal(self.label + ".leg1", self.width - (2 * self.thick_pal), 100, self.thick_pal,
+        leg1 = BoardPal(self.label + ".top1", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
         leg1.move("z", lat1.length + jos.thick - leg1.thick)
         leg1.move("x", lat1.thick)
@@ -60,7 +60,7 @@ class BaseBox(Cabinet):
         # ASSEMBLIES[ASSEMBLY_TYPE](leg1, lat1)
         # ASSEMBLIES[ASSEMBLY_TYPE](leg1, lat2)
 
-        leg2 = BoardPal(self.label + ".leg2", self.width - (2 * self.thick_pal), 100, self.thick_pal,
+        leg2 = BoardPal(self.label + ".top2", self.width - (2 * self.thick_pal), 100, self.thick_pal,
                         self.cant_lab, self.cant_lab, "", "")
         leg2.move("z", lat1.length + jos.thick - leg1.thick)
         leg2.move("y", lat1.width - leg2.width)

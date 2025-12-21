@@ -40,10 +40,10 @@ class CabinetWorkbench (Gui.Workbench):
         self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in commands.cmd_make_cabinet.REGISTERED_CABINETS])
         self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in commands.cmd_make_element.ELEMENTS])
         self.appendToolbar("Cabinet Tools", [
-                                    "Export_JSON",
-                                    "Create_Globals_Spreadsheet",
+#                                    "Export_JSON",
+#                                    "Create_Globals_Spreadsheet",
                                     "Explode_Box_To_Cabinet",
-                                    "AIGenFurniture"
+#                                    "AIGenFurniture"
                                     ]
                            )
         self.appendToolbar("Manipulation", ["Draft_Move"])

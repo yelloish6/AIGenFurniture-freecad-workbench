@@ -55,7 +55,7 @@ FEATURES = {
     # drawers
     "add_tandem_box": {
         "label": "Tandembox",
-        "enabled": True,
+        "enabled": False,
         "tooltip": "Add a Tandembox drawer",
         "params": {
             "tandembox_type": ("App::PropertyString", "", "Box type"),
@@ -90,7 +90,7 @@ FEATURES = {
         "tooltip": "Add a shelves",
         "params": {
             "nr": ("App::PropertyInteger", 1, "Number of shelves"),
-            "cant": ("App::PropertyString", "", "Edge type"),
+            "cant": ("App::PropertyString", "2", "Edge type"),
         }
     },
     "add_pol_2": {

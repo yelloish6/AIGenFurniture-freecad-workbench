@@ -98,7 +98,7 @@ CABINET_DEFINITIONS = {
         "factory": make_base_corner,
         "ui": {
             "label": "Base Corner",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a base corner cabinet",
         },
         "params": {
@@ -113,7 +113,7 @@ CABINET_DEFINITIONS = {
         "factory": make_raft,
         "ui": {
             "label": "Base Shelf",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a shelf unit (Raft)",
         },
         "params":{
@@ -125,7 +125,7 @@ CABINET_DEFINITIONS = {
         "factory": make_corp_cu_picioare,
         "ui": {
             "label": "Base Shelf with Skirt",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
         },
         "params": {
@@ -138,7 +138,7 @@ CABINET_DEFINITIONS = {
         "factory": None,
         "ui": {
             "label": "Base Jolly",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a JollyBox cabinet",
         },
         "params": {}
@@ -148,7 +148,7 @@ CABINET_DEFINITIONS = {
         "factory": None,
         "ui": {
             "label": "Base Sink",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a sink cabinet",
         },
         "params": {}
@@ -158,7 +158,7 @@ CABINET_DEFINITIONS = {
         "factory": make_base_corner_shelf,
         "ui": {
             "label": "Base Corner Shelf",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a base corner shelf cabinet",
         },
         "params": {
@@ -171,7 +171,7 @@ CABINET_DEFINITIONS = {
         "factory": None,
         "ui": {
             "label": "Dishwasher",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a MsVBox cabinet",
         },
         "params": {}
@@ -191,7 +191,7 @@ CABINET_DEFINITIONS = {
         "factory": make_top_corner,
         "ui": {
             "label": "Top Corner",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a top corner cabinet",
         },
         "params": {
@@ -221,7 +221,7 @@ CABINET_DEFINITIONS = {
         "factory": make_etajera,
         "ui": {
             "label": "Etajera (n.a)",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add an Etajera (shelf unit)",
         },
         "params": {
@@ -235,7 +235,7 @@ CABINET_DEFINITIONS = {
         "factory": make_corp_dressing,
         "ui": {
             "label": "Tower with skirt",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a wardrobe cabinet",
         },
         "params": {
@@ -248,7 +248,7 @@ CABINET_DEFINITIONS = {
         "factory": None,
         "ui": {
             "label": "Base Cabinet (n.a)",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a simple closet (Dulap)",
         },
         "params": {}
@@ -259,7 +259,7 @@ CABINET_DEFINITIONS = {
         "factory": None,
         "ui": {
             "label": "Bar",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a bar cabinet",
         },
         "params": {}
@@ -270,7 +270,7 @@ CABINET_DEFINITIONS = {
         "factory": make_bench,
         "ui": {
             "label": "Bench",
-            "enabled": True,
+            "enabled": False,
             "tooltip": "Add a bench cabinet",
         },
         "params": {
