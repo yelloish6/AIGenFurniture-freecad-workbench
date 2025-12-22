@@ -28,7 +28,7 @@ def export_and_generate():
     os.makedirs(output_dir, exist_ok=True)
 
     # Export JSON directly into the output folder
-    json_path = os.path.join(output_dir, "kitchen_layout.json")
+    json_path = os.path.join(output_dir, "layout.json")
     cmd_json_export.export(doc, json_path)   # you wrap your exporter in a function
 
     # # ensure vendor path is in PYTHONPATH

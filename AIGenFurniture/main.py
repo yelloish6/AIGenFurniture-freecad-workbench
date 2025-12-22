@@ -44,28 +44,6 @@ def main():
 
     run(args.input, args.output)
 
-    # # Assuming your input files are in the customer_input directory, if not change to the right path
-    # # input_directory = "customer_input"
-    # # input_file = "kitchen_layout.json"
-    # # output_directory = "output"
-    #
-    # # Create output directory if it doesn't exist
-    # os.makedirs(output_dir, exist_ok=True)
-    #
-    # # Load input file and output file
-    # # input_path = os.path.join(input_directory, input_file)
-    # customer_data = load_customer_input(input_path)
-    #
-    # # Generate furniture based on input data and store it under order.
-    # order = design_furniture(customer_data)
-    #
-    # # # Create output directory if it doesn't exist
-    # # customer_output_directory = os.path.join(output_directory, input_file.replace(".json", "_output"))
-    # # os.makedirs(customer_output_directory, exist_ok=True)
-    #
-    # # Generate all drawings and manufacturing files for the furniture design under order
-    # generate_manufacturing_files(order, output_dir)
-
     print(f"✅ Furniture generation complete.\nInput:  {input_path}\nOutput: {output_dir}")
 
 if __name__ == "__main__":

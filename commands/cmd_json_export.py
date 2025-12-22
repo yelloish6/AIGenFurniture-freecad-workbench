@@ -383,12 +383,9 @@ def export(doc, output_path):
     export_data["cabinets"] = cabinets
     export_data["elements"] = elements
 
-    # fc_path = doc.FileName or os.path.expanduser("~/kitchen_layout.json")
-    # output_path = os.path.join(os.path.dirname(fc_path), "kitchen_layout.json")
-
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(export_data, f, indent=2, ensure_ascii=False)
-    FreeCAD.Console.PrintMessage(f"✅ Exported {len(cabinets)} cabinets to: {output_path}\n")
+    # FreeCAD.Console.PrintMessage(f"✅ Exported {len(cabinets)} cabinets to: {output_path}\n")
 
 
 class ExportJSONCommand:
@@ -409,8 +406,8 @@ class ExportJSONCommand:
             FreeCAD.Console.PrintError("No active document open.\n")
             return
 
-        fc_path = doc.FileName or os.path.expanduser("~/kitchen_layout.json")
-        output_path = os.path.join(os.path.dirname(fc_path), "kitchen_layout.json")
+        fc_path = doc.FileName or os.path.expanduser("~/layout.json")
+        output_path = os.path.join(os.path.dirname(fc_path), "layout.json")
         try:
             export(doc, output_path)
         except Exception as e:
