@@ -212,11 +212,12 @@ def export_cost_sheet(order, output_folder):
     cost_sheet_file.close()
 
 
-def print_order_summary(order):
+def print_order_summary(order, output_folder):
     """
     Prints a summary of the size and costs of an order, mainly for debugging purposes. Actual offer for the customer
     is generated using the generate_offer_file() method
     :param order:
+    :param output_folder: not used
     :return:
     """
 
