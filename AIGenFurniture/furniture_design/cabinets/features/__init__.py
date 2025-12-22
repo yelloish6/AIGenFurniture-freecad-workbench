@@ -164,3 +164,29 @@ def get_enabled_features():
         for name, data in FEATURES.items()
         if data.get("enabled", False)
     }
+
+def get_feature_handler(feature_name):
+    """
+    Returns a callable that applies a feature to a cabinet,
+    or None if the feature is disabled or unknown.
+    """
+
+    feature_def = FEATURES.get(feature_name)
+    if not feature_def or not feature_def.get("enabled", False):
+        return None
+
+    def handler(cabinet, feature_data):
+        method = getattr(cabinet, feature_name, None)
+        if not callable(method):
+            raise AttributeError(
+                f"Cabinet does not support feature '{feature_name}'"
+            )
+
+        params = {
+            k: v for k, v in feature_data.items()
+            if k != "feature"
+        }
+
+        method(**params)
+
+    return handler

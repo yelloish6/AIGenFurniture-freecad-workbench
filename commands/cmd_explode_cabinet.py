@@ -98,6 +98,7 @@ def explode_box_to_cabinet(box):
     import re
     from collections import defaultdict
 
+# TODO rewrite the section below to use the get_feature_handler() method defined in the __init__.py for features.
     # === AUTO-APPLY BOX FEATURES ===
     feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
     features = defaultdict(lambda: defaultdict(dict))
