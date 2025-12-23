@@ -11,8 +11,6 @@ if workbench_dir not in sys.path:
 import commands.cmd_json_export as cmd_json_export  # reuse your exporter code
 from AIGenFurniture import main as AIGenFurniture_main
 
-
-
 def export_and_generate():
     doc = App.ActiveDocument
     if not doc or not doc.FileName:

@@ -1,7 +1,6 @@
 import FreeCAD as App
 import FreeCADGui as Gui
-
-from AIGenFurniture.furniture_design.cabinets.features import FEATURES, get_enabled_features
+from AIGenFurniture.furniture_design.cabinets.features import get_enabled_features
 
 def make_feature_command(feature_name, data):
     class FeatureCommand:

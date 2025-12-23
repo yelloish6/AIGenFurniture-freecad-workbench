@@ -2,8 +2,6 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 
-from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
-from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat, Front, Pfl
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from AIGenFurniture.furniture_design.cabinets.architectures import get_cabinet_factory
 
