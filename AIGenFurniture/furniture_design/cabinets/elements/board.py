@@ -184,7 +184,7 @@ class Board:
         return float(self.length * self.width / 1000000)
 
     def print(self):
-        print(f"Board type {self.type}, {self.label}, [{self.length} x {self.width} x {self.thick}], {self.material}, "
+        print(f"Board type: {self.type}, {self.label}, [{self.length} x {self.width} x {self.thick}], {self.material}, "
               f"position {self.position}")
         print(f"Cut coordinates: {self.cut_coords}")
 

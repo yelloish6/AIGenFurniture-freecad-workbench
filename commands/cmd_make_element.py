@@ -11,7 +11,7 @@ def make_element_command(element_name, data):
         def GetResources(self):
             return {
                 "Pixmap": "",  # put path to icon if you have one
-                "MenuText": data.get("label", f"{element_name}"),
+                "MenuText": data.get("UI_label", f"{element_name}"),
                 "ToolTip": data.get("tooltip", f"{element_name}"),
             }
 
@@ -20,19 +20,21 @@ def make_element_command(element_name, data):
 
             # Create a box placeholder
             box = doc.addObject("Part::Box", f"{element_name}")
-            box.Label = element_name
-            box.Length = 600
-            box.Width = 500
-            if element_name == "PFL":
-                box.Height = 4
-            elif element_name == "Countertop":
-                box.Height = 38
-            else:
-                box.Height = 18
+            defaults = data.get("defaults", {})
+            box.Label = defaults.get("label", f"{element_name}")
+            box.Length = defaults.get("length", f"{element_name}")
+            box.Width = defaults.get("width", f"{element_name}")
+            box.Height = defaults.get("thickness", f"{element_name}")
+            # if element_name == "PFL":
+            #     box.Height = 4
+            # elif element_name == "Countertop":
+            #     box.Height = 38
+            # else:
+            #     box.Height = 18
 
             # Add a ElementType property
             box.addProperty("App::PropertyString", "ElementType", "Element", "Type of element").ElementType = element_name
-            box.addProperty("App::PropertyString", "BoardType", "Board", "Type of board").BoardType = element_name
+            # box.addProperty("App::PropertyString", "BoardType", "Board", "Type of board").BoardType = element_name
 
             # Add parameters as properties
             params = data.get("params", element_name)

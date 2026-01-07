@@ -1,10 +1,31 @@
 # -------------------------
 # Define the ELEMENTS dict
 # -------------------------
+from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat, Front, Pfl
+
 ELEMENTS = {
     "BoardPal": {
-        "label": "Chipboard",
+        "UI_label": "Chipboard",
+        "class": BoardPal,
         "tooltip": "Add a standard chipboard [18 mm]",
+        "enabled": True,
+        "defaults": {
+            "label": "BoardPal",
+            "length": 600,
+            "width": 500,
+            "thickness": 18,
+        },
+        # Constructor parameters (used by design_engine)
+        "constructor": [
+            "label",
+            "length",
+            "width",
+            "thick",
+            "cant_L1",
+            "cant_L2",
+            "cant_l1",
+            "cant_l2",
+        ],
         "params": {
             "cant_L1": ("App::PropertyString", "", "Edge length 1"),
             "cant_L2": ("App::PropertyString", "", "Edge length 2"),
@@ -13,19 +34,61 @@ ELEMENTS = {
         },
 
     },
-    "Countertop": {
-        "label": "Countertop",
+    "Blat": {
+        "UI_label": "Countertop",
+        "class": Blat,
         "tooltip": "Add a countertop board [38 mm]",
+        "enabled": True,
+        "defaults": {
+            "label": "Countertop",
+            "length": 1000,
+            "width": 600,
+            "thickness": 38,
+        },
+        # Constructor parameters (used by design_engine)
+        "constructor": [
+            "label",
+            "length",
+            "width",
+            "thick",
+        ],
         "params": {},
     },
     "Front": {
-        "label": "Front",
+        "UI_label": "Front",
+        "class": Front,
         "tooltip": "Add a front board [18 mm]",
+        "enabled": True,
+        "defaults": {
+            "label": "Front",
+            "length": 400,
+            "width": 700,
+            "thickness": 18,
+        },
+        "constructor": [
+            "label",
+            "length",
+            "width",
+            "thick",
+        ],
         "params": {},
     },
-    "PFL": {
-        "label": "HDF",
+    "Pfl": {
+        "UI_label": "HDF",
+        "class": Pfl,
         "tooltip": "Add a thin HDF board [4 mm]",
+        "enabled": True,
+        "defaults": {
+            "label": "hdf",
+            "length": 1000,
+            "width": 1000,
+            "thickness": 4,
+        },
+        "constructor": [
+            "label",
+            "length",
+            "width",
+        ],
         "params": {},
     }
 }

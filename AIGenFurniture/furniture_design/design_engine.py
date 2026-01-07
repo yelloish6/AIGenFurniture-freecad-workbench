@@ -41,9 +41,6 @@ def design_furniture(customer_data):
             additional_features = cabinet_data.get("additional_features")
             for feature in additional_features:
                 feature_handler(designed_cabinet, feature)
-        else:
-            continue
-            # print(f"[WARNING] design_engine.py: No features implemented in {cabinet_label}.")
 
         # handling of "positioning" when positioning[{"move": ["x", 100]}, {"rotate": "x"}]
         if "positioning" in cabinet_data:
@@ -57,23 +54,21 @@ def design_furniture(customer_data):
                     designed_cabinet.rotate_corp(axis)
                 else:
                     print(f"Unidentified movement")
-        else:
-            print(f"No movement in cabinet {cabinet_label}")
 
         if "additional_elements" in cabinet_data:
             additional_elements = cabinet_data.get("additional_elements")
             for element in additional_elements:
                 element_handler(designed_cabinet, element)
-        else:
-            continue
-            # print(f"[WARNING] design_engine.py: No additional elements in {cabinet_label}")
+
         order.append(designed_cabinet)
+        order.print()
     # define dummy cabinet for additional elements
     rules = load_default_rules(DEFAULT_RULES_PATH)
     generic_cab = Cabinet("Generic", 100, 100, 100, rules)
     for element_data in elements_data:
         element_handler(generic_cab, element_data)
     order.append(generic_cab)
+    order.print()
     return order
 
 
@@ -148,14 +143,23 @@ def element_handler(cabinet, element_data):
             f"Invalid element class for '{element_type}'"
         )
 
-    # Remove meta keys before constructor
-    params = {
-        k: v for k, v in element_data.items()
-        if k not in ("element_type", "positioning")
+    ctor_keys = element_def["constructor"]
+    ctor_args = {
+        k: element_data[k]
+        for k in ctor_keys
+        if k in element_data
     }
+    # allowed_params = element_def.get("params")
+    # print(allowed_params)
+    #
+    # # Remove meta keys before constructor
+    # params = {
+    #     k: v for k, v in element_data.items()
+    #     if k not in allowed_params
+    # }
+    # print(params)
 
-    element = element_cls(**params)
-
+    element = element_cls(**ctor_args)
     cabinet.append(element)
 
     # Optional positioning
@@ -310,7 +314,6 @@ def cabinet_handler(cabinet_data):
     rules = load_default_rules(DEFAULT_RULES_PATH)
 
     factory = get_cabinet_factory(cabinet_type)
-
     if not factory:
         raise ValueError(f"Unsupported or disabled cabinet type: {cabinet_type}")
 

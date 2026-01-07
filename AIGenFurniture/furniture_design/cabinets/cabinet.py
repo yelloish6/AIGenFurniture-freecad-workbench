@@ -190,11 +190,7 @@ class Cabinet(DrawersMixin, ShelvesMixin, FrontMixin, BackMixin):
         print(f"Dimensions: height {self.height}, width {self.width}, depth {self.depth}")
         print(f"Elements list:")
         for element in self.elements_list:
-            element.print()
-            # if material.type == "Accessory":
-            #     material.print_accessory()
-            # elif material.type == "pal" or "blat" or "front":
-            #     material.print_placa()
+            element.debug_print()
 
     def get_m2_pal(self):
 

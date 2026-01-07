@@ -8,6 +8,7 @@ H_BOARD_HANDLING = 0.17 # 10 minutes average board handling
 H_APPLIANCE = 2 # hours for installing appliance, including, sink, stove, washing machine, etc.
 H_COUNTERTOP = 0.5 # 30 min per meter of countertop to install the countertop
 
+from AIGenFurniture.furniture_design.cabinets.elements import ELEMENTS
 
 class Order:
     def __init__(self,

@@ -3,9 +3,9 @@ import json
 import argparse
 
 # 🔹 Add vendor folder to sys.path
-# _vendor_path = os.path.join(os.path.dirname(__file__), "vendor")
-# if _vendor_path not in sys.path:
-#     sys.path.insert(0, _vendor_path)
+_vendor_path = os.path.join(os.path.dirname(__file__), "vendor")
+if _vendor_path not in sys.path:
+    sys.path.insert(0, _vendor_path)
 
 from .furniture_design.design_engine import design_furniture
 from .manufacturing.generate_files import generate_manufacturing_files

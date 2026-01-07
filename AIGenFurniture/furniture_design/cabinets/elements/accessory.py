@@ -12,6 +12,9 @@ class Accessory:
     def print(self):
         print(self.type, ": ", self.label, " Pieces:", self.pieces, " Price: ", self.price, "Obs.: ", self.obs)
 
+    def debug_print(self):
+        print(self.type, ": ", self.label, " Pieces:", self.pieces, " Price: ", self.price, "Obs.: ", self.obs)
+
     def add_pieces(self, number):
         self.pieces = self.pieces + number
 
