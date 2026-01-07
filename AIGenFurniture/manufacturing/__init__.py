@@ -1,16 +1,16 @@
 EXPORT_DEFINITIONS = {
     "export_pal_for_proficut":{
-        "enabled": True,
+        "enabled": False,
         "runner": "export_pal_for_proficut",
         "module": "export_for_proficut",
     },
     "export_pfl_for_proficut": {
-        "enabled": True,
+        "enabled": False,
         "runner": "export_pfl_for_proficut",
         "module": "export_for_proficut",
     },
     "export_front_for_nettfront": {
-        "enabled": True,
+        "enabled": False,
         "runner": "export_front_for_nettfront",
         "module": "export_for_nettfront",
     },
@@ -20,12 +20,12 @@ EXPORT_DEFINITIONS = {
         "module": "export_csv",
     },
     "export_stl": {
-        "enabled": True,
+        "enabled": False,
         "runner": "export_stl_order",
         "module": "export_stl_new",
     },
     "export_cost_sheet":{
-        "enabled": True,
+        "enabled": False,
         "runner": "export_cost_sheet",
         "module": "generate_offer_cost",
     },
@@ -40,17 +40,17 @@ EXPORT_DEFINITIONS = {
         "module": "generate_offer_cost",
     },
     "generate_assembly_file":{
-        "enabled": True,
+        "enabled": False,
         "runner": "generate_assembly_file",
         "module": "generate_assembly_file",
     },
     "generate_drill_file":{
-        "enabled": True,
+        "enabled": False,
         "runner": "generate_drill_file",
         "module": "generate_assembly_file",
     },
     "generate_drill_pdf_reportlab":{
-        "enabled": True,
+        "enabled": False,
         "runner": "generate_drill_pdf_reportlab",
         "module": "generate_assembly_file_reportlab",
     }

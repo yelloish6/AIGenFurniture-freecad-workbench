@@ -61,14 +61,12 @@ def design_furniture(customer_data):
                 element_handler(designed_cabinet, element)
 
         order.append(designed_cabinet)
-        order.print()
     # define dummy cabinet for additional elements
     rules = load_default_rules(DEFAULT_RULES_PATH)
     generic_cab = Cabinet("Generic", 100, 100, 100, rules)
     for element_data in elements_data:
         element_handler(generic_cab, element_data)
     order.append(generic_cab)
-    order.print()
     return order
 
 
