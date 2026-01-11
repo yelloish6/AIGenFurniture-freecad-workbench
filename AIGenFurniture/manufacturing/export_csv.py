@@ -14,14 +14,6 @@ def export_csv(order, output_folder):
     folder_name = output_folder
     cabinets = order.cabinets_list
 
-    # #region agent log
-    import json
-    try:
-        with open('/home/bogdan/Cursor/CabinetWorkbench/.cursor/debug.log', 'a') as f:
-            f.write(json.dumps({"location": "export_csv.py:15", "message": "Order data before CSV export", "data": {"client": order.client, "mat_front": order.mat_front, "mat_pal": order.mat_pal}, "timestamp": __import__('time').time(), "sessionId": "debug-session", "runId": "run1", "hypothesisId": "C"}) + '\n')
-    except: pass
-    # #endregion
-
     # Ensure client name is not None for filename
     client_name = order.client if order.client else "Unknown"
 

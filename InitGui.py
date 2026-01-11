@@ -4,6 +4,8 @@ import FreeCAD as App
 import FreeCADGui as Gui
 # import DraftGui
 
+
+
 class CabinetWorkbench (Gui.Workbench):
     """Cabinet Generator Workbench"""
     def __init__(self):
@@ -12,8 +14,10 @@ class CabinetWorkbench (Gui.Workbench):
         base_dir = os.path.dirname(os.path.abspath(current_file))
         icon_path = os.path.join(base_dir, "Resources", "icons", "convert_cabinet.svg")
         
+        from AIGenFurniture import __version__
+
         self.__class__.MenuText = "Cabinet Generator"
-        self.__class__.ToolTip = "Tools for generating cabinets from boxes"
+        self.__class__.ToolTip = "Tools for generating cabinets from boxes (v{__version__})"
         self.__class__.Icon = icon_path
 
         # Save for later use when registering commands
