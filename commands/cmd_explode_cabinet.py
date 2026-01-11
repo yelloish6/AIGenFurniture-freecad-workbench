@@ -155,7 +155,7 @@ def explode_box_to_cabinet(box):
             # Map legacy code elem.type to FreeCAD ElementType definitions
             element_type_map = {
                 "pal": "BoardPal",
-                "pfl": "PFL",
+                "pfl": "Pfl",
                 "front": "Front",
                 "blat": "Countertop"
             }

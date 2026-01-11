@@ -36,6 +36,12 @@ class PriceManager:
 
     @classmethod
     def get_price_for_item(cls, item_type, material):
+        # Handle None material gracefully
+        if material is None:
+            raise PriceNotFoundError(
+                f"Material is None for type '{item_type}'"
+            )
+        
         key = (item_type.lower(), material.lower())
         prices = cls.load_prices()
         if key not in prices:
@@ -46,6 +52,11 @@ class PriceManager:
 
     @classmethod
     def get_unit_for_item(cls, item_type, material):
+        # Handle None or empty material gracefully
+        if not material:
+            raise PriceNotFoundError(
+                f"Material is None or empty for type '{item_type}'"
+            )
         key = (item_type.lower(), material.lower())
         prices = cls.load_prices()
         if key not in prices:
@@ -56,6 +67,12 @@ class PriceManager:
 
     @classmethod
     def get_min_qty_for_item(cls, item_type, material):
+        # Handle None material gracefully
+        if material is None:
+            raise PriceNotFoundError(
+                f"Material is None for type '{item_type}'"
+            )
+        
         key = (item_type.lower(), material.lower())
         prices = cls.load_prices()
         if key not in prices:

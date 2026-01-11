@@ -14,8 +14,19 @@ def export_csv(order, output_folder):
     folder_name = output_folder
     cabinets = order.cabinets_list
 
+    # #region agent log
+    import json
+    try:
+        with open('/home/bogdan/Cursor/CabinetWorkbench/.cursor/debug.log', 'a') as f:
+            f.write(json.dumps({"location": "export_csv.py:15", "message": "Order data before CSV export", "data": {"client": order.client, "mat_front": order.mat_front, "mat_pal": order.mat_pal}, "timestamp": __import__('time').time(), "sessionId": "debug-session", "runId": "run1", "hypothesisId": "C"}) + '\n')
+    except: pass
+    # #endregion
+
+    # Ensure client name is not None for filename
+    client_name = order.client if order.client else "Unknown"
+
     # output pal order
-    name = os.path.join(folder_name, "order_pal_" + order.client + ".csv")
+    name = os.path.join(folder_name, "order_pal_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pal_order_file:
         order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Bucati", "Lungime", "Latime", "Orientabila", "Eticheta", "L1", "L2", "l1", "l2"])
@@ -28,7 +39,7 @@ def export_csv(order, output_folder):
     pal_order_file.close()
 
     # output pfl order
-    name = os.path.join(folder_name, "order_pfl_" + order.client + ".csv")
+    name = os.path.join(folder_name, "order_pfl_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_order_file:
         order_writer = csv.writer(pfl_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Bucati", "Lungime", "Latime", "Eticheta"])
@@ -39,7 +50,7 @@ def export_csv(order, output_folder):
     pfl_order_file.close()
 
     # output fronts order
-    name = os.path.join(folder_name, "order_front_" + order.client + ".csv")
+    name = os.path.join(folder_name, "order_front_" + client_name + ".csv")
     with open(name, mode='w', newline="") as front_order_file:
         order_writer = csv.writer(front_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Eticheta", "Lungime", "Latime", "Pret"])
@@ -51,7 +62,7 @@ def export_csv(order, output_folder):
     front_order_file.close()
 
     # output accessories order
-    name = os.path.join(folder_name, "order_accessories_" + order.client + ".csv")
+    name = os.path.join(folder_name, "order_accessories_" + client_name + ".csv")
     with open(name, mode='w', newline="") as accessory_order_file:
         order_writer = csv.writer(accessory_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Nume", "Bucati", "Pret/buc", "Pret total", "Observatii"])
@@ -78,7 +89,7 @@ def export_csv(order, output_folder):
     accessory_order_file.close()
 
     # output for PAL optimization
-    name = os.path.join(folder_name, "PanelsCuttingList_pal_" + order.client + ".csv")
+    name = os.path.join(folder_name, "PanelsCuttingList_pal_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pal_opt_file:
         order_writer = csv.writer(pal_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Length", "Width", "Qty", "Label", "Enabled"])
@@ -89,7 +100,7 @@ def export_csv(order, output_folder):
     pal_opt_file.close()
 
     # output for PFL optimization
-    name = os.path.join(folder_name, "PanelsCuttingList_pfl_" + order.client + ".csv")
+    name = os.path.join(folder_name, "PanelsCuttingList_pfl_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_opt_file:
         order_writer = csv.writer(pfl_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Length", "Width", "Qty", "Enabled"])

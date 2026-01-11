@@ -16,6 +16,7 @@ from .sink_box import SinkBox
 from .top_box import TopBox
 from .top_corner import TopCorner
 from .tower_box import TowerBox
+from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
 

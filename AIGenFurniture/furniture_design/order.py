@@ -13,18 +13,6 @@ from AIGenFurniture.furniture_design.cabinets.elements import ELEMENTS
 class Order:
     def __init__(self,
                  customer_data
-                 # client="Default",
-                 # client_proficut="Bogdan Urs",
-                 # tel_proficut="0740472185",
-                 # transport="Da",
-                 # address="Str. Borsa, Nr. 38, Mosnita Veche",
-                 # discount=0,
-                 # h_rate=120,
-                 # nr_electrocasnice=0,
-                 # mat_pal="Alb W962ST2",
-                 # mat_pfl="Alb",
-                 # mat_blat="Stejar Halifax 600",
-                 # mat_front="Alb Riflat A356R3"
                  ):
         """
 
@@ -98,28 +86,55 @@ class Order:
         self.cost_acc = 0
         '''
 
+    # def append(self, cabinet):
+    #     """
+    #     Set material for all elements from the cabinet based on materials from order if material in the cabinet
+    #     is empty, and append the cabinet to the order.
+    #     :param cabinet:
+    #     :return:
+    #     """
+    #     for element in cabinet.elements_list:
+    #         if element.type == "pal":
+    #             if element.material == "":
+    #                 element.material = self.mat_pal
+    #         elif element.type == "front":
+    #             if element.material == "":
+    #                 element.material = self.mat_front
+    #         elif element.type == "pfl":
+    #             if element.material == "":
+    #                 element.material = self.mat_pfl
+    #         elif element.type == "blat":
+    #             if element.material == "":
+    #                 element.material = self.mat_blat
+    #         elif element.type == "accessory":
+    #             element.material = element.label
+    #     self.cabinets_list.append(cabinet)
+
     def append(self, cabinet):
         """
         Set material for all elements from the cabinet based on materials from order if material in the cabinet
         is empty, and append the cabinet to the order.
+        Uses ELEMENTS dict to find material_attr by matching element class.
         :param cabinet:
         :return:
         """
         for element in cabinet.elements_list:
-            if element.type == "pal":
+            # Find element definition in ELEMENTS by matching class
+            material_attr = None
+            for elem_def in ELEMENTS.values():
+                if isinstance(element, elem_def["class"]):
+                    material_attr = elem_def.get("material_attr")
+                    break
+
+            if material_attr is None:
+                # Special handling for accessories - use element.label as material
+                if element.type == "accessory":
+                    element.material = element.label
+            else:
+                # For board types, assign material from order if element material is empty
                 if element.material == "":
-                    element.material = self.mat_pal
-            elif element.type == "front":
-                if element.material == "":
-                    element.material = self.mat_front
-            elif element.type == "pfl":
-                if element.material == "":
-                    element.material = self.mat_pfl
-            elif element.type == "blat":
-                if element.material == "":
-                    element.material = self.mat_blat
-            elif element.type == "accessory":
-                element.material = element.label
+                    material_value = getattr(self, material_attr, "")
+                    element.material = material_value
         self.cabinets_list.append(cabinet)
 
     def print(self):

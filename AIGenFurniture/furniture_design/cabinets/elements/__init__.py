@@ -7,6 +7,7 @@ ELEMENTS = {
     "BoardPal": {
         "UI_label": "Chipboard",
         "class": BoardPal,
+        "material_attr": "mat_pal",  # Material attribute name in Order class
         "tooltip": "Add a standard chipboard [18 mm]",
         "enabled": True,
         "defaults": {
@@ -37,6 +38,7 @@ ELEMENTS = {
     "Blat": {
         "UI_label": "Countertop",
         "class": Blat,
+        "material_attr": "mat_blat",  # Material attribute name in Order class
         "tooltip": "Add a countertop board [38 mm]",
         "enabled": True,
         "defaults": {
@@ -57,6 +59,7 @@ ELEMENTS = {
     "Front": {
         "UI_label": "Front",
         "class": Front,
+        "material_attr": "mat_front",  # Material attribute name in Order class
         "tooltip": "Add a front board [18 mm]",
         "enabled": True,
         "defaults": {
@@ -76,6 +79,7 @@ ELEMENTS = {
     "Pfl": {
         "UI_label": "HDF",
         "class": Pfl,
+        "material_attr": "mat_pfl",  # Material attribute name in Order class
         "tooltip": "Add a thin HDF board [4 mm]",
         "enabled": True,
         "defaults": {

@@ -15,7 +15,8 @@ def generate_offer_file(order, output_path):
     Items with price == 0 appear RED + BOLD in the breakdown.
     """
 
-    pdf_filename = os.path.join(output_path, f"Oferta_{order.client}.pdf")
+    client_name = order.client if order.client else "Unknown"
+    pdf_filename = os.path.join(output_path, f"Oferta_{client_name}.pdf")
 
     doc = SimpleDocTemplate(
         pdf_filename,

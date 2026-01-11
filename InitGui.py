@@ -29,6 +29,7 @@ class CabinetWorkbench (Gui.Workbench):
         import commands.cmd_aigenfurniture
         import commands.cmd_make_ordervar
         import commands.cmd_explode_cabinet
+        import commands.cmd_generate_from_geometry
         import Draft
         import DraftTools
         import DraftGui
@@ -43,7 +44,8 @@ class CabinetWorkbench (Gui.Workbench):
                                     # "Export_JSON",
                                     "Create_Globals_Spreadsheet",
                                     "Explode_Box_To_Cabinet",
-                                    "AIGenFurniture"
+                                    "AIGenFurniture",
+                                    "Generate_From_Geometry"
                                     ]
                            )
         self.appendToolbar("Manipulation", ["Draft_Move"])
