@@ -1,3 +1,10 @@
+# AIGenFurniture/manufacturing/__init__.py
+
+# Schema version for EXPORT_DEFINITIONS structure
+# Increment when the structure of EXPORT_DEFINITIONS changes (e.g., new required fields, renamed keys)
+# This enables backward compatibility and migration logic in future releases
+EXPORT_DEFINITIONS_SCHEMA_VERSION = "1.0"
+
 EXPORT_DEFINITIONS = {
     "export_pal_for_proficut":{
         "enabled": False, #False for MVP
@@ -20,7 +27,7 @@ EXPORT_DEFINITIONS = {
         "module": "export_csv",
     },
     "export_stl": {
-        "enabled": False, #False for MVP
+        "enabled": True, #False for MVP
         "runner": "export_stl_order",
         "module": "export_stl_new",
     },
