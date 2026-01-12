@@ -1,4 +1,14 @@
-from .cabinets.elements.board import *
+# AIGenFurniture/furniture_design/order/order.py
+"""
+Order class implementation.
+
+Handles order logic and behavior, importing parameter schema from order_params.
+"""
+
+import os
+import math
+from ..cabinets.elements.board import *
+from AIGenFurniture.furniture_design.pricing.price_manager import PriceManager as pm
 
 PAL_LOSS = 0.1  # used to calculate number of sheets needed
 SHEET_HEIGHT = 2800
@@ -9,106 +19,55 @@ H_APPLIANCE = 2 # hours for installing appliance, including, sink, stove, washin
 H_COUNTERTOP = 0.5 # 30 min per meter of countertop to install the countertop
 
 from AIGenFurniture.furniture_design.cabinets.elements import ELEMENTS
+from .order_params import ORDER_PARAMS, get_order_attr_mapping, validate_order as validate_order_params
 
 class Order:
-    def __init__(self,
-                 customer_data
-                 ):
+    def __init__(self, customer_data):
         """
-
-        :param customer_data:
-        :param client:
-        :param client_proficut:
-        :param tel_proficut:
-        :param transport:
-        :param address:
-        :param discount:
-        :param h_rate:
-        :param nr_electrocasnice:
-        :param h_proiect:
-        :param mat_pal:
-        :param mat_pfl:
-        :param mat_blat:
-        :param mat_front:
+        Initialize Order from customer_data dictionary.
+        
+        Uses centralized ORDER_PARAMS to determine which attributes to set.
+        Numeric defaults from ORDER_PARAMS (stored as strings) are converted
+        to appropriate numeric types here.
+        
+        Handles missing (disabled) parameters gracefully by applying defaults.
+        Only parameters present in OrderVar (enabled) will be in customer_data,
+        but all parameters get defaults to ensure backward compatibility.
+        
+        :param customer_data: Dictionary of order parameters (typically from OrderVar spreadsheet)
         """
-        # if customer_data is None:
-        #     self.client = client
-        #     self.client_proficut = client_proficut
-        #     self.tel_proficut = tel_proficut
-        #     self.transport = transport
-        #     self.address = address
-        #     self.discount = discount
-        #     self.h_rate = h_rate
-        #     self.nr_electrocasnice = nr_electrocasnice
-        #     self.mat_pal = mat_pal
-        #     self.mat_pfl = mat_pfl
-        #     self.mat_blat = mat_blat
-        #     self.mat_front = mat_front
-        # else:
-        self.client = customer_data.get("client")
-        self.client_proficut = customer_data.get("client_proficut")
-        self.tel_proficut = customer_data.get("tel_proficut")
-        self.transport = customer_data.get("transport")
-        self.address = customer_data.get("address")
-        self.discount = customer_data.get("discount")
-        self.h_rate = customer_data.get("h_rate")
-        self.nr_electrocasnice = customer_data.get("nr_electrocasnice")
-        self.h_proiect = customer_data.get("h_proiect")
-        self.mat_pal = customer_data.get("material_pal")
-        self.mat_pfl = customer_data.get("material_pfl")
-        self.mat_blat = customer_data.get("material_blat")
-        self.mat_front = customer_data.get("material_front")
+        # Get mapping from parameter names to Order class attribute names
+        attr_mapping = get_order_attr_mapping()
+        
+        # Initialize all order parameters from customer_data using centralized definition
+        # Missing (disabled) parameters get defaults and do not raise errors
+        for param_name, param_def in ORDER_PARAMS.items():
+            attr_name = param_def.get("order_attr", param_name)
+            default_value = param_def.get("default", None)
+            
+            # Get value from customer_data if present (enabled params from spreadsheet),
+            # otherwise use default (for disabled params or missing data)
+            value = customer_data.get(param_name, default_value)
+            
+            # Convert string defaults to appropriate types if needed
+            # Spreadsheet defaults are strings; convert numeric types here
+            if value is None:
+                setattr(self, attr_name, None)
+            elif isinstance(default_value, str) and param_def.get("type") == "number":
+                # Convert string numbers to float/int (handles both spreadsheet strings and actual strings)
+                try:
+                    # Try to convert to float first to handle decimals, then int if appropriate
+                    float_val = float(value)
+                    # Use int if the float representation is an integer
+                    value = int(float_val) if float_val.is_integer() else float_val
+                except (ValueError, TypeError):
+                    # Keep as string if conversion fails
+                    pass
+                setattr(self, attr_name, value)
+            else:
+                setattr(self, attr_name, value)
+        
         self.cabinets_list = []
-        '''
-        self.length = 0
-        self.pret_manop = 0
-        self.acc = []
-        self.m2pal = 0
-        self.mat_pal = ""
-        self.m2front = 0
-        self.frezare = ""
-        self.m2pfl = 0
-        self.mat_pfl = ""
-        self.m_blat = 0
-        self.mat_blat = ""
-        self.m_cant = [0, 0]
-        self.price_pal = 1
-        self.price_pfl = 1
-        self.price_front = 1
-        self.price_blat = 1
-        self.price_cant = [0, 0]
-        self.price_list = []
-        self.cost_pal = 0
-        self.cost_pfl = 0
-        self.cost_front = 0
-        self.cost_blat = 0
-        self.cost_cant = [0, 0]
-        self.cost_acc = 0
-        '''
-
-    # def append(self, cabinet):
-    #     """
-    #     Set material for all elements from the cabinet based on materials from order if material in the cabinet
-    #     is empty, and append the cabinet to the order.
-    #     :param cabinet:
-    #     :return:
-    #     """
-    #     for element in cabinet.elements_list:
-    #         if element.type == "pal":
-    #             if element.material == "":
-    #                 element.material = self.mat_pal
-    #         elif element.type == "front":
-    #             if element.material == "":
-    #                 element.material = self.mat_front
-    #         elif element.type == "pfl":
-    #             if element.material == "":
-    #                 element.material = self.mat_pfl
-    #         elif element.type == "blat":
-    #             if element.material == "":
-    #                 element.material = self.mat_blat
-    #         elif element.type == "accessory":
-    #             element.material = element.label
-    #     self.cabinets_list.append(cabinet)
 
     def append(self, cabinet):
         """
@@ -136,6 +95,15 @@ class Order:
                     material_value = getattr(self, material_attr, "")
                     element.material = material_value
         self.cabinets_list.append(cabinet)
+
+    def validate(self):
+        """
+        Validate that this order has all required parameters.
+        
+        Returns:
+            tuple: (is_valid: bool, missing_params: list)
+        """
+        return validate_order_params(self)
 
     def print(self):
         print(f"[order.py] Printing order:")

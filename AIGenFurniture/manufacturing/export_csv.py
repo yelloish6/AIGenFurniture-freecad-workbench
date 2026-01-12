@@ -21,7 +21,7 @@ def export_csv(order, output_folder):
     name = os.path.join(folder_name, "order_pal_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pal_order_file:
         order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Bucati", "Lungime", "Latime", "Orientabila", "Eticheta", "L1", "L2", "l1", "l2"])
+        order_writer.writerow(["Pieces", "Length", "Width", "Orientable", "Label", "L1", "L2", "l1", "l2"])
         for cabinet in cabinets:
             for element in cabinet.elements_list:
                 if element.type == "pal":
@@ -34,7 +34,7 @@ def export_csv(order, output_folder):
     name = os.path.join(folder_name, "order_pfl_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_order_file:
         order_writer = csv.writer(pfl_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Bucati", "Lungime", "Latime", "Eticheta"])
+        order_writer.writerow(["Pieces", "Length", "Width", "Label"])
         for cabinet in cabinets:
             for element in cabinet.elements_list:
                 if element.type == "pfl":
@@ -45,7 +45,7 @@ def export_csv(order, output_folder):
     name = os.path.join(folder_name, "order_front_" + client_name + ".csv")
     with open(name, mode='w', newline="") as front_order_file:
         order_writer = csv.writer(front_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Eticheta", "Lungime", "Latime", "Pret"])
+        order_writer.writerow(["Label", "Length", "Width", "Price"])
         order_writer.writerow([order.mat_front])
         for cabinet in cabinets:
             for element in cabinet.elements_list:
@@ -57,7 +57,7 @@ def export_csv(order, output_folder):
     name = os.path.join(folder_name, "order_accessories_" + client_name + ".csv")
     with open(name, mode='w', newline="") as accessory_order_file:
         order_writer = csv.writer(accessory_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Nume", "Bucati", "Pret/buc", "Pret total", "Observatii"])
+        order_writer.writerow(["Name", "Pieces", "Price/piece", "Total Price", "Comments"])
 
         totals = []  # totals is a list containing total accessories and their amount and price
 

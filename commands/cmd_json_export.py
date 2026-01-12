@@ -37,23 +37,19 @@ def export(doc, output_path):
         FreeCAD.Console.PrintError("Spreadsheet with label 'OrderVar' not found.\n")
         return
 
-    # ✅ Load global variables from spreadsheet aliases
-    global_aliases = [
-        "client", "client_proficut", "tel_proficut", "transport", "address",
-        "h_bucatarie", "h_faianta_top", "h_faianta_base", "depth_base",
-        "top_height", "top_height_2", "top_depth", "top_depth_2",
-        "blat_height", "cuptor_height", "MsV_height_min", "MsV_height_max",
-        "material_pal", "material_front", "material_blat", "material_pfl",
-        "h_rate", "h_proiect", "discount", "nr_electrocasnice"
-    ]
-
+    # ✅ Load global variables from spreadsheet aliases using centralized definition
     globals_dict = {}
-    # Prefer dynamic alias enumeration if available; otherwise use the predefined list.
+    
+    # Prefer dynamic alias enumeration if available; otherwise use centralized list
     try:
         alias_names = list(getattr(spreadsheet, "Aliases", {}).keys())
+        # Import here to avoid circular imports at module level
+        from AIGenFurniture.furniture_design.order import get_order_param_names
+        # Use centralized list to ensure consistent ordering if dynamic enumeration fails
+        alias_iter = alias_names if alias_names else get_order_param_names()
     except Exception:
-        alias_names = None
-    alias_iter = alias_names if alias_names else global_aliases
+        from AIGenFurniture.furniture_design.order import get_order_param_names
+        alias_iter = get_order_param_names()
 
     for alias_name in alias_iter:
         try:

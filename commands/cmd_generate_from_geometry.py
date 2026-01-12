@@ -106,23 +106,16 @@ def freecad_document_to_order(doc):
             spreadsheet = obj
             break
 
-    # Build customer_data dict from spreadsheet
+    # Build customer_data dict from spreadsheet using centralized definition
     customer_data = {}
     if spreadsheet:
-        # Use the same approach as cmd_json_export.py - try aliases first, then fallback to predefined list
-        global_aliases = [
-            "client", "client_proficut", "tel_proficut", "transport", "address",
-            "h_bucatarie", "h_faianta_top", "h_faianta_base", "depth_base",
-            "top_height", "top_height_2", "top_depth", "top_depth_2",
-            "blat_height", "cuptor_height", "MsV_height_min", "MsV_height_max",
-            "material_pal", "material_front", "material_blat", "material_pfl",
-            "h_rate", "h_proiect", "discount", "nr_electrocasnice"
-        ]
         try:
             aliases = getattr(spreadsheet, "Aliases", {})
-            # Prefer dynamic alias enumeration if available; otherwise use the predefined list
+            # Import here to avoid circular imports at module level
+            from AIGenFurniture.furniture_design.order import get_order_param_names
+            # Prefer dynamic alias enumeration if available; otherwise use centralized list
             alias_names = list(aliases.keys()) if aliases else None
-            alias_iter = alias_names if alias_names else global_aliases
+            alias_iter = alias_names if alias_names else get_order_param_names()
 
             for alias_name in alias_iter:
                 try:

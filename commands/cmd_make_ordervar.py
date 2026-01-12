@@ -2,49 +2,17 @@ import FreeCAD as App
 import FreeCADGui as Gui
 
 import os
+# Import centralized order parameters - uses deterministic ordering
+from AIGenFurniture.furniture_design.order import get_enabled_order_params
 
 def create_globals_spreadsheet(doc):
-    """Create a spreadsheet with all global_aliases prefilled and aliases set."""
-
-    # List of global aliases (same as JSON exporter)
-    global_aliases = [
-        "client", "client_proficut", "tel_proficut", "transport", "address",
-        "h_bucatarie", "h_faianta_top", "h_faianta_base", "depth_base",
-        "top_height", "top_height_2", "top_depth", "top_depth_2",
-        "blat_height", "cuptor_height", "MsV_height_min", "MsV_height_max",
-        "material_pal", "material_front", "material_blat", "material_pfl",
-        "h_rate", "h_proiect", "discount", "nr_electrocasnice"
-    ]
-
-    # Default values for each alias (adapt as needed)
-    defaults = {
-        "client": "Nume Client",
-        "client_proficut": "Your Company",
-        "tel_proficut": "07xxxxxxxx",
-        "transport": "Da",
-        "address": "Adresa Client",
-        "h_bucatarie": "2400",       # mm
-        "h_faianta_top": "700",      # mm
-        "h_faianta_base": "600",     # mm
-        "depth_base": "600",         # mm
-        "top_height": "720",         # mm
-        "top_height_2": "720",       # mm
-        "top_depth": "300",          # mm
-        "top_depth_2": "300",        # mm
-        "blat_height": "40",         # mm
-        "cuptor_height": "600",      # mm
-        "MsV_height_min": "500",     # mm
-        "MsV_height_max": "1200",    # mm
-        "material_pal": "Alb W962ST2",
-        "material_front": "A34R3",
-        "material_blat": "Stejar Alpin Keindl",
-        "material_pfl": "Alb",
-        "h_rate": "120",
-        "h_proiect": "8",
-        "discount": "0",
-        "nr_electrocasnice": "4"
-    }
-
+    """Create a spreadsheet with enabled order parameters prefilled and aliases set.
+    
+    Uses centralized ORDER_PARAMS definition for consistency.
+    Only enabled parameters are included (MVP cleanliness).
+    Column A: English label (user-facing)
+    Column B: Value (with alias set to parameter key for programmatic access)
+    """
     # Check if spreadsheet "OrderVar" already exists
     spreadsheet = None
     for obj in doc.Objects:
@@ -55,26 +23,30 @@ def create_globals_spreadsheet(doc):
     if not spreadsheet:
         spreadsheet = doc.addObject("Spreadsheet::Sheet", "OrderVar")
 
-    # Fill spreadsheet
+    # Get enabled parameters only
+    enabled_params = get_enabled_order_params()
+
+    # Fill spreadsheet from enabled ORDER_PARAMS only
     row = 1
-    for alias in global_aliases:
-        # Column A: alias name
-        spreadsheet.set(f"A{row}", alias)
+    for param_name, param_def in enabled_params.items():
+        # Column A: English label (user-facing, no parameter keys visible)
+        label = param_def.get("label", param_name)
+        spreadsheet.set(f"A{row}", label)
 
-        # Column B: default value or empty string
-        value = defaults.get(alias, "")
-        spreadsheet.set(f"B{row}", str(value))
+        # Column B: default value (stored as string in ORDER_PARAMS for spreadsheet)
+        default_value = param_def.get("default", "")
+        spreadsheet.set(f"B{row}", str(default_value))
 
-        # Set alias of cell in column B to alias name
+        # Set alias of cell in column B to parameter key (for programmatic access, not visible)
         try:
-            spreadsheet.setAlias(f"B{row}", alias)
+            spreadsheet.setAlias(f"B{row}", param_name)
         except Exception as e:
-            App.Console.PrintError(f"⚠ Could not set alias for {alias}: {e}\n")
+            App.Console.PrintError(f"⚠ Could not set alias for {param_name}: {e}\n")
 
         row += 1
 
     doc.recompute()
-    App.Console.PrintMessage("✅ Spreadsheet 'OrderVar' created/updated with global aliases and defaults.\n")
+    App.Console.PrintMessage(f"✅ Spreadsheet 'OrderVar' created/updated with {len(enabled_params)} enabled parameters.\n")
 
 
 class CreateGlobalsSpreadsheetCommand:
