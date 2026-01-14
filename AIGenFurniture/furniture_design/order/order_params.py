@@ -50,7 +50,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "string",
         "order_attr": "transport",
         "order": 4,
-        "enabled": True  # MVP: used in cost calculation
+        "enabled": False  # MVP: used in cost calculation
     }),
     ("address", {
         "default": "Your Address",
@@ -218,7 +218,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "number",
         "order_attr": "h_rate",
         "order": 40,
-        "enabled": True  # MVP: used in labour cost calculation
+        "enabled": False  # MVP: used in labour cost calculation
     }),
     ("h_proiect", {
         "default": "8",  # String default for spreadsheet; converted in Order.__init__
@@ -227,7 +227,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "number",
         "order_attr": "h_proiect",
         "order": 41,
-        "enabled": True  # MVP: used in labour cost calculation
+        "enabled": False  # MVP: used in labour cost calculation
     }),
     ("discount", {
         "default": "0",  # String default for spreadsheet; converted in Order.__init__
@@ -236,7 +236,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "number",
         "order_attr": "discount",
         "order": 42,
-        "enabled": True  # MVP: used in cost calculation
+        "enabled": False  # MVP: used in cost calculation
     }),
     ("nr_electrocasnice", {
         "default": "4",  # String default for spreadsheet; converted in Order.__init__
@@ -245,7 +245,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "number",
         "order_attr": "nr_electrocasnice",
         "order": 43,
-        "enabled": True  # MVP: used in labour cost calculation
+        "enabled": False  # MVP: used in labour cost calculation
     })
 ])
 

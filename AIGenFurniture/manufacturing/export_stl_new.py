@@ -44,35 +44,35 @@ def export_stl_order(order, output_folder, is_horizontal_layout = False):
                 order_mesh = mesh.Mesh(numpy.concatenate([order_mesh.data, cabinet_mesh.data]))
     order_mesh.save(str(file_name) + ".stl")
 
-    file_name = os.path.join(output_folder, "3D " + order.client)
+    # file_name = os.path.join(output_folder, "3D " + order.client)
 
-    offset = 0
-    order_mesh = None
-    for cabinet in order.cabinets_list:
-        cabinet_to_print = deepcopy(cabinet)  # copy the cabinet to print, to not change the original cabinet
-        cabinet_to_print.move_corp("x", offset)  # add an offset to separate the cabinets when printing
+    # offset = 0
+    # order_mesh = None
+    # for cabinet in order.cabinets_list:
+    #     cabinet_to_print = deepcopy(cabinet)  # copy the cabinet to print, to not change the original cabinet
+    #     cabinet_to_print.move_corp("x", offset)  # add an offset to separate the cabinets when printing
 
-        for movement in cabinet_to_print.position_list:  # run through the position list and operate all movements on the cabinet to be printed
-            if movement[0] == "move":
-                cabinet_move(cabinet_to_print, movement[1], movement[2])
-            elif movement[0] == "rotate":
-                cabinet_rotate(cabinet_to_print, movement[1])
+    #     for movement in cabinet_to_print.position_list:  # run through the position list and operate all movements on the cabinet to be printed
+    #         if movement[0] == "move":
+    #             cabinet_move(cabinet_to_print, movement[1], movement[2])
+    #         elif movement[0] == "rotate":
+    #             cabinet_rotate(cabinet_to_print, movement[1])
 
-        for element in cabinet_to_print.elements_list:  # generate the stl part for all elements in the cabinet to be printed
-            if isinstance(element, Board):
-                board_mesh = generate_mesh(element.position[0],
-                                           element.position[1],
-                                           element.position[2],
-                                           element.position[3],
-                                           element.position[4],
-                                           element.position[5]
-                                           )
-                if not order_mesh:
-                    order_mesh = board_mesh
-                else:
-                    order_mesh = mesh.Mesh(numpy.concatenate([order_mesh.data, board_mesh.data]))
-        offset += cabinet_to_print.width + 1
-    order_mesh.save(str(file_name) + ".stl")
+    #     for element in cabinet_to_print.elements_list:  # generate the stl part for all elements in the cabinet to be printed
+    #         if isinstance(element, Board):
+    #             board_mesh = generate_mesh(element.position[0],
+    #                                        element.position[1],
+    #                                        element.position[2],
+    #                                        element.position[3],
+    #                                        element.position[4],
+    #                                        element.position[5]
+    #                                        )
+    #             if not order_mesh:
+    #                 order_mesh = board_mesh
+    #             else:
+    #                 order_mesh = mesh.Mesh(numpy.concatenate([order_mesh.data, board_mesh.data]))
+    #     offset += cabinet_to_print.width + 1
+    # order_mesh.save(str(file_name) + ".stl")
 
 
 def generate_mesh(x, y, z, ox, oy, oz, cut_coords=None):

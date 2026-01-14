@@ -48,7 +48,7 @@ class CabinetWorkbench (Gui.Workbench):
                                     # "Export_JSON",
                                     "Create_Globals_Spreadsheet",
                                     "Explode_Box_To_Cabinet",
-                                    "AIGenFurniture",
+                                    # "AIGenFurniture",
                                     "Generate_From_Geometry"
                                     ]
                            )
