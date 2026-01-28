@@ -17,7 +17,7 @@ class DrawersMixin:
         spate_label = self.label + ".ser.sp"
         fund_lung = int(self.width - (2 * self.thick_pal) - (37.5 * 2))
         spate_lung = self.width - 2 * 18 - 87
-        fund_lat = self.depth - 20
+        fund_lat = self.depth - 20 #TODO de verificat daca la Tandembox M nu e nevoie de self.depth - 24 in loc de -20
         spate_lat = 0
         if tandembox_type == "M":
             spate_lat = 68
