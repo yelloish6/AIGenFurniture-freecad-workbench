@@ -63,9 +63,8 @@ class TowerBox(Cabinet):
 
         self.add_pfl()
         if gap_heat > 0:
-            self.get_item_by_type_label("pfl",self.label + ".pfl").__setattr__("length", self.width - (2 * self.thick_pal))
-            self.get_item_by_type_label("pfl",self.label + ".pfl").move("x", self.thick_pal - 2)
-
+            self.get_item_by_type_label("pfl",self.label + ".hdf").__setattr__("length", self.width - (2 * self.thick_pal))
+            self.get_item_by_type_label("pfl",self.label + ".hdf").move("x", self.thick_pal - 2)
         # --- Setting the front doors for the tower (loop-based with fg + separator sharing) ---
         fg = rules["gap_front"]
 
