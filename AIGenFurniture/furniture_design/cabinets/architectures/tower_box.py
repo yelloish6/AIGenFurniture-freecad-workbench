@@ -2,10 +2,10 @@ import math
 
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
 from AIGenFurniture.furniture_design.cabinets.elements.accessory import Accessory
-from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal, Blat
+from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal
 
 class TowerBox(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list = [20, 40], gap_heat = 50, front_list = [0, 0, 0, 0]):
+    def __init__(self, label, height, width, depth, rules, gap_list = [200, 400], gap_heat = 50, front_list = [0, 0, 0, 0]):
         """
 
         :param label:
@@ -53,7 +53,6 @@ class TowerBox(Cabinet):
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + self.thick_pal, self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.thick_pal),
         #              self.cant_lab)
-
         self.append(Accessory("surub", 8))
         self.append(Accessory("plinta", self.width / 1000))
         picioare = math.ceil(self.width / 400) * 2
@@ -73,7 +72,6 @@ class TowerBox(Cabinet):
         last_gap = self.height - used_height - (2 * self.thick_pal)  # subtract top board and bottom board
         if len(gap_list) < len(front_list):  # only append if needed
             gap_list = gap_list + [last_gap]
-
         offset = 0  # cumulative height from bottom
         for i, (gap, has_front) in enumerate(zip(gap_list, front_list)):
             if has_front:
