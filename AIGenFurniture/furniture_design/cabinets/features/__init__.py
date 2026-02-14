@@ -68,7 +68,7 @@ FEATURES = {
         "tooltip": "Add a drawer",
         "params": {
             "height": ("App::PropertyFloat", 100.0, "Drawer height"),
-            "offset": ("App::PropertyFloat", 0.0, "Offset"),
+            "offset": ("App::PropertyFloat", 24.0, "Offset"),
             "box_type": ("App::PropertyString", "a", "(a) lateral assembles on the edge of the front board, or (b) on the back"),
             "bottom": ("App::PropertyString", "pfl", "material of the bottom. Can be (pal) or (pfl) -> (default and not defined)"),
         }

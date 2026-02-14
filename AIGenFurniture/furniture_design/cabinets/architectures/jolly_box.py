@@ -15,5 +15,4 @@ class JollyBox(BaseBox):
         else:
             self.append(Accessory("Joly300500", 1))
 
-        self.add_pfl()
         self.add_front([[100, 100]], "door")
