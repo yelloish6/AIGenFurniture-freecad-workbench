@@ -18,7 +18,7 @@ def export_csv(order, output_folder):
     client_name = order.client if order.client else "Unknown"
 
     # output pal order
-    name = os.path.join(folder_name, "BOM_pal_" + client_name + ".csv")
+    name = os.path.join(folder_name, "BOM_chipboard_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pal_order_file:
         order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Pieces", "Length", "Width", "Orientable", "Label", "L1", "L2", "l1", "l2"])
@@ -31,7 +31,7 @@ def export_csv(order, output_folder):
     pal_order_file.close()
 
     # output pfl order
-    name = os.path.join(folder_name, "BOM_pfl_" + client_name + ".csv")
+    name = os.path.join(folder_name, "BOM_hdf_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_order_file:
         order_writer = csv.writer(pfl_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Pieces", "Length", "Width", "Label"])
@@ -52,6 +52,18 @@ def export_csv(order, output_folder):
             for element in cabinet.elements_list:
                 if element.type == "front":
                     #order_writer.writerow([element.label, element.length, element.width, element.price])
+                    order_writer.writerow([element.label, element.length, element.width])
+    front_order_file.close()
+
+    # output Blat order
+    name = os.path.join(folder_name, "BOM_countertop_" + client_name + ".csv")
+    with open(name, mode='w', newline="") as blat_order_file:
+        order_writer = csv.writer(blat_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        order_writer.writerow(["Label", "Length", "Width"])
+        order_writer.writerow([order.mat_blat])
+        for cabinet in cabinets:
+            for element in cabinet.elements_list:
+                if element.type == "blat":
                     order_writer.writerow([element.label, element.length, element.width])
     front_order_file.close()
 
@@ -86,7 +98,7 @@ def export_csv(order, output_folder):
     # accessory_order_file.close()
 
     # output for PAL optimization
-    name = os.path.join(folder_name, "PanelsCuttingList_pal_" + client_name + ".csv")
+    name = os.path.join(folder_name, "PanelsCuttingList_chipboard_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pal_opt_file:
         order_writer = csv.writer(pal_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Length", "Width", "Qty", "Label", "Enabled"])
@@ -97,7 +109,7 @@ def export_csv(order, output_folder):
     pal_opt_file.close()
 
     # output for PFL optimization
-    name = os.path.join(folder_name, "PanelsCuttingList_pfl_" + client_name + ".csv")
+    name = os.path.join(folder_name, "PanelsCuttingList_hdf_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_opt_file:
         order_writer = csv.writer(pfl_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
         order_writer.writerow(["Length", "Width", "Qty", "Enabled"])
