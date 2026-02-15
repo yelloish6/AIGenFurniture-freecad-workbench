@@ -1,67 +1,105 @@
-# AIGenFurniture-freecad-workbench
+# AIGenFurniture FreeCAD Workbench
+
 A FreeCAD workbench intended to automatically generate furniture based on predefined simple boxes.
 
-## 🔧 Installation
-
-1. **Locate your FreeCAD `Mod` folder**  
-   Copy the entire folder **`CabinetWorkbench`** into your FreeCAD `Mod` directory.  
-   The location of the `Mod` folder depends on your operating system and installation type:
-
-   | OS / Install Type          | User `Mod` folder (recommended) | System-wide / App folder (may require admin/root) |
-   |----------------------------|---------------------------------|--------------------------------------------------|
-   | **Windows (standard install)** | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` | `C:\Program Files\FreeCAD <version>\Mod` |
-   | **Windows (portable .zip)**    | `<FreeCAD-Portable-Folder>\AppData\Roaming\FreeCAD\Mod` | `<FreeCAD-Portable-Folder>\Mod` |
-   | **Linux (package manager)**    | `~/.local/share/FreeCAD/Mod` | `/usr/lib/freecad/Mod` or `/usr/share/freecad/Mod` |
-   | **macOS (.dmg / .app)**        | `~/Library/Preferences/FreeCAD/Mod` | `/Applications/FreeCAD.app/Contents/Mod` |
-   | **Linux (AppImage)**           | `~/.local/share/FreeCAD/Mod` | *(inside AppImage, read-only)* |
-   | **Linux (Snap)**               | `~/snap/freecad/current/.local/share/FreeCAD/Mod` | `/snap/freecad/current/usr/share/freecad/Mod` |
-   | **Linux (Flatpak)**            | `~/.var/app/org.freecadweb.FreeCAD/data/FreeCAD/Mod` | `/var/lib/flatpak/app/org.freecadweb.FreeCAD/current/active/files/Mod` |
-
-   👉 **Tip:** Always prefer the **user folder**, so your workbench survives FreeCAD updates.
+⚠️ **Project status:** early-stage / experimental  
+🖥️ **Supported platform:** **Windows only**
 
 ---
 
-2. **Install Python dependencies**  
-   
-   This workbench requires the following Python packages:
-   - openpyxl==3.1.5 (vendored and distributed in ./AIGenFurniture/vendor)
-   - tripy==1.0.0 (vendored and distributed in ./AIGenFurniture/vendor)
-   - reportlab==4.4.3 (vendored and distributed in ./AIGenFurniture/vendor)
-   - numpy==2.3.2 (not vendored)
-   - numpy-stl==3.1.2 (not vendored)
-   - PyMuPDF==1.24.14 (not vendored)
+## 🖥️ Platform Support
 
-   ### a) Standard installs (Windows/Linux/macOS) 
-   From inside the `CabinetWorkbench/AIGenFurniture` folder, run:
+At the moment, **AIGenFurniture is only supported on Windows**.
 
-      ```bash
-      pip install -r requirements.txt
-   ```
+- ✅ Windows: supported and tested
+- ❌ macOS: not yet supported
+- ❌ Linux: not yet supported
 
-   ### b) Portable FreeCAD on Windows
+Earlier commits mentioned macOS/Linux installation paths, but these were never fully tested and may not work.  
+Please use the Windows installer described below.
 
-   Portable FreeCAD uses its own Python. You must install binary dependencies into that Python, while pure-Python ones are already vendored.
+---
 
-   FreeCAD’s Python:
+## 🚀 Recommended Installation (Windows)
 
-      ```bash
-      <FreeCAD-Portable>\bin\python.exe
-   ```
+The **recommended and supported installation method** is via the **`.exe` installer** available on the GitHub Releases page.
 
-    Install binary packages into it:
+✔ No manual dependency installation  
+✔ Uses the correct Python environment automatically  
+✔ Tested setup
 
-      ```bash
-      <FreeCAD-Portable>\bin\python.exe -m pip install numpy==2.3.2 numpy-stl==3.1.2 PyMuPDF==1.24.14
-   ```
+### Steps
 
-    Pure-Python dependencies (openpyxl, tripy, reportlab) are bundled inside the workbench (vendor/), so no extra steps are needed.
-    On Windows, make sure to use the Python environment that FreeCAD uses.
-    (If you use portable FreeCAD, the Python executable is usually inside bin\python.exe in the portable folder.)
+1. Go to the **Releases** section of this repository
+2. Download the latest **`AIGenFurniture-Setup.exe`**
+3. Close FreeCAD if it is running
+4. Run the installer
+5. Launch FreeCAD
 
-    On Linux/macOS, you may need to run:
+After installation, you should see **CabinetWorkbench** in the FreeCAD workbench selector.
 
-        python3 -m pip install -r requirements.txt
+---
 
-3. **Launch FreeCAD**  
-   Restart FreeCAD. You should now see CabinetWorkbench in the Workbench selector.
+## 🔧 Manual Installation (Advanced / Not Recommended)
 
+Manual installation is provided **only for advanced users** or development purposes.  
+It is **not the recommended setup** and may require troubleshooting.
+
+> If you are new to the project, **use the `.exe` installer instead**.
+
+### 1. Install the workbench
+
+Copy the entire folder **`CabinetWorkbench`** into your FreeCAD `Mod` directory:
+
+| Windows install type | User `Mod` folder (recommended) |
+|----------------------|----------------------------------|
+| Standard installer   | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
+| Portable (.zip)      | `<FreeCAD-Portable-Folder>\AppData\Roaming\FreeCAD\Mod` |
+
+---
+
+### 2. Dependencies
+
+When installing manually, all required Python dependencies **must match FreeCAD’s Python version**.
+
+The recommended way to avoid dependency issues is to use the `.exe` installer instead.
+
+---
+
+### 3. Launch FreeCAD
+
+Restart FreeCAD and select **CabinetWorkbench** from the workbench selector.
+
+---
+
+## 🎥 Tutorials & Walkthroughs
+
+I’m recording short video tutorials that show how to use **AIGenFurniture** in real FreeCAD workflows, including:
+
+- Installation via the `.exe` installer
+- Creating simple cabinet layouts
+- Generating furniture from placeholder boxes
+- Exporting production-ready outputs
+
+You can find the tutorials here:  
+👉 **YouTube: http://www.youtube.com/@AIGenFurniture**
+
+The videos follow the same early-stage evolution as the project, so feedback and suggestions are very welcome.
+
+
+## 💬 Feedback & Issues
+
+If you encounter issues, please make sure that:
+
+- you are running **Windows**
+- you installed via the **latest `.exe` installer**
+- you are using a supported FreeCAD version
+
+When opening a GitHub issue, include:
+- Windows version
+- FreeCAD version
+- installation method (`.exe` installer or manual)
+
+Early feedback is very welcome and helps shape the future of the project. Please report issues or suggestions via:
+- GitHub Issues
+- Email (if you prefer direct feedback) at: contact@aigenfurniture.com
