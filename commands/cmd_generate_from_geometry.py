@@ -2,6 +2,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 from PySide import QtGui, QtWidgets
+from collections import deque
 
 from AIGenFurniture.furniture_design.order import Order
 from AIGenFurniture.furniture_design.cabinets.cabinet import Cabinet
@@ -10,29 +11,130 @@ from AIGenFurniture.furniture_design.design_engine import load_default_rules, DE
 from AIGenFurniture.manufacturing.generate_files import generate_manufacturing_files
 
 
+_ROT_STEPS_TABLE = None
+
+
+def _mat_mul3(a, b):
+    return (
+        a[0] * b[0] + a[1] * b[3] + a[2] * b[6],
+        a[0] * b[1] + a[1] * b[4] + a[2] * b[7],
+        a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
+        a[3] * b[0] + a[4] * b[3] + a[5] * b[6],
+        a[3] * b[1] + a[4] * b[4] + a[5] * b[7],
+        a[3] * b[2] + a[4] * b[5] + a[5] * b[8],
+        a[6] * b[0] + a[7] * b[3] + a[8] * b[6],
+        a[6] * b[1] + a[7] * b[4] + a[8] * b[7],
+        a[6] * b[2] + a[7] * b[5] + a[8] * b[8],
+    )
+
+
+def _step_rot_matrix(axis):
+    # Matches placement_from_position_list() semantics in cmd_explode_cabinet.py:
+    # one recorded "rotate axis" corresponds to +90° in FreeCAD placement space.
+    if axis == "x":
+        return (
+            1, 0, 0,
+            0, 0, -1,
+            0, 1, 0,
+        )
+    if axis == "y":
+        return (
+            0, 0, 1,
+            0, 1, 0,
+            -1, 0, 0,
+        )
+    if axis == "z":
+        return (
+            0, -1, 0,
+            1, 0, 0,
+            0, 0, 1,
+        )
+    raise ValueError(f"Unsupported axis: {axis}")
+
+
+def _build_rot_steps_table():
+    identity = (
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1,
+    )
+    table = {identity: []}
+    queue = deque([identity])
+    axes = ("x", "y", "z")
+
+    while queue and len(table) < 24:
+        current = queue.popleft()
+        current_steps = table[current]
+        for axis in axes:
+            nxt = _mat_mul3(_step_rot_matrix(axis), current)
+            if nxt not in table:
+                table[nxt] = current_steps + [["rotate", axis]]
+                queue.append(nxt)
+
+    return table
+
+
+def _snap_axis_vector(v, tol=1e-5):
+    coords = (v.x, v.y, v.z)
+    idx = max(range(3), key=lambda i: abs(coords[i]))
+    if abs(abs(coords[idx]) - 1.0) > tol:
+        return None
+    if any(abs(coords[i]) > tol for i in range(3) if i != idx):
+        return None
+
+    out = [0, 0, 0]
+    out[idx] = 1 if coords[idx] >= 0 else -1
+    return tuple(out)
+
+
+def _rotation_to_discrete_matrix(rot):
+    ex = _snap_axis_vector(rot.multVec(App.Vector(1, 0, 0)))
+    ey = _snap_axis_vector(rot.multVec(App.Vector(0, 1, 0)))
+    ez = _snap_axis_vector(rot.multVec(App.Vector(0, 0, 1)))
+    if not ex or not ey or not ez:
+        return None
+
+    # Columns are rotated basis vectors.
+    return (
+        ex[0], ey[0], ez[0],
+        ex[1], ey[1], ez[1],
+        ex[2], ey[2], ez[2],
+    )
+
+
 def freecad_placement_to_position_list(placement):
     """Convert FreeCAD Placement to position_list format used by elements."""
     position_list = []
     base = placement.Base
     rot = placement.Rotation
+    global _ROT_STEPS_TABLE
+    if _ROT_STEPS_TABLE is None:
+        _ROT_STEPS_TABLE = _build_rot_steps_table()
 
-    # Extract rotations (90° steps)
-    try:
-        yaw, pitch, roll = rot.toEuler()
-        # Convert to 90° steps
-        for axis, angle in [("z", yaw), ("y", pitch), ("x", roll)]:
-            steps = int(round(angle / 90.0)) % 4
-            for _ in range(abs(steps)):
-                position_list.append(["rotate", axis])
-    except:
-        pass
+    discrete_rot = _rotation_to_discrete_matrix(rot)
+    if discrete_rot in _ROT_STEPS_TABLE:
+        position_list.extend(_ROT_STEPS_TABLE[discrete_rot])
+    else:
+        App.Console.PrintWarning(
+            "[WARN] cmd_generate_from_geometry.py: "
+            "could not map placement rotation to 90-degree steps exactly; using Euler fallback.\n"
+        )
+        # Fallback keeps behavior for non-orthogonal placements.
+        try:
+            yaw, pitch, roll = rot.toEuler()
+            for axis, angle in [("z", yaw), ("y", pitch), ("x", roll)]:
+                steps = int(round(angle / 90.0)) % 4
+                for _ in range(abs(steps)):
+                    position_list.append(["rotate", axis])
+        except Exception:
+            pass
 
     # Extract translations
-    if base.x != 0:
+    if abs(base.x) > 1e-9:
         position_list.append(["move", "x", base.x])
-    if base.y != 0:
+    if abs(base.y) > 1e-9:
         position_list.append(["move", "y", base.y])
-    if base.z != 0:
+    if abs(base.z) > 1e-9:
         position_list.append(["move", "z", base.z])
 
     return position_list
