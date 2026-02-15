@@ -1,8 +1,8 @@
 from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal
-from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
+# from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES
 
-ASSEMBLY_TYPE = "euro_screw"
+# ASSEMBLY_TYPE = "euro_screw"
 
 # class SinkBox(BaseBox):
 #     def __init__(self, label, height, width, depth, rules):
@@ -39,7 +39,7 @@ class SinkBox(BaseBox):
         self.remove_all_pfl()
 
         leg_width = 100
-        legatura = BoardPal(self.label + ".leg", self.width - (2 * self.thick_pal), leg_width, self.thick_pal,
+        legatura = BoardPal(self.label + ".link", self.width - (2 * self.thick_pal), leg_width, self.thick_pal,
                             self.cant_lab, "", "", "")
         legatura.rotate("x")
         legatura.move("x", self.thick_pal)
@@ -48,11 +48,11 @@ class SinkBox(BaseBox):
         legatura.move("y", self.thick_pal)
         self.append(legatura)
 
-        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat1"))
-        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat2"))
-        ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".jos"))
+        # ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat1"))
+        # ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".lat2"))
+        # ASSEMBLIES[ASSEMBLY_TYPE](legatura, self.get_item_by_type_label("pal", self.label + ".jos"))
 
-        leg1 = self.get_item_by_type_label("pal", self.label + ".leg1")
+        leg1 = self.get_item_by_type_label("pal", self.label + ".top1")
 
         # reset all positioning
         leg1.position_list = []
@@ -67,7 +67,7 @@ class SinkBox(BaseBox):
         leg1.move("y", leg1.thick)
         # leg1.move("z", self.thick_pal - leg1.width)
 
-        leg2 = self.get_item_by_type_label("pal", self.label + ".leg2")
+        leg2 = self.get_item_by_type_label("pal", self.label + ".top2")
         # reset all positioning
         leg2.position_list = []
         leg2.position = [leg2.length, leg2.width, leg2.thick, 0, 0, 0]
@@ -81,3 +81,44 @@ class SinkBox(BaseBox):
         # # leg2.move("y", leg2.thick)
         # leg2.move("z", self.thick_pal - leg2.width)
         # leg2.move("y", leg2.width - self.thick_pal)
+
+if __name__ == "__main__":
+
+    RULES = {
+        "thick_pal": 18,
+        "thick_front": 18,
+        "thick_blat": 38,
+        "height_legs": 100,
+        "general_width": 600,
+        "width_blat": 600,
+        "gap_spate": 50,
+        "gap_fata": 50,
+        "gap_front": 2,
+        "cant_general": 1,
+        "cant_pol": 2,
+        "cant_separator": 1,
+        "pol_depth": 20
+    }
+
+    print("=== Running SinkBox test scenario ===")
+
+    cabinet = SinkBox("test_cabinet", 720, 600, 500, RULES)
+
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.down").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.down").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal","test_cabinet.down").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_l").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_l").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_l").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_r").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_r").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.lat_r").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top1").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top1").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top1").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top2").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top2").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.top2").__getattribute__("drill_list"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.link").__getattribute__("label"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.link").__getattribute__("position"))
+    print(cabinet.get_item_by_type_label("pal", "test_cabinet.link").__getattribute__("drill_list"))
