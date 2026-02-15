@@ -5,6 +5,16 @@ import os
 from AIGenFurniture.furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from AIGenFurniture.furniture_design.cabinets.architectures import get_cabinet_factory
 
+def is_valid_cabinet_object(obj):
+    if obj is None:
+        return False
+    if getattr(obj, "TypeId", "") != "Part::Box":
+        return False
+    if not hasattr(obj, "CabinetType"):
+        return False
+    cab_type = getattr(obj, "CabinetType", "")
+    return bool(cab_type) and get_cabinet_factory(cab_type) is not None
+
 def apply_movements_to_part(part, position_list):
     pl = App.Placement()  # identity
     for movement in position_list:
@@ -211,12 +221,19 @@ class ExplodeBoxCommand:
         }
 
     def IsActive(self):
-        return App.ActiveDocument is not None
+        if App.ActiveDocument is None:
+            return False
+        sel = Gui.Selection.getSelection()
+        if len(sel) != 1:
+            return False
+        return is_valid_cabinet_object(sel[0])
 
     def Activated(self):
         sel = Gui.Selection.getSelection()
-        if not sel:
-            App.Console.PrintError("[WARNING] cmd_explode_cabinet.py: Please select a box first.\n")
+        if len(sel) != 1 or not is_valid_cabinet_object(sel[0]):
+            App.Console.PrintError(
+                "[WARNING] cmd_explode_cabinet.py: Please select one valid cabinet box first.\n"
+            )
             return
         explode_box_to_cabinet(sel[0])
 
