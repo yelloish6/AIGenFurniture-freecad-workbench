@@ -12,7 +12,7 @@
   <url type="repository" branch="main">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
   <url type="readme">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/blob/main/README.md</url>
 
-  <icon>Resources/icons/AIGenFurniture_logo_noBG.png</icon>
+  <icon>Resources/icons/AIGenFurniture_logo_noBG.svg</icon>
 
   <freecadmin>0.20</freecadmin>
 
