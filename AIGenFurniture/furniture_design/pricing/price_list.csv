@@ -1,7 +1,7 @@
 type,material,price,currency,unit,minimum_order,supplier,comment
 pal,Alb W908ST2,423,RON,sheet,0.5,proficut,PAL MEL Stejar Bardolino Gri H1146 711RON + TVA
 pal,Alb W962ST2,300,RON,sheet,0.5,proficut,
-pal,Alb W960ST7,309,RON,sheet,0.5,proficut,
+pal,Alb W960ST7,329,RON,sheet,0.5,proficut,
 pal,Roz Fuchsia U337 ST9,514,RON,sheet,0.5,proficut,Pal Roz Fuchsia  U337 ST9
 pal,Smoke Green K521 SU,475,RON,sheet,1,proficut,
 pal,Roz Flamingo U363 ST9,514,RON,sheet,1,proficut,Pal Roz Flamingo  U363 ST9
@@ -17,7 +17,7 @@ front,A34R3,309.4,RON,m2,1,nett front,
 front,Alb W962ST2,55,RON,m2,0.5,proficut,
 front,Alb Riflat A356R3,637,RON,m2,1,nett front,107 EUR + TVA
 front,Alb Riflat Global Design,975.8,RON,m2,1,global design,164 EUR + TVA
-cant,0.4,3.57,RON,m,1,proficut,ABS0422A
+cant,0.4,5.2,RON,m,1,proficut,ABS0422A
 cant,2,7.36,RON,m,1,proficut,ABS222A
 service,decupare pal,29.75,RON,piece,1,proficut,DECUPARE PAL SCHITA
 accessory,decupare blat,100,RON,piece,1,proficut,DECUPARE BLAT SCHITA
@@ -45,10 +45,10 @@ accessory,balama 170 deg,17.2,RON,piece,1,ProfiCut,Viking Tools (eMAG) 15.47
 accessory,amortizor,7.74,RON,piece,1,regency company,https://regencycompany.ro/balamale/blumotion-balama-aplicata-973a050001.html
 accessory,maner,10,RON,piece,1,generic,
 accessory,pereche glisiera 400 mm,30,RON,piece,1,generic,
-accessory,pereche glisiera 450 mm,19,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m4500.html
+accessory,pereche glisiera 450 mm,30,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m4500.html
 accessory,pereche glisiera 500 mm,49.8967,RON,piece,1,proficut,Glisiera L=500 cu bile si amortizare extra tot 45MM 35kg 4301905 EUMUKA
-accessory,pereche glisiera 550 mm,22.71,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m5500.html
-accessory,pereche glisiera 600 mm,25.86,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m6000.html
+accessory,pereche glisiera 550 mm,50,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m5500.html
+accessory,pereche glisiera 600 mm,50,RON,piece,1,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m6000.html
 accessory,Joly150500,150,RON,piece,1,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html
 accessory,Joly240500,250,RON,piece,1,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html
 accessory,Joly300500,300,RON,piece,1,MAM Bricolaj,https://webshop.mam-bricolaj.ro/produs/cos-jolly-300-mm-cu-amortizare-hafele?gclid=CjwKCAjw_tWRBhAwEiwALxFPoTAZRHSX3hwvYY7b79gUjj2oL3iZRrCTpfPMCOunEYo1TEYseA4WYhoCnkwQAvD_BwE
@@ -69,3 +69,6 @@ front,Gri Onix UM A34/R3,477.95,RON,m2,1,nett front,79 EUR + TVA
 blat,Titanit Bej nisip F226 ST78,150.5,RON,m,4,Egger,"601,89 RON 4m"
 blat,K4893 DP Pietra Gray,206,RON,m,1,Kaindl,411.91 2m (blatul de 36mm)
 pal,Gri Onix U960 ST9,453,RON,sheet,1,palhaus,https://www.palhause.ro/pal-melaminat/egger-5196/u960-st9-gri-onix-2800x2070x18-mm-egger
+pal,Lemn Stejar Masiv,2191,RON,sheet,0.00001,nu,7000 RON/ m3 * 2.7 factor de pierdere * (1m x 1m x 0.02 m) * 2.8 * 2.07 -> 2191 RON/m2
+front,Lemn Stejar Masiv,378,RON,m2,0.00001,nu,7000 RON/ m3 * 2.7 factor de pierdere * (1m x 1m x 0.02 m) -> 378 RON/m2
+pfl,Lemn Stejar Masiv,113.4,RON,sheet,0.00001,nu,7000 RON/ m3 * 2.7 factor de pierdere * (1m x 1m x 0.006 m) * 2.8 * 2.07 ->  657.2 RON/coala

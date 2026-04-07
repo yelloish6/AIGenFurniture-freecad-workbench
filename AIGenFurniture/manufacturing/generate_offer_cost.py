@@ -57,41 +57,41 @@ def generate_offer_file(order, output_path):
     total_cost += order.get_cost_pal()
 
     line(f"M2 PAL: {order.get_total_m2_pal():.2f}"
-         f" | Nr. coli PAL: {order.get_sheets_pal()}"
-         f" | Nr. piese decupate: {order.get_count_cutout_pal()}"
-         f" | Cost decupaj piese pal: {order.get_cost_cutout_pal()}"
-         f" | Cost pal: {order.get_cost_pal() + order.get_cost_cutout_pal()}"
+         f" | Nr. coli PAL: {order.get_sheets_pal():.2f}"
+         f" | Nr. piese decupate: {order.get_count_cutout_pal():.2f}"
+         f" | Cost decupaj piese pal: {order.get_cost_cutout_pal():.2f}"
+         f" | Cost pal: {order.get_cost_pal() + order.get_cost_cutout_pal():.2f}"
          f" | Material: {order.mat_pal}")
 
-    line(f"M Cant 0.4: {math.ceil(order.get_m_cant('0.4'))}"
+    line(f"M Cant 0.4: {math.ceil(order.get_m_cant('0.4')):.2f}"
          f" | Pret {order.get_cost_edge('0.4'):.2f}")
 
-    line(f"M Cant 2: {math.ceil(order.get_m_cant('2'))}"
+    line(f"M Cant 2: {math.ceil(order.get_m_cant('2')):.2f}"
          f" | Pret {order.get_cost_edge('2'):.2f}")
 
     line(f"M2 PFL: {order.get_total_m2_pfl():.2f}"
-         f" | Nr. coli PFL: {order.get_sheets_pfl()}"
-         f" | Pret PFL: {order.get_cost_pfl()}")
+         f" | Nr. coli PFL: {order.get_sheets_pfl():.2f}"
+         f" | Pret PFL: {order.get_cost_pfl():.2f}")
 
     line(f"M2 Front: {order.get_total_m2_front():.2f}"
          f" | Pret {order.get_cost_front():.2f}"
-         f" | Material: NETT FRONT {order.mat_front}")
+         f" | Material: {order.mat_front}")
 
     line(f"M Blat: {order.get_m_blat():.2f}"
-         f" | Pret {order.get_cost_countertop()}")
+         f" | Pret {order.get_cost_countertop():.2f}")
 
-    line(f"Cost total accesorii: {order.get_cost_accessories()}")
+    line(f"Cost total accesorii: {order.get_cost_accessories():.2f}")
 
-    line(f"Cost transport: {order.get_cost_transport()}")
+    line(f"Cost transport: {order.get_cost_transport():.2f}")
 
     if order.discount == 0:
-        line(f"Cost manopera: {order.get_labour_cost()[0]}")
+        line(f"Cost manopera: {order.get_labour_cost()[0]:.2f}")
     else:
-        line(f"Cost manopera: {order.get_labour_cost()[0]}"
+        line(f"Cost manopera: {order.get_labour_cost()[0]:.2f}"
              f" | Discount[%]: {order.discount}"
-             f" | Pret manopera cu discount: {order.get_labour_cost()[1]}")
+             f" | Pret manopera cu discount: {order.get_labour_cost()[1]:.2f}")
 
-    line(f"Cost TOTAL: {math.ceil(order.get_cost_total())} RON")
+    line(f"Cost TOTAL: {math.ceil(order.get_cost_total()):.2f} RON")
 
     story.append(Spacer(1, 20))
 
@@ -103,7 +103,7 @@ def generate_offer_file(order, output_path):
     story.append(Spacer(1, 12))
 
     # Table header
-    data = [["Tip", "Etichetă", "Cantitate", "Unitate", "Material", "Preț (RON)"]]
+    data = [["Tip", "Eticheta", "Cantitate", "Unitate", "Material", "Pret (RON)"]]
 
     # Collect items
     for cabinet in order.cabinets_list:
@@ -112,11 +112,11 @@ def generate_offer_file(order, output_path):
             if element.type in ["pal", "front", "pfl"]:
                 material = element.material
                 qty = element.get_m2()
-                unit = element.get_unit()
+                unit = "m2"
             elif element.type == "blat":
                 material = element.material
                 qty = element.get_length()
-                unit = element.get_unit()
+                unit = "m"
             elif element.type == "accessory":
                 material = element.label
                 qty = element.pieces
@@ -188,11 +188,11 @@ def export_cost_sheet(order, output_folder):
                 if element.type in ["pal", "front", "pfl"]:
                     material = element.material
                     size = element.get_m2()
-                    unit = element.get_unit()
+                    unit = "m2"
                 elif element.type == "blat":
                     material = element.material
                     size = element.get_length()
-                    unit = element.get_unit()
+                    unit = "m"
                 elif element.type == "accessory":
                     material = element.label
                     size = element.pieces
@@ -234,6 +234,7 @@ def print_order_summary(order, output_folder):
           " | Cost decupaj piese pal: ", order.get_cost_cutout_pal(),
           " | Cost pal:", order.get_cost_pal() + order.get_cost_cutout_pal(),
           " | Material:", order.mat_pal)
+    print("M3 lemn: ", "{:.2f}".format(order.get_m3_pal()))
     print("M Cant 0.4", math.ceil(order.get_m_cant('0.4')),
           " | Pret ", "{:.2f}".format(order.get_cost_edge('0.4')))
     print("M Cant 2", math.ceil(order.get_m_cant('2')),
@@ -243,7 +244,7 @@ def print_order_summary(order, output_folder):
           " | Pret PFL: ", order.get_cost_pfl())
     print("M2 Front: ", "{:.2f}".format(order.get_total_m2_front()),
           " | Pret ", "{:.2f}".format(order.get_cost_front()),
-          " | Material: ", "NETT FRONT", order.mat_front)
+          " | Material: ", order.mat_front)
     print("M Blat: ", "{:.2f}".format(order.get_m_blat()),
           " | Pret", order.get_cost_countertop())
     print("Cost total accesorii: ", order.get_cost_accessories())

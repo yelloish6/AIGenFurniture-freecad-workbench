@@ -150,6 +150,12 @@ class Order:
             m2pal = m2pal + cabinet.get_m2_pal()
         return m2pal
 
+    def get_m3_pal(self):
+        m3 = 0
+        for cabinet in self.cabinets_list:
+            m3 = m3 + cabinet.get_m3_pal()
+        return m3
+
     def get_total_m2_pfl(self):
         m2pfl = 0
         for cabinet in self.cabinets_list:
@@ -184,7 +190,7 @@ class Order:
         m = 0
         for cabinet in self.cabinets_list:
             for element in cabinet.elements_list:
-                if element.type == "blat":
+                if element.type == "countertop":
                     m = m + element.length
         return float(m / 1000)
 
@@ -286,6 +292,12 @@ class Order:
              self.nr_electrocasnice * H_APPLIANCE +
              self.get_m_blat() * H_COUNTERTOP) * self.h_rate * (1 + IMPOZIT))
         labour_cost_discount = labour_cost * (100 - self.discount) / 100
+        # TODO Change how the labour cost is managed in to a separate labour cost calculation module that can be adjusted based on available parameters of order
+        # print("Brakdown of labour cost:")
+        # print(f"Project: h: {self.h_proiect}, cost:{self.h_proiect * self.h_rate} RON")
+        # print(f"Cabinet construction: h: {self.get_boards_number() * H_BOARD_HANDLING}, cost:{self.get_boards_number() * H_BOARD_HANDLING * self.h_rate} RON")
+        # print(f"Appliance installation: h: {self.nr_electrocasnice * H_APPLIANCE}, cost:{self.nr_electrocasnice * H_APPLIANCE * self.h_rate} RON")
+        # print(f"Countertop installation: h:{self.get_m_blat() * H_COUNTERTOP}, cost:{self.get_m_blat() * H_COUNTERTOP * self.h_rate} RON")
         return [labour_cost, labour_cost_discount]
 
     def get_cost_transport(self):

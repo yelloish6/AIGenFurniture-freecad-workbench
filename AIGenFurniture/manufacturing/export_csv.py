@@ -30,6 +30,19 @@ def export_csv(order, output_folder):
                          element.cant_list[1], element.cant_list[2], element.cant_list[3]])
     pal_order_file.close()
 
+    # output for solid wood
+    name = os.path.join(folder_name, "BOM_solid_wood_" + client_name + ".csv")
+    with open(name, mode='w', newline="") as pal_order_file:
+        order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        order_writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"])
+        for cabinet in cabinets:
+            for element in cabinet.elements_list:
+                if element.type in ("pal", "front", "pfl", "blat"):
+                    order_writer.writerow(
+                        [element.label, element.length, element.width, element.thick, element.get_m2(), element.get_m3()
+                         ])
+    pal_order_file.close()
+
     # output pfl order
     name = os.path.join(folder_name, "BOM_hdf_" + client_name + ".csv")
     with open(name, mode='w', newline="") as pfl_order_file:

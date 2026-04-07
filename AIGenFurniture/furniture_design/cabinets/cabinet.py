@@ -216,6 +216,13 @@ class Cabinet(DrawersMixin, ShelvesMixin, FrontMixin, BackMixin):
                 m2 = m2 + self.elements_list[i].get_m2()
         return m2
 
+    def get_m3_pal(self):
+        m3 = 0
+        for i in range(len(self.elements_list)):
+            if self.elements_list[i].type == "pal":
+                m3 = m3 + self.elements_list[i].get_m3()
+        return m3
+
     def get_m_cant(self, cant_type):
         """
         :param cant_type: "0.4" sau "2"

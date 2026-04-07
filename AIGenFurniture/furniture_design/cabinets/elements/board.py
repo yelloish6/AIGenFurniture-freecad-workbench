@@ -183,6 +183,9 @@ class Board:
     def get_m2(self):
         return float(self.length * self.width / 1000000)
 
+    def get_m3(self):
+        return float(self.length * self.width * self.thick / 1000000000)
+
     def print(self):
         print(f"Board type: {self.type}, {self.label}, [{self.length} x {self.width} x {self.thick}], {self.material}, "
               f"position {self.position}")
