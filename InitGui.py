@@ -12,7 +12,7 @@ class CabinetWorkbench (Gui.Workbench):
 
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
-        icon_path = os.path.join(base_dir, "Resources", "icons", "convert_cabinet.svg")
+        icon_path = os.path.join(base_dir, "Resources", "icons", "AIGenFurniture_logo_noBG.png")
         
         from AIGenFurniture import __version__
 
