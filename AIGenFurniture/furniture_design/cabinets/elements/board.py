@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 import csv, os, math
 from AIGenFurniture.furniture_design.pricing.price_manager import PriceManager as pm
 # TODO add a method to cut-out boards, and add the effect in all output files

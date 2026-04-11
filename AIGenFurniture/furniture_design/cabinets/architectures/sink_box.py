@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 from AIGenFurniture.furniture_design.cabinets.architectures.base_box import BaseBox
 from AIGenFurniture.furniture_design.cabinets.elements.board import BoardPal
 # from AIGenFurniture.furniture_design.cabinets.assemblies import ASSEMBLIES

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 def assemble(board1, board2):
     """
     Assemble two boards using wood dowels.

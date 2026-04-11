@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 import os
 import inspect
 import FreeCAD as App
@@ -12,7 +14,7 @@ class CabinetWorkbench (Gui.Workbench):
 
         current_file = inspect.getfile(inspect.currentframe())
         base_dir = os.path.dirname(os.path.abspath(current_file))
-        icon_path = os.path.join(base_dir, "Resources", "icons", "AIGenFurniture_logo_noBG.png")
+        icon_path = os.path.join(base_dir, "Resources", "icons", "AIGenFurniture_logo_noBG.svg")
         
         from AIGenFurniture import __version__
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 import math
 from AIGenFurniture.furniture_design.cabinets.elements.board import Board
 

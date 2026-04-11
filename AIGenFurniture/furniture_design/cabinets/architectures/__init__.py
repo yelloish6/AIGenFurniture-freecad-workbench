@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 from .banca import Banca
 from .bar import Bar
 from .base_box import BaseBox

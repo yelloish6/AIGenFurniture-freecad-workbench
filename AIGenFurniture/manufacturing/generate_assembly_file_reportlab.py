@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 import os
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4

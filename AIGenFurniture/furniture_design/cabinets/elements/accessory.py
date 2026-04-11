@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 import csv, os
 from AIGenFurniture.furniture_design.pricing.price_manager import PriceManager as pm
 

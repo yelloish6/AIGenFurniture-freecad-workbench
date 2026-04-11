@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 from .order import Order
 # from .cabinets.architectures import *
 from .cabinets.cabinet import Cabinet

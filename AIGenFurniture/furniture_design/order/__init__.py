@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# SPDX-FileNotice: Part of the AIGenFurniture addon.
 # AIGenFurniture/furniture_design/order/__init__.py
 """
 Order module - re-exports for backward compatibility.
