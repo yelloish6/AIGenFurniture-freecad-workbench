@@ -1,105 +1,104 @@
 # AIGenFurniture FreeCAD Workbench
 
-A FreeCAD workbench intended to automatically generate furniture based on predefined simple boxes.
+A FreeCAD workbench that automatically generates furniture structures from
+predefined parametric cabinet boxes — dramatically reducing the manual work
+involved in furniture design and manufacturing preparation.
 
-⚠️ **Project status:** early-stage / experimental  
-🖥️ **Supported platform:** **Windows only**
-
----
-
-## 🖥️ Platform Support
-
-At the moment, **AIGenFurniture is only supported on Windows**.
-
-- ✅ Windows: supported and tested
-- ❌ macOS: not yet supported
-- ❌ Linux: not yet supported
-
-Earlier commits mentioned macOS/Linux installation paths, but these were never fully tested and may not work.  
-Please use the Windows installer described below.
+⚠️ **Project status:** Beta / Early-stage MVP  
+📦 **Current version:** v0.1.3  
+🖥️ **Tested on:** Windows · Linux  _(macOS not yet tested)_
 
 ---
 
-## 🚀 Recommended Installation (Windows)
+## 🚀 Installation via FreeCAD Addon Manager (Recommended)
 
-The **recommended and supported installation method** is via the **`.exe` installer** available on the GitHub Releases page.
+The easiest way to install AIGenFurniture is via the built-in
+**FreeCAD Addon Manager**:
 
-✔ No manual dependency installation  
-✔ Uses the correct Python environment automatically  
-✔ Tested setup
+1. Open FreeCAD
+2. Go to **Tools → Addon Manager**
+3. Search for **AIGenFurniture**
+4. Click **Install**
+5. Restart FreeCAD
+6. Select **Cabinet Generator** from the workbench selector
 
-### Steps
+Do not skip the dependencies installation step that is triggered during the set-up.
 
-1. Go to the **Releases** section of this repository
-2. Download the latest **`AIGenFurniture-Setup.exe`**
-3. Close FreeCAD if it is running
-4. Run the installer
-5. Launch FreeCAD
-
-After installation, you should see **CabinetWorkbench** in the FreeCAD workbench selector.
-
----
-
-## 🔧 Manual Installation (Advanced / Not Recommended)
-
-Manual installation is provided **only for advanced users** or development purposes.  
-It is **not the recommended setup** and may require troubleshooting.
-
-> If you are new to the project, **use the `.exe` installer instead**.
-
-### 1. Install the workbench
-
-Copy the entire folder **`CabinetWorkbench`** into your FreeCAD `Mod` directory:
-
-| Windows install type | User `Mod` folder (recommended) |
-|----------------------|----------------------------------|
-| Standard installer   | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
-| Portable (.zip)      | `<FreeCAD-Portable-Folder>\AppData\Roaming\FreeCAD\Mod` |
+> **Note on platform testing:**  
+> The workbench has been tested on **Windows** and **Linux**.  
+> It has **not been tested on macOS** — it may work, but is not confirmed.
 
 ---
 
-### 2. Dependencies
+## 💾 Manual Installation (Advanced / Development)
 
-When installing manually, all required Python dependencies **must match FreeCAD’s Python version**.
+For advanced users or development purposes, you can install manually
+by copying the `CabinetWorkbench` folder into FreeCAD's `Mod` directory.
 
-The recommended way to avoid dependency issues is to use the `.exe` installer instead.
+| Platform | `Mod` folder path |
+|----------|-------------------|
+| Windows  | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
+| Linux    | `~/.local/share/FreeCAD/Mod` |
+
+> When installing manually, all Python dependencies must match
+> FreeCAD's internal Python version. The Addon Manager handles
+> this automatically — use it unless you have a specific reason not to.
 
 ---
 
-### 3. Launch FreeCAD
+## ⬇️ Direct Download (Alternative)
 
-Restart FreeCAD and select **CabinetWorkbench** from the workbench selector.
+Prefer a direct download? You can also grab the latest release from the
+[aigenfurniture.com](https://www.aigenfurniture.com):
+
+- Windows users: **`AIGenFurniture_Setup_0.1.3.exe`** (Windows installer)
+- Cross-platform: source `.zip` from the release assets
 
 ---
 
-## 🎥 Tutorials & Walkthroughs
+## ✨ What It Does
 
-I’m recording short video tutorials that show how to use **AIGenFurniture** in real FreeCAD workflows, including:
+AIGenFurniture automates the transition from idea → design → manufacturing files:
 
-- Installation via the `.exe` installer
-- Creating simple cabinet layouts
-- Generating furniture from placeholder boxes
-- Exporting production-ready outputs
+1. **Design your layout** — represent cabinets as labeled simple boxes in FreeCAD
+2. **Configure parameters** — assign type, dimensions, and features (drawers, shelves, fronts) to each box
+3. **Generate structure** — one click replaces the box with a full cabinet assembly
+4. **Export manufacturing files** — generates all production-ready outputs under one folder
 
-You can find the tutorials here:  
-👉 **YouTube: http://www.youtube.com/@AIGenFurniture**
+---
 
-The videos follow the same early-stage evolution as the project, so feedback and suggestions are very welcome.
+## 🎥 Tutorials
 
+Short video tutorials covering installation, cabinet creation, and manufacturing exports:
+
+👉 **YouTube: [youtube.com/@AIGenFurniture](http://www.youtube.com/@AIGenFurniture)**
+
+---
+
+## ❤️ Support the Project
+
+AIGenFurniture is free and open-source (LGPL 2+). If it saves you time,
+consider supporting its development:
+
+- **GitHub Sponsors:** [github.com/sponsors/yelloish6](https://github.com/sponsors/yelloish6)
+- **Ko-fi:** https://ko-fi.com/bogdan_aigenfurniture
+
+Your support directly funds new features, better documentation, and maintenance.
+
+---
 
 ## 💬 Feedback & Issues
 
-If you encounter issues, please make sure that:
+Early-stage feedback shapes the product. When opening a GitHub Issue, please include:
 
-- you are running **Windows**
-- you installed via the **latest `.exe` installer**
-- you are using a supported FreeCAD version
-
-When opening a GitHub issue, include:
-- Windows version
+- Operating system (Windows / Linux)
 - FreeCAD version
-- installation method (`.exe` installer or manual)
+- How you installed the workbench (Addon Manager / manual / installer)
 
-Early feedback is very welcome and helps shape the future of the project. Please report issues or suggestions via:
-- GitHub Issues
-- Email (if you prefer direct feedback) at: contact@aigenfurniture.com
+You can also reach us directly: **contact@aigenfurniture.com**
+
+---
+
+## 📄 License
+
+[LGPL 2+](LICENSE)
