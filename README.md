@@ -80,8 +80,8 @@ Short video tutorials covering installation, cabinet creation, and manufacturing
 AIGenFurniture is free and open-source (LGPL 2+). If it saves you time,
 consider supporting its development:
 
-- **GitHub Sponsors:** [github.com/sponsors/yelloish6](https://github.com/sponsors/yelloish6)
 - **Ko-fi:** https://ko-fi.com/bogdan_aigenfurniture
+- **PayPal:** https://www.paypal.com/donate/?hosted_button_id=UV2AFNARW4RBN
 
 Your support directly funds new features, better documentation, and maintenance.
 
