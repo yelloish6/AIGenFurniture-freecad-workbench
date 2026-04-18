@@ -1,4 +1,0 @@
-[console_scripts]
-stl = stl.main:main
-stl2ascii = stl.main:to_ascii
-stl2bin = stl.main:to_binary
