@@ -2,7 +2,7 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>AIGenFurniture</name>
   <description>A FreeCAD workbench for parametric furniture cabinet design. Generate base, wall, and tower cabinets from simple boxes, apply features (fronts, shelves, drawers), and export CSV bill of materials, cut lists and STL file.</description>
-  <version>0.1.0</version>
+  <version>0.1.4</version>
   <date>2026-04-07</date>
 
   <maintainer email="bogdan@aigenfurniture.com">Bogdan Miron</maintainer>
@@ -10,18 +10,18 @@
   <license>LGPL-2.1-or-later</license>
 
   <url type="repository" branch="main">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
-  <url type="readme">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/blob/main/README.md</url>
+  <url type="readme">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/blob/Resources/Documents/Overview.md</url>
 
-  <icon>Resources/icons/AIGenFurniture_logo_noBG.svg</icon>
+  <icon>Resources/Icons/AIGenFurniture_logo_noBG.svg</icon>
 
-  <freecadmin>0.20</freecadmin>
+  <freecadmin>1.1.0</freecadmin>
 
   <content>
     <workbench>
       <name>AIGenFurniture Cabinet Workbench</name>
       <classname>CabinetWorkbench</classname>
       <description>Parametric cabinet generation workbench with CSV and STL manufacturing files exports.</description>
-      <subdirectory>./</subdirectory>
+      <subdirectory>freecad/AIGenFurniture</subdirectory>
     </workbench>
   </content>
 

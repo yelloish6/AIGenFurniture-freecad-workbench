@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+
+# FreeCAD
+*.FCStd1
+*.FCBak
+
+# OS
+.DS_Store
+Thumbs.db
+.~lock.*
