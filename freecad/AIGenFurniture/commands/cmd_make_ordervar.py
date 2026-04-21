@@ -6,6 +6,7 @@ import FreeCADGui as Gui
 import os
 # Import centralized order parameters - uses deterministic ordering
 from ..furniture_design.order import get_enabled_order_params
+from .._resources import get_command_icon
 
 
 def create_globals_spreadsheet(doc):
@@ -56,9 +57,8 @@ def create_globals_spreadsheet(doc):
 
 class CreateGlobalsSpreadsheetCommand:
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_create_spreadsheet.svg"),
+            "Pixmap": get_command_icon("icon_create_spreadsheet"),
             "MenuText": "Create Globals Spreadsheet",
             "ToolTip": "Create a spreadsheet with all global aliases and default values",
         }

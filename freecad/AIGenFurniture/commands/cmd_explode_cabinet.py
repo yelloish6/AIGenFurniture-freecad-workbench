@@ -3,6 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 import os
+from .._resources import get_command_icon
 
 from . import resources
 from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
@@ -234,9 +235,8 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
 class ExplodeBoxCommand:
 
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_explode_box.svg"),
+            "Pixmap": get_command_icon("icon_explode_box"),
             "MenuText": "Generate Cabinet",
             "ToolTip": "Generate cabinet structure based on the parameters of the cabinet box"
         }

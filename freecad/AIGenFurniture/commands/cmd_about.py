@@ -3,13 +3,13 @@
 import os
 import FreeCADGui as Gui
 from PySide import QtGui, QtCore
-
+from .._resources import get_command_icon
 
 class AboutCommand:
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "")
+        # ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_support.svg"),
+            "Pixmap": get_command_icon("icon_support"),
             "MenuText": "Support",
             "ToolTip": "Contact, feedback, and donation info for AIGenFurniture"
         }

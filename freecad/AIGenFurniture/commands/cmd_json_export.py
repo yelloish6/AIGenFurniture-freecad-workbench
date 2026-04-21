@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 import json
 import os
+from .._resources import get_command_icon
 
 def serialize_property_value(value):
     """Convert FreeCAD property values into JSON-serializable Python types."""
@@ -388,9 +389,8 @@ def export(doc, output_path):
 
 class ExportJSONCommand:
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_json_export.png"),  # replace with actual icon path
+            "Pixmap": get_command_icon("icon_json_export.svg"),  # replace with actual icon path
             "MenuText": "Export Cabinets JSON",
             "ToolTip": "Export all cabinets and global parameters to a JSON file"
         }

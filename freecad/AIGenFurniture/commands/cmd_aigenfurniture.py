@@ -4,6 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os, sys
 from PySide import QtGui
+from .._resources import get_command_icon
 
 # Add parent of CabinetWorkbench to sys.path if missing
 workbench_dir = os.path.dirname(os.path.dirname(__file__))
@@ -50,9 +51,8 @@ def export_and_generate():
 
 class AIGenFurnitureCommand:
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_AIGenFurniture.svg"),
+            "Pixmap": get_command_icon("icon_AIGenFurniture"),
             "MenuText": "AIGen Furniture generator",
             "ToolTip": "Run AIGen Furniture generator"
         }

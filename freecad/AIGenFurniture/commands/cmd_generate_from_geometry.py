@@ -5,6 +5,7 @@ import FreeCADGui as Gui
 import os
 from PySide import QtGui, QtWidgets
 from collections import deque
+from .._resources import get_command_icon
 
 from ..furniture_design.order import Order
 from ..furniture_design.cabinets.cabinet import Cabinet
@@ -357,9 +358,8 @@ def generate_from_geometry():
 
 class GenerateFromGeometryCommand:
     def GetResources(self):
-        ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
         return {
-            "Pixmap": os.path.join(ICON_DIR, "icon_AIGenFurniture.svg"),
+            "Pixmap": get_command_icon("icon_AIGenFurniture"),
             "MenuText": "Generate from Geometry",
             "ToolTip": "Generate manufacturing files from exploded cabinets in FreeCAD"
         }
