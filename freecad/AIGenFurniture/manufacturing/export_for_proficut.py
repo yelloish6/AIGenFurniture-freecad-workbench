@@ -2,13 +2,14 @@
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
 import openpyxl
 import shutil, os
+from .._resources import get_resource_path
 from openpyxl.styles.borders import Border, Side
 
 
 def export_pal_for_proficut(order, output_folder):
 
     file_path = output_folder + "/Comanda_PAL_" + order.mat_pal + "_" + order.client + ".xlsx"
-    template_path = os.path.join(os.path.dirname(__file__), "templates", "Cote-Proficut-2018.xlsx")
+    template_path = get_resource_path("templates", "Cote-Proficut-2018.xlsx")
     shutil.copyfile(template_path, file_path)
     # file = openpyxl.load_workbook(file_path)
     file = openpyxl.load_workbook(file_path, data_only=True, keep_links=False)

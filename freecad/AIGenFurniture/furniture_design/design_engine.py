@@ -3,6 +3,7 @@
 from .order import Order
 # from .cabinets.architectures import *
 from .cabinets.cabinet import Cabinet
+from .._resources import get_resource_path
 # from .cabinets.elements.board import *
 # from .cabinets.elements.accessory import *
 
@@ -22,8 +23,7 @@ and customer input data. Additionally, you might want to add error handling and 
 project requirements.
 '''
 
-# DEFAULT_RULES_PATH = ".default_rules.json"
-DEFAULT_RULES_PATH = os.path.join(os.path.dirname(__file__), "default_rules.json")
+DEFAULT_RULES_PATH = get_resource_path("furniture_design", "default_rules.json")
 # TODO move rules to the FreeCAD as spreadsheet
 
 def design_furniture(customer_data):

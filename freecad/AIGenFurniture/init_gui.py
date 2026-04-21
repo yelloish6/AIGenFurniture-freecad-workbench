@@ -4,6 +4,7 @@ import os
 import inspect
 import FreeCAD as App
 import FreeCADGui as Gui
+from ._resources import get_resource_path
 # import DraftGui
 
 
@@ -12,9 +13,10 @@ class CabinetWorkbench (Gui.Workbench):
     """Cabinet Generator Workbench"""
     def __init__(self):
 
-        current_file = inspect.getfile(inspect.currentframe())
-        base_dir = os.path.dirname(os.path.abspath(current_file))
-        icon_path = os.path.join(base_dir, "../../Resources", "Icons", "AIGenFurniture_logo_noBG.svg")
+        # current_file = inspect.getfile(inspect.currentframe())
+        # base_dir = os.path.dirname(os.path.abspath(current_file))
+        # icon_path = os.path.join(base_dir, "../../Resources", "Icons", "AIGenFurniture_logo_noBG.svg")
+        icon_path = get_resource_path("..", "..", "Resources", "Icons", "AIGenFurniture_logo_noBG.svg")
         
         from freecad.AIGenFurniture import __version__
 
