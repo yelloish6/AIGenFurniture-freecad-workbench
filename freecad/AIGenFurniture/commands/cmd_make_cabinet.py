@@ -52,7 +52,10 @@ def make_cabinet_command(cabinet_name, ui, params):
 # -------------------------
 # Register commands in FreeCAD
 # -------------------------
-REGISTERED_CABINETS = []
-for cab_name, cab_data in get_enabled_ui_cabinets().items():
-    Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data["ui"], cab_data["params"]))
-    REGISTERED_CABINETS.append(cab_name)
+REGISTERED_CABINETS = get_enabled_ui_cabinets()
+def register_cabinet_commands(cabinets_registry):
+    registered = []
+    for cab_name, cab_data in cabinets_registry.items():
+        Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data["ui"], cab_data["params"]))
+        registered.append(cab_name)
+    return registered

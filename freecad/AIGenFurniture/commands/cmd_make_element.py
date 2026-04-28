@@ -56,5 +56,12 @@ def make_element_command(element_name, data):
 # -------------------------
 # Register commands in FreeCAD
 # -------------------------
-for ele_name, ele_data in ELEMENTS.items():
-    Gui.addCommand(f"Cmd_Add_{ele_name}", make_element_command(ele_name, ele_data))
+def register_element_commands(elements_registry):
+    registered = []
+    for ele_name, ele_data in elements_registry.items():
+        Gui.addCommand(f"Cmd_Add_{ele_name}", make_element_command(ele_name, ele_data))
+        registered.append(ele_name)
+    return registered
+
+# for ele_name, ele_data in ELEMENTS.items():
+#     Gui.addCommand(f"Cmd_Add_{ele_name}", make_element_command(ele_name, ele_data))

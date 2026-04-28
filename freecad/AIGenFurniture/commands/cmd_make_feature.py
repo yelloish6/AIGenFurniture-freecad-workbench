@@ -55,8 +55,16 @@ def make_feature_command(feature_name, data):
 
     return FeatureCommand()
 
+REGISTERED_FEATURES = get_enabled_features()
 
-REGISTERED_FEATURES = []
-for feature_name, feature_data in get_enabled_features().items():
-    Gui.addCommand(f"Cmd_Add_{feature_name}", make_feature_command(feature_name, feature_data))
-    REGISTERED_FEATURES.append(feature_name)
+def register_feature_commands(features_registry):
+    registered = []
+    for feature_name, feature_data in features_registry.items():
+        Gui.addCommand(f"Cmd_Add_{feature_name}", make_feature_command(feature_name, feature_data))
+        registered.append(feature_name)
+    return registered
+
+
+# for feature_name, feature_data in get_enabled_features().items():
+#     Gui.addCommand(f"Cmd_Add_{feature_name}", make_feature_command(feature_name, feature_data))
+#     REGISTERED_FEATURES.append(feature_name)
