@@ -41,12 +41,11 @@ from . import get_active_exports
 #
 #     print(f"Manufacturing files generated in: {output_path}")
 
-def generate_manufacturing_files(order, output_path):
+def generate_manufacturing_files(order, output_path, context=None):
     """
     Run all active manufacturing exports.
     MVP-safe dispatcher.
     """
-
     exports = get_active_exports()
 
     for export_name, export_def in exports.items():
@@ -66,6 +65,8 @@ def generate_manufacturing_files(order, output_path):
             continue
 
         try:
-            runner(order, output_path)
+            runner(order, output_path, context)
+        except TypeError:
+            runner(order, output_path) # backward compatibility for old runners
         except Exception as e:
             print(f"[ERROR] Export '{export_name}' failed: {e}")

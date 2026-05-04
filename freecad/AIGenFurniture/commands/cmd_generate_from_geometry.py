@@ -10,6 +10,8 @@ from .._resources import get_command_icon
 from ..furniture_design.order import Order
 from ..furniture_design.cabinets.cabinet import Cabinet
 from ..furniture_design.cabinets.elements import ELEMENTS
+from ..furniture_design.cabinets.features import FEATURES
+from ..furniture_design.cabinets.architectures import CABINETS
 from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from ..manufacturing.generate_files import generate_manufacturing_files
 
@@ -338,7 +340,12 @@ def generate_from_geometry():
 
         # Generate manufacturing files
         App.Console.PrintMessage(f"Generating manufacturing files to: {output_dir}\n")
-        generate_manufacturing_files(order, output_dir)
+        context = {
+            "elements_registry": ELEMENTS,
+            "features_registry": FEATURES,
+            "cabinets_registry": CABINETS,
+        }
+        generate_manufacturing_files(order, output_dir, context["elements_registry"])
 
         QtGui.QMessageBox.information(
             None,

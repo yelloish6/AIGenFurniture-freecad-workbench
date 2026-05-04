@@ -9,6 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import mm
+from ._board_utils import _get_board_type_elements
 
 def generate_offer_file(order, output_path):
     """
@@ -168,50 +169,44 @@ def generate_offer_file(order, output_path):
 
     print(f"[OK] Offer PDF generated at: {pdf_filename}")
 
-def export_cost_sheet(order, output_folder):
+def export_cost_sheet(order, output_folder, elements_registry=None):
     """
-    This method generates .csv files containing the prices for all elements from an order
-    It calls the get_price method for each element
-    :param order:  object as input
+    Generates a .csv containing prices for all Board-subclass elements in the order.
+    Uses the shared elements_registry (core + addons) to discover all types.
+    Fields: Element type, Label, Length, Width, Thickness, Material, Price
+    :param order: Order object
     :param output_folder: output folder path
-    :return:
+    :param elements_registry: dict containing 'elements_registry' (merged ELEMENTS dict)
     """
 
     folder_name = output_folder
-    cabinets = order.cabinets_list
-
-    # output pal order
     name = os.path.join(folder_name, "Cost_Sheet" + order.client + ".csv")
+
+    def _safe_get_price(element):
+        try:
+            return element.get_price()
+        except Exception:
+            return element.price
+
     with open(name, mode='w', newline="") as cost_sheet_file:
         cost_writer = csv.writer(cost_sheet_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        cost_writer.writerow(["Element type", "Element Label", "Size", "Unit", "Material", "Price"])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type in ["pal", "front", "pfl"]:
-                    material = element.material
-                    size = element.get_m2()
-                    unit = "m2"
-                elif element.type == "blat":
-                    material = element.material
-                    size = element.get_length()
-                    unit = "m"
-                elif element.type == "accessory":
-                    material = element.label
-                    size = element.pieces
-                    unit = "pieces"
-                else:
-                    continue
-                # cant1_size = element.get_m_cant("0.4")
-                # cant2_size = element.get_m_cant("2")
-                price = element.get_price()
-                # cant1_price = get_price_for_item("cant", "0.4")
-                # cant2_price = get_price_for_item("cant", "2")
+        cost_writer.writerow(["Element type", "Label", "Length", "Width", "Thickness", "Material", "Price"])
 
-                cost_writer.writerow([element.type, element.label, size, unit, material, price])
-                # cost_writer.writerow(["cant", element.label, cant1_size, "m", "cant 0.4",
-                #                      cant1_price, float(cant1_size) * float(cant1_price)])
-                # cost_writer.writerow(["cant", element.label, cant1_size, "m", "cant 2",
-                #                       cant2_price, float(cant2_size) * float(cant2_price)])
+        if elements_registry is not None:
+            grouped = _get_board_type_elements(order, elements_registry)
+            for type_key, elements in grouped.items():
+                for element in elements:
+                    cost_writer.writerow([
+                        type_key,
+                        element.label,
+                        element.length,
+                        element.width,
+                        element.thick,
+                        element.material,
+                        # getattr(element, "material", ""),
+                        _safe_get_price(element),
+                    ])
+
     cost_sheet_file.close()
 
 

@@ -5,7 +5,15 @@
 
 <br/>
 
-## [0.1.4] - YYYY-MM-DD (in work)
+## [0.1.5] - 2026-05-03 (in work)
+
+### Changed
+
+- Manufacturing exports (export_csv, export_cost_sheet) are now registry-driven:
+all Board subclasses registered by core or addons are automatically included
+in BOM and cost sheet outputs without requiring changes to the workbench.
+
+## [0.1.4] - 2026-04-23
 
 ### Fixed
 
