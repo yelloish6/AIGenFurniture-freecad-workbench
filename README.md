@@ -5,7 +5,7 @@ predefined parametric cabinet boxes — dramatically reducing the manual work
 involved in furniture design and manufacturing preparation.
 
 ⚠️ **Project status:** Beta / Early-stage MVP  
-📦 **Current version:** v0.1.4  
+📦 **Current version:** v0.1.5  
 🖥️ **Tested on:** Windows · Linux  _(macOS not yet tested)_
 
 ---
