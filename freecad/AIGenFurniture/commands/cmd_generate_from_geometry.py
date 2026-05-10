@@ -201,6 +201,21 @@ def freecad_box_to_element(fc_box):
     position_list = freecad_placement_to_position_list(fc_box.Placement)
     element.position_list = position_list
 
+    # Preserve editable element properties that are not constructor arguments.
+    for prop in fc_box.PropertiesList:
+        if fc_box.getGroupOfProperty(prop) != "Element" or prop == "ElementType":
+            continue
+
+        prop_value = getattr(fc_box, prop)
+        if hasattr(prop_value, "Value"):
+            prop_value = prop_value.Value
+
+        setattr(element, prop, prop_value)
+        if prop == "Material":
+            element.material = prop_value
+        elif prop == "ManufacturingRoute":
+            setattr(element, "manufacturing_route", prop_value)
+
     return element
 
 
