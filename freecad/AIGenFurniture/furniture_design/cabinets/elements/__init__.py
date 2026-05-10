@@ -98,3 +98,10 @@ ELEMENTS = {
         "params": {},
     }
 }
+
+def get_enabled_elements():
+    return {
+        name: data
+        for name, data in ELEMENTS.items()
+        if data.get("enabled", False)
+    }

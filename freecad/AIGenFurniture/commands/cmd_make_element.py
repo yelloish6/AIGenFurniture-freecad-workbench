@@ -2,7 +2,7 @@
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
 import FreeCAD as App
 import FreeCADGui as Gui
-from ..furniture_design.cabinets.elements import ELEMENTS
+from ..furniture_design.cabinets.elements import ELEMENTS, get_enabled_elements
 
 
 # -------------------------
@@ -56,9 +56,12 @@ def make_element_command(element_name, data):
 # -------------------------
 # Register commands in FreeCAD
 # -------------------------
+REGISTERED_ELEMENTS = get_enabled_elements()
 def register_element_commands(elements_registry):
     registered = []
     for ele_name, ele_data in elements_registry.items():
+        if not ele_data.get("enabled", False):
+            continue
         Gui.addCommand(f"Cmd_Add_{ele_name}", make_element_command(ele_name, ele_data))
         registered.append(ele_name)
     return registered

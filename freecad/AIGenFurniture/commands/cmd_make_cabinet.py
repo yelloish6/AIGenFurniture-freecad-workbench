@@ -56,6 +56,8 @@ REGISTERED_CABINETS = get_enabled_ui_cabinets()
 def register_cabinet_commands(cabinets_registry):
     registered = []
     for cab_name, cab_data in cabinets_registry.items():
+        if not cab_data["ui"].get("enabled", False):
+            continue
         Gui.addCommand(f"Cmd_Add_{cab_name}", make_cabinet_command(cab_name, cab_data["ui"], cab_data["params"]))
         registered.append(cab_name)
     return registered

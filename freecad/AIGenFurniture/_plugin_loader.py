@@ -8,8 +8,32 @@ import sys
 import FreeCAD as App
 
 
+def _deep_update(target, patch):
+    """Recursively merge patch into target in place."""
+    for key, value in patch.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            _deep_update(target[key], value)
+        else:
+            target[key] = value
+
+
+def _apply_overrides(registry, overrides, registry_name, plugin_id):
+    for key, patch in overrides.items():
+        if key not in registry:
+            App.Console.PrintWarning(
+                f"[{plugin_id}] Cannot override missing {registry_name} '{key}'.\n"
+            )
+            continue
+        if not isinstance(patch, dict):
+            App.Console.PrintWarning(
+                f"[{plugin_id}] Override for {registry_name} '{key}' must be a dict.\n"
+            )
+            continue
+        _deep_update(registry[key], patch)
+
+
 def load_plugins(features_registry, elements_registry,
-                 cabinets_registry, tools_registry):
+                 cabinets_registry, tools_registry, order_params_registry):
     mod_dir = os.path.dirname(  # .../Mod/
         os.path.dirname(        # .../Mod/AIGenFurniture/
             os.path.dirname(    # .../Mod/AIGenFurniture/freecad/
@@ -57,8 +81,38 @@ def load_plugins(features_registry, elements_registry,
             if name not in cabinets_registry:
                 cabinets_registry[name] = data
 
+        for name, data in getattr(mod, "ORDER_PARAMS", {}).items():
+            if name not in order_params_registry:
+                order_params_registry[name] = data
+
         for tool_def in getattr(mod, "TOOLS", []):
             tools_registry.append(tool_def)
+
+        # ── Apply overrides to existing base entries ───────────────────
+        _apply_overrides(
+            features_registry,
+            getattr(mod, "OVERRIDE_FEATURES", {}),
+            "feature",
+            plugin_id,
+        )
+        _apply_overrides(
+            elements_registry,
+            getattr(mod, "OVERRIDE_ELEMENTS", {}),
+            "element",
+            plugin_id,
+        )
+        _apply_overrides(
+            cabinets_registry,
+            getattr(mod, "OVERRIDE_CABINETS", {}),
+            "cabinet",
+            plugin_id,
+        )
+        _apply_overrides(
+            order_params_registry,
+            getattr(mod, "OVERRIDE_ORDER_PARAMS", {}),
+            "order parameter",
+            plugin_id,
+        )
 
         # ── Apply disables ─────────────────────────────────────────────
         for key in getattr(mod, "DISABLE_FEATURES", []):
@@ -72,6 +126,10 @@ def load_plugins(features_registry, elements_registry,
         for key in getattr(mod, "DISABLE_CABINETS", []):
             if key in cabinets_registry:
                 cabinets_registry[key]["enabled"] = False
+
+        for key in getattr(mod, "DISABLE_ORDER_PARAMS", []):
+            if key in order_params_registry:
+                order_params_registry[key]["enabled"] = False
 
         for tool_id in getattr(mod, "DISABLE_TOOLS", []):
             for t in tools_registry:

@@ -60,6 +60,8 @@ REGISTERED_FEATURES = get_enabled_features()
 def register_feature_commands(features_registry):
     registered = []
     for feature_name, feature_data in features_registry.items():
+        if not feature_data.get("enabled", False):
+            continue
         Gui.addCommand(f"Cmd_Add_{feature_name}", make_feature_command(feature_name, feature_data))
         registered.append(feature_name)
     return registered

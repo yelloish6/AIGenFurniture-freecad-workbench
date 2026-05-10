@@ -25,8 +25,9 @@ class CabinetWorkbench (Gui.Workbench):
         # features
         from freecad.AIGenFurniture.commands.cmd_make_feature import REGISTERED_FEATURES, register_feature_commands
         from freecad.AIGenFurniture.commands.cmd_make_cabinet import REGISTERED_CABINETS, register_cabinet_commands
-        from freecad.AIGenFurniture.commands.cmd_make_element import ELEMENTS, register_element_commands
+        from freecad.AIGenFurniture.commands.cmd_make_element import REGISTERED_ELEMENTS, register_element_commands
         from freecad.AIGenFurniture.commands.cmd_tools import TOOLS, register_tools
+        from freecad.AIGenFurniture.furniture_design.order import ORDER_PARAMS
         from freecad.AIGenFurniture.commands import cmd_about
         from freecad.AIGenFurniture.commands import cmd_json_export
         from freecad.AIGenFurniture.commands import cmd_aigenfurniture
@@ -42,15 +43,15 @@ class CabinetWorkbench (Gui.Workbench):
         # Gui.activateWorkbench("DraftWorkbench")
         # Gui.activateWorkbench("CabinetWorkbench")
 
-        load_plugins(REGISTERED_FEATURES, ELEMENTS, REGISTERED_CABINETS, TOOLS)
+        load_plugins(REGISTERED_FEATURES, REGISTERED_ELEMENTS, REGISTERED_CABINETS, TOOLS, ORDER_PARAMS)
         registered_features = register_feature_commands(REGISTERED_FEATURES)
         registered_cabinets = register_cabinet_commands(REGISTERED_CABINETS)
-        registered_elements = register_element_commands(ELEMENTS)
+        registered_elements = register_element_commands(REGISTERED_ELEMENTS)
         registered_tools = register_tools(TOOLS)
 
-        self.appendToolbar("Features", [f"Cmd_Add_{f}" for f in REGISTERED_FEATURES])
-        self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in REGISTERED_CABINETS])
-        self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in ELEMENTS])
+        self.appendToolbar("Features", [f"Cmd_Add_{f}" for f in registered_features])
+        self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in registered_cabinets])
+        self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in registered_elements])
 
         # self.appendToolbar("Cabinet Tools", [
         #                             # "Export_JSON",
