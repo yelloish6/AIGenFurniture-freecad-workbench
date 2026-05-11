@@ -26,6 +26,9 @@ def export_csv(order, output_folder, elements_registry=None):
     folder_name = output_folder
     cabinets = order.cabinets_list
 
+    if isinstance(elements_registry, dict) and "elements_registry" in elements_registry:
+        elements_registry = elements_registry["elements_registry"]
+
     # Ensure client name is not None for filename
     client_name = order.client if order.client else "Unknown"
 

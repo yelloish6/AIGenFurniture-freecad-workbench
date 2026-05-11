@@ -9,9 +9,9 @@ from .._resources import get_command_icon
 
 from ..furniture_design.order import Order
 from ..furniture_design.cabinets.cabinet import Cabinet
-from ..furniture_design.cabinets.elements import ELEMENTS
 from ..furniture_design.cabinets.features import FEATURES
 from ..furniture_design.cabinets.architectures import CABINETS
+from .cmd_make_element import get_elements_registry
 from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
 from ..manufacturing.generate_files import generate_manufacturing_files
 
@@ -150,12 +150,13 @@ def freecad_box_to_element(fc_box):
     if not hasattr(fc_box, "ElementType"):
         return None
 
+    elements_registry = get_elements_registry()
     element_type = fc_box.ElementType
-    element_def = ELEMENTS.get(element_type)
+    element_def = elements_registry.get(element_type)
 
-    if not element_def or not element_def.get("enabled", False):
+    if not element_def:
         App.Console.PrintWarning(
-            f"[WARN] Element type '{element_type}' not found or disabled, skipping {fc_box.Label}\n"
+            f"[WARN] Element type '{element_type}' not found in registry, skipping {fc_box.Label}\n"
         )
         return None
 
@@ -355,8 +356,9 @@ def generate_from_geometry():
 
         # Generate manufacturing files
         App.Console.PrintMessage(f"Generating manufacturing files to: {output_dir}\n")
+        elements_registry = get_elements_registry()
         context = {
-            "elements_registry": ELEMENTS,
+            "elements_registry": elements_registry,
             "features_registry": FEATURES,
             "cabinets_registry": CABINETS,
         }

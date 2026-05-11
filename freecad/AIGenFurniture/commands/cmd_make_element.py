@@ -178,6 +178,10 @@ def make_element_command(element_name, data):
 # Register commands in FreeCAD
 # -------------------------
 REGISTERED_ELEMENTS = get_enabled_elements()
+
+def get_elements_registry():
+    return REGISTERED_ELEMENTS
+
 def register_element_commands(elements_registry):
     registered = []
     for ele_name, ele_data in elements_registry.items():

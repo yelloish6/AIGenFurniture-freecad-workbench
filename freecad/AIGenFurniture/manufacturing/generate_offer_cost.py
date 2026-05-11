@@ -182,6 +182,9 @@ def export_cost_sheet(order, output_folder, elements_registry=None):
     folder_name = output_folder
     name = os.path.join(folder_name, "Cost_Sheet" + order.client + ".csv")
 
+    if isinstance(elements_registry, dict) and "elements_registry" in elements_registry:
+        elements_registry = elements_registry["elements_registry"]
+
     def _safe_get_price(element):
         try:
             return element.get_price()
