@@ -6,7 +6,7 @@
   <description>Parametric furniture cabinet design workbench. Generate cabinets from simple boxes, apply features (fronts, shelves, drawers), and export manufacturing files.</description>
   <version>0.1.5</version>
   <date>2026-05-04</date>
-  <freecadmin>1.1.0</freecadmin>
+  <freecadmin>1.0.0</freecadmin>
   <pythonmin>3.11</pythonmin>
 
   <maintainer email="bogdan@aigenfurniture.com">Bogdan</maintainer>
