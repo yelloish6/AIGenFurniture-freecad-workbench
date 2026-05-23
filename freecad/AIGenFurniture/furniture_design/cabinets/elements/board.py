@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
 import csv, os, math
+import FreeCAD as App
 from ...pricing.price_manager import PriceManager as pm
 # TODO add a method to cut-out boards, and add the effect in all output files
 
@@ -187,6 +188,36 @@ class Board:
 
     def get_m3(self):
         return float(self.length * self.width * self.thick / 1000000000)
+
+    def get_ml(self):
+        dimensions = []
+        for attr_name in ("length", "width", "thick"):
+            try:
+                value = getattr(self, attr_name, None)
+            except Exception as exc:
+                App.Console.PrintWarning(
+                    f"[AIGenFurniture] Unexpected error reading '{attr_name}' for get_ml: {exc}\n"
+                )
+                continue
+
+            if value in (None, ""):
+                continue
+
+            try:
+                numeric_value = float(value)
+            except (TypeError, ValueError) as exc:
+                App.Console.PrintWarning(
+                    f"[AIGenFurniture] Invalid dimension '{attr_name}'={value!r} for get_ml: {exc}\n"
+                )
+                continue
+
+            if numeric_value > 0:
+                dimensions.append(numeric_value)
+
+        if not dimensions:
+            return 0.0
+
+        return float(max(dimensions))
 
     def print(self):
         print(f"Board type: {self.type}, {self.label}, [{self.length} x {self.width} x {self.thick}], {self.material}, "
