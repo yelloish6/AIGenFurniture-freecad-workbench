@@ -30,6 +30,7 @@ ELEMENTS = {
             "cant_l2",
         ],
         "params": {
+            "Material": ("App::PropertyString", "", "Material"),
             "cant_L1": ("App::PropertyString", "", "Edge length 1"),
             "cant_L2": ("App::PropertyString", "", "Edge length 2"),
             "cant_l1": ("App::PropertyString", "", "Edge width 1"),
@@ -56,7 +57,9 @@ ELEMENTS = {
             "width",
             "thick",
         ],
-        "params": {},
+        "params": {
+            "Material": ("App::PropertyString", "", "Material"),
+        },
     },
     "Front": {
         "UI_label": "Front",
@@ -76,7 +79,9 @@ ELEMENTS = {
             "width",
             "thick",
         ],
-        "params": {},
+        "params": {
+            "Material": ("App::PropertyString", "", "Material"),
+        },
     },
     "Pfl": {
         "UI_label": "HDF",
@@ -95,7 +100,9 @@ ELEMENTS = {
             "length",
             "width",
         ],
-        "params": {},
+        "params": {
+            "Material": ("App::PropertyString", "", "Material"),
+        },
     }
 }
 

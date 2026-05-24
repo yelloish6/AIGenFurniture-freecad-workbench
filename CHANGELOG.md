@@ -5,7 +5,22 @@
 
 <br/>
 
-## [0.1.5] - 2026-05-03 (in work)
+## [0.2.0] - 2026-05-03
+
+### Changed
+
+
+- Drawer slide gap can be adjusted via the slider_gap parameter of the drawer feature
+
+## Added
+- Implemented different types of overlay for fronts. Full overlay and partial 
+overlay supported via the reveal parameter of the Front feature. Separate inset
+front type added.
+- Introduced the Material attribute as free text for all elements. BOM lists the content
+of the Material attribute for every element in an order.
+
+
+## [0.1.5] - 2026-05-03
 
 ### Changed
 

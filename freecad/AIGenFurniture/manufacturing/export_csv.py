@@ -5,6 +5,50 @@ import csv
 
 from ._board_utils import _get_board_type_elements
 
+
+def _get_registry_key_by_ui_label(elements_registry, ui_label):
+    for key, element_def in elements_registry.items():
+        if element_def.get("UI_label", key) == ui_label:
+            return key
+    return None
+
+
+def _get_registry_param_value(element, element_def, param_name, default_value=""):
+    if hasattr(element, param_name):
+        return getattr(element, param_name)
+
+    if param_name == "Material":
+        return getattr(element, "material", default_value)
+
+    if param_name == "ManufacturingRoute":
+        return getattr(element, "manufacturing_route", default_value)
+
+    lower_name = param_name.lower()
+    if hasattr(element, lower_name):
+        return getattr(element, lower_name)
+
+    cant_params = [
+        name for name in element_def.get("params", {})
+        if name.startswith("cant_")
+    ]
+    if hasattr(element, "cant_list") and param_name in cant_params:
+        cant_index = cant_params.index(param_name)
+        if cant_index < len(element.cant_list):
+            return element.cant_list[cant_index]
+
+    return default_value
+
+
+def _get_param_default(param_spec, param_name):
+    if isinstance(param_spec, tuple):
+        return param_spec[1]
+
+    if isinstance(param_spec, dict):
+        return param_spec.get("default", "")
+
+    raise TypeError(f"Unsupported property definition for '{param_name}'")
+
+
 def export_csv(order, output_folder, elements_registry=None):
     """
     Generates .csv files containing all elements in an order, in separate files
@@ -12,7 +56,8 @@ def export_csv(order, output_folder, elements_registry=None):
 
     For every element type registered in elements_registry (including addon types)
     that inherits from Board, a file named BOM_<element_type>_<customer_name>.csv
-    is produced with the fields: Label, Length, Width, Thickness, m2, m3.
+    is produced with the fields: Label, Length, Width, Thickness, m2, m3,
+    plus any extra element params declared in the registry.
 
     The legacy per-type files (chipboard, hdf, front, countertop) and the
     PanelsCuttingList files are preserved unchanged.
@@ -36,61 +81,61 @@ def export_csv(order, output_folder, elements_registry=None):
     # Legacy exports — kept exactly as before
     # ------------------------------------------------------------------
 
-    # output pal order
-    name = os.path.join(folder_name, "BOM_chipboard_" + client_name + ".csv")
-    with open(name, mode='w', newline="") as pal_order_file:
-        order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Pieces", "Length", "Width", "Orientable", "Label", "L1", "L2", "l1", "l2"])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type == "pal":
-                    order_writer.writerow(
-                        [1, element.length, element.width, 0, element.label, element.cant_list[0],
-                         element.cant_list[1], element.cant_list[2], element.cant_list[3]])
-
-    # output for solid wood
-    name = os.path.join(folder_name, "BOM_solid_wood_" + client_name + ".csv")
-    with open(name, mode='w', newline="") as pal_order_file:
-        order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type in ("pal", "front", "pfl", "blat"):
-                    order_writer.writerow(
-                        [element.label, element.length, element.width, element.thick,
-                         element.get_m2(), element.get_m3()])
-
-    # output pfl order
-    name = os.path.join(folder_name, "BOM_hdf_" + client_name + ".csv")
-    with open(name, mode='w', newline="") as pfl_order_file:
-        order_writer = csv.writer(pfl_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Pieces", "Length", "Width", "Label"])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type == "pfl":
-                    order_writer.writerow([1, element.length, element.width, element.label])
-
-    # output fronts order
-    name = os.path.join(folder_name, "BOM_front_" + client_name + ".csv")
-    with open(name, mode='w', newline="") as front_order_file:
-        order_writer = csv.writer(front_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Label", "Length", "Width"])
-        order_writer.writerow([order.mat_front])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type == "front":
-                    order_writer.writerow([element.label, element.length, element.width])
-
-    # output Blat order
-    name = os.path.join(folder_name, "BOM_countertop_" + client_name + ".csv")
-    with open(name, mode='w', newline="") as blat_order_file:
-        order_writer = csv.writer(blat_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        order_writer.writerow(["Label", "Length", "Width"])
-        order_writer.writerow([order.mat_blat])
-        for cabinet in cabinets:
-            for element in cabinet.elements_list:
-                if element.type == "blat":
-                    order_writer.writerow([element.label, element.length, element.width])
+    # # output pal order
+    # name = os.path.join(folder_name, "BOM_chipboard_" + client_name + ".csv")
+    # with open(name, mode='w', newline="") as pal_order_file:
+    #     order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     order_writer.writerow(["Pieces", "Length", "Width", "Orientable", "Label", "L1", "L2", "l1", "l2"])
+    #     for cabinet in cabinets:
+    #         for element in cabinet.elements_list:
+    #             if element.type == "pal":
+    #                 order_writer.writerow(
+    #                     [1, element.length, element.width, 0, element.label, element.cant_list[0],
+    #                      element.cant_list[1], element.cant_list[2], element.cant_list[3]])
+    #
+    # # output for solid wood
+    # name = os.path.join(folder_name, "BOM_solid_wood_" + client_name + ".csv")
+    # with open(name, mode='w', newline="") as pal_order_file:
+    #     order_writer = csv.writer(pal_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     order_writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"])
+    #     for cabinet in cabinets:
+    #         for element in cabinet.elements_list:
+    #             if element.type in ("pal", "front", "pfl", "blat"):
+    #                 order_writer.writerow(
+    #                     [element.label, element.length, element.width, element.thick,
+    #                      element.get_m2(), element.get_m3()])
+    #
+    # # output pfl order
+    # name = os.path.join(folder_name, "BOM_hdf_" + client_name + ".csv")
+    # with open(name, mode='w', newline="") as pfl_order_file:
+    #     order_writer = csv.writer(pfl_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     order_writer.writerow(["Pieces", "Length", "Width", "Label"])
+    #     for cabinet in cabinets:
+    #         for element in cabinet.elements_list:
+    #             if element.type == "pfl":
+    #                 order_writer.writerow([1, element.length, element.width, element.label])
+    #
+    # # output fronts order
+    # name = os.path.join(folder_name, "BOM_front_" + client_name + ".csv")
+    # with open(name, mode='w', newline="") as front_order_file:
+    #     order_writer = csv.writer(front_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     order_writer.writerow(["Label", "Length", "Width"])
+    #     order_writer.writerow([order.mat_front])
+    #     for cabinet in cabinets:
+    #         for element in cabinet.elements_list:
+    #             if element.type == "front":
+    #                 order_writer.writerow([element.label, element.length, element.width])
+    #
+    # # output Blat order
+    # name = os.path.join(folder_name, "BOM_countertop_" + client_name + ".csv")
+    # with open(name, mode='w', newline="") as blat_order_file:
+    #     order_writer = csv.writer(blat_order_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     order_writer.writerow(["Label", "Length", "Width"])
+    #     order_writer.writerow([order.mat_blat])
+    #     for cabinet in cabinets:
+    #         for element in cabinet.elements_list:
+    #             if element.type == "blat":
+    #                 order_writer.writerow([element.label, element.length, element.width])
 
     # output for PAL optimization
     name = os.path.join(folder_name, "PanelsCuttingList_chipboard_" + client_name + ".csv")
@@ -122,17 +167,27 @@ def export_csv(order, output_folder, elements_registry=None):
         for ui_label, elements in grouped.items():
             if not elements:
                 continue
+            registry_key = _get_registry_key_by_ui_label(elements_registry, ui_label)
+            element_def = elements_registry.get(registry_key, {})
+            param_names = list(element_def.get("params", {}).keys())
             safe_label = ui_label.replace(" ", "_")
             bom_name = os.path.join(folder_name, f"BOM_{safe_label}_{client_name}.csv")
             with open(bom_name, mode='w', newline="") as bom_file:
                 writer = csv.writer(bom_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"])
+                writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"] + param_names)
                 for element in elements:
-                    writer.writerow([
+                    row = [
                         element.label,
                         element.length,
                         element.width,
                         element.thick,
                         element.get_m2(),
                         element.get_m3(),
-                    ])
+                    ]
+                    for param_name in param_names:
+                        param_spec = element_def["params"][param_name]
+                        default_value = _get_param_default(param_spec, param_name)
+                        row.append(
+                            _get_registry_param_value(element, element_def, param_name, default_value)
+                        )
+                    writer.writerow(row)

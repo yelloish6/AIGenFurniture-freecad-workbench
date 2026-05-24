@@ -4,6 +4,8 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import os
 from .._resources import get_command_icon
+from ..furniture_design.cabinets.elements import ELEMENTS
+from .cmd_make_element import _resolve_property_spec
 
 from . import resources
 from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
@@ -80,6 +82,88 @@ def placement_from_position_list(position_list):
             R = Rstep.multiply(R)
 
     return App.Placement(t, R)
+
+
+def _get_element_param_value(element, param_name, default_value=""):
+    if hasattr(element, param_name):
+        return getattr(element, param_name)
+
+    if param_name == "Material":
+        return getattr(element, "material", default_value)
+
+    if param_name == "ManufacturingRoute":
+        return getattr(element, "manufacturing_route", default_value)
+
+    lower_name = param_name.lower()
+    if hasattr(element, lower_name):
+        return getattr(element, lower_name)
+
+    cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
+    if param_name in cant_names and hasattr(element, "cant_list"):
+        cant_index = cant_names.index(param_name)
+        if cant_index < len(element.cant_list):
+            return element.cant_list[cant_index]
+
+    return default_value
+
+
+def ensure_registry_params(doc_obj, element_type):
+    element_def = ELEMENTS.get(element_type, {})
+    if not element_def:
+        App.Console.PrintWarning(
+            f"[WARNING] cmd_explode_cabinet.py: Unknown registry element type '{element_type}', skipping params.\n"
+        )
+        return
+
+    params = element_def.get("params", {})
+    for param_name, param_spec in params.items():
+        fc_type, default_value, doc_string, options = _resolve_property_spec(
+            doc_obj.Document,
+            param_name,
+            param_spec,
+        )
+        if not hasattr(doc_obj, param_name):
+            doc_obj.addProperty(fc_type, param_name, "Element", doc_string)
+            if fc_type == "App::PropertyEnumeration":
+                setattr(doc_obj, param_name, options or [])
+                if default_value in (options or []):
+                    setattr(doc_obj, param_name, default_value)
+            else:
+                setattr(doc_obj, param_name, default_value)
+
+
+def apply_registry_param_values(doc_obj, element_type, element):
+    element_def = ELEMENTS.get(element_type, {})
+    params = element_def.get("params", {})
+
+    for param_name, param_spec in params.items():
+        fc_type, default_value, _doc_string, options = _resolve_property_spec(
+            doc_obj.Document,
+            param_name,
+            param_spec,
+        )
+        element_value = _get_element_param_value(element, param_name, default_value)
+
+        if fc_type == "App::PropertyEnumeration":
+            if element_value in (None, ""):
+                continue
+            if options and element_value not in options:
+                continue
+            try:
+                current_value = getattr(doc_obj, param_name)
+            except Exception:
+                current_value = ""
+            if current_value in (None, ""):
+                setattr(doc_obj, param_name, element_value)
+        else:
+            if fc_type == "App::PropertyString" and element_value not in (None, ""):
+                element_value = str(element_value)
+            try:
+                current_value = getattr(doc_obj, param_name)
+            except Exception:
+                current_value = None
+            if current_value in (None, ""):
+                setattr(doc_obj, param_name, element_value)
 
 def explode_box_to_cabinet(box):
     doc = App.ActiveDocument
@@ -195,6 +279,12 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
                 "front": "Front",
                 "blat": "Countertop"
             }
+            registry_type_map = {
+                "pal": "BoardPal",
+                "pfl": "Pfl",
+                "front": "Front",
+                "blat": "Blat"
+            }
 
             try:
                 part.ElementType = element_type_map[elem.type]
@@ -202,11 +292,14 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
                 App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown board type '{elem.type}' in cabinet {cabinet.label}\n")
                 continue
 
-            # --- Specific parameters for "pal" boards ---
+            registry_element_type = registry_type_map.get(elem.type)
+            ensure_registry_params(part, registry_element_type)
+            apply_registry_param_values(part, registry_element_type, elem)
+
+            # Preserve actual board-specific edge values from the generated element.
             if elem.type == "pal":
                 cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
                 for name, value in zip(cant_names, elem.cant_list):
-                    part.addProperty("App::PropertyString", name, "Element", f"Edge {name} flag")
                     setattr(part, name, str(value))
 
             # Apply recorded transformations of the element (match STL)
