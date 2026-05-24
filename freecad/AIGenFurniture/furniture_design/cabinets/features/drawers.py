@@ -41,14 +41,14 @@ class DrawersMixin:
         self.append(Accessory("tandembox " + tandembox_type, 1))
         self.append(Accessory("surub 3.5x16", 18))
 
-    def add_drawer_a_pfl(self, sert_h, height_offset):
+    def add_drawer_a_pfl(self, sert_h, height_offset, slider_gap = 13):
         """
         adds an "A" box drawer with PFL bottom
         :param sert_h: height of the drawer (cuttlery drawer 100, regular drawers 200)
         :param height_offset: positioning of the drawer in the cabinet
         :return:
         """
-        gap_glisiera = 13
+        gap_glisiera = slider_gap
         sert_height = sert_h
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
         sert_depth = self.depth - gap_glisiera
@@ -66,10 +66,8 @@ class DrawersMixin:
         self.append(Accessory("surub", 8))
         self.append(Accessory("surub PFL", 2 * round(sert_width / 100) + 2 * round(sert_depth / 100)))
 
-    def add_drawer(self, height, offset, box_type="a", bottom="pfl"):
+    def add_drawer(self, height, offset, box_type="a", bottom="pfl", slider_gap = 13):
 
-
-    # def add_drawer(self, sert_h, height_offset, box_type="a", bottom="pfl"):
         """
         adds a drawer
         :param height: height of the drawer (cuttlery drawer 100, regular drawers 200)
@@ -81,7 +79,7 @@ class DrawersMixin:
         sert_h = height
         height_offset = offset
 
-        gap_slide = 13
+        gap_slide = slider_gap
         sert_height = sert_h
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_slide)
         sert_depth = self.depth - gap_slide

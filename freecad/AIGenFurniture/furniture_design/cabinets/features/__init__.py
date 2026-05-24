@@ -8,9 +8,20 @@ from .backs import BackMixin
 # FEATURE REGISTRY
 FEATURES = {
     "add_front": {
-        "label": "Front",
+        "label": "Front - overlay",
         "enabled": True,
-        "tooltip": "Add a drawer",
+        "tooltip": "Add fronts to the cabinet",
+        "params": {
+            "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
+            "front_type": ("App::PropertyString", "door", "Front type"),
+            "reveal": ("App::PropertyString", "[2,2,2,2]", "Distance to reveal on each side [left, top, right, bottom]"),
+        }
+    },
+
+    "add_inset_front": {
+        "label": "Front - inset",
+        "enabled": True,
+        "tooltip": "Add inset fronts to the cabinet",
         "params": {
             "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
             "front_type": ("App::PropertyString", "door", "Front type"),
@@ -73,6 +84,7 @@ FEATURES = {
             "offset": ("App::PropertyFloat", 24.0, "Offset"),
             "box_type": ("App::PropertyString", "a", "(a) lateral assembles on the edge of the front board, or (b) on the back"),
             "bottom": ("App::PropertyString", "pfl", "material of the bottom. Can be (pal) or (pfl) -> (default and not defined)"),
+            "slider_gap": ("App::PropertyFloat", 13.0, "Gap of the slider"),
         }
     },
     "add_drawer_pal_glass": {
