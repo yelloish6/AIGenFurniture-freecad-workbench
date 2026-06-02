@@ -11,7 +11,7 @@ blat,Stejar Bardolino Natur,320,RON,m,2,Holver,"K5577 DP - CER NEGRU DESCHIS 48,
 blat,Stejar Halifax 600,347,RON,m,4,proficut,Stejar Halifax Alb H1176 ST37 (1377RON/4m) + 35 RON/m aplicare cant
 blat,Stejar Halifax 920,634.25,RON,m,4,proficut,Stejar Halifax Alb H1176 ST37
 blat,Stejar Alpin Keindl,138.75,RON,m,2,,
-pfl,Alb,115,RON,sheet,0.5,proficut,"HDF ALB 96,72 RON + debitare 18,23 RON = 114,95 RON"
+pfl,PFL Alb,115,RON,sheet,0.5,proficut,"HDF ALB 96,72 RON + debitare 18,23 RON = 114,95 RON"
 front,A75P AquaBlue Ultramat,493,RON,m2,1,protege parol,414RON + TVA => 493 RON/m2
 front,A34R3,309.4,RON,m2,1,nett front,
 front,Alb W962ST2,55,RON,m2,0.5,proficut,
@@ -66,6 +66,7 @@ pal,Gri Piatra U727 ST9,385.26,RON,sheet,1,proficut,Gri Piatra U727 ST9- 18 mm
 front,Gri Piatra UM A58/R6 - riflat,477.95,RON,m2,1,nett front,79 EUR + TVA
 front,Gri Piatra M A58/R6 - riflat,401,RON,m2,1,nett front,65 EUR + TVA
 front,Gri Onix UM A34/R3,477.95,RON,m2,1,nett front,79 EUR + TVA
+front,A342/R2T7 Magnolia UM,700,RON,m2,1,nett front,112 EUR + TVA
 blat,Titanit Bej nisip F226 ST78,150.5,RON,m,4,Egger,"601,89 RON 4m"
 blat,K4893 DP Pietra Gray,206,RON,m,1,Kaindl,411.91 2m (blatul de 36mm)
 pal,Gri Onix U960 ST9,453,RON,sheet,1,palhaus,https://www.palhause.ro/pal-melaminat/egger-5196/u960-st9-gri-onix-2800x2070x18-mm-egger

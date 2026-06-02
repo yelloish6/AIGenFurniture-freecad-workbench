@@ -9,7 +9,7 @@ def export_front_for_nettfront(order, output_folder):
 
     # file_path = output_folder + "/Comanda_Front_" + order.mat_front + "_" + order.client + ".xlsx"
     file_path = output_folder + "/Comanda_Front_" + order.client + ".xlsx"
-    template_path = get_resource_path("templates", "Formular_de_comanda_nett_front.xlsx")
+    template_path = get_resource_path("manufacturing", "templates", "Formular_de_comanda_nett_front.xlsx")
     shutil.copyfile(template_path, file_path)
     file = openpyxl.load_workbook(file_path)
     sheet = file.get_sheet_by_name("Sheet1")
