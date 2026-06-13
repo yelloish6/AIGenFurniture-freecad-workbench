@@ -8,12 +8,19 @@ from .cmd_generate_from_geometry import GenerateFromGeometryCommand
 from .cmd_aigenfurniture import AIGenFurnitureCommand
 from .cmd_make_ordervar import CreateGlobalsSpreadsheetCommand
 from .cmd_json_export import ExportJSONCommand
+from .cmd_design_rules import DesignRulesCommand
 
 # Base tool registry — same schema plugins use
 TOOLS = [
     {
         "id": "AIGenFurniture_About",
         "command": AboutCommand(),
+        "toolbar": "Cabinet Tools",
+        "enabled": True,
+    },
+    {
+        "id": "Design_Rules",
+        "command": DesignRulesCommand(),
         "toolbar": "Cabinet Tools",
         "enabled": True,
     },

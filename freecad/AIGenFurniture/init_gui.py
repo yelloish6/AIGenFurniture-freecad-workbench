@@ -28,20 +28,10 @@ class CabinetWorkbench (Gui.Workbench):
         from freecad.AIGenFurniture.commands.cmd_make_element import REGISTERED_ELEMENTS, register_element_commands
         from freecad.AIGenFurniture.commands.cmd_tools import TOOLS, register_tools
         from freecad.AIGenFurniture.furniture_design.order import ORDER_PARAMS
-        from freecad.AIGenFurniture.commands import cmd_about
-        from freecad.AIGenFurniture.commands import cmd_json_export
-        from freecad.AIGenFurniture.commands import cmd_aigenfurniture
-        from freecad.AIGenFurniture.commands import cmd_make_ordervar
-        from freecad.AIGenFurniture.commands import cmd_explode_cabinet
-        from freecad.AIGenFurniture.commands import cmd_generate_from_geometry
         import Draft
         import DraftTools
         import DraftGui
 
-
-
-        # Gui.activateWorkbench("DraftWorkbench")
-        # Gui.activateWorkbench("CabinetWorkbench")
 
         load_plugins(REGISTERED_FEATURES, REGISTERED_ELEMENTS, REGISTERED_CABINETS, TOOLS, ORDER_PARAMS)
         registered_features = register_feature_commands(REGISTERED_FEATURES)
@@ -53,16 +43,6 @@ class CabinetWorkbench (Gui.Workbench):
         self.appendToolbar("Cabinets", [f"Cmd_Add_{c}" for c in registered_cabinets])
         self.appendToolbar("Elements", [f"Cmd_Add_{e}" for e in registered_elements])
 
-        # self.appendToolbar("Cabinet Tools", [
-        #                             # "Export_JSON",
-        #                             "Create_Globals_Spreadsheet",
-        #                             "Explode_Box_To_Cabinet",
-        #                             # "AIGenFurniture",
-        #                             "Generate_From_Geometry",
-        #                             "AIGenFurniture_About"
-        #                             ]
-        #                    )
-        # Group tool IDs by toolbar
         from collections import defaultdict
         toolbar_groups = defaultdict(list)
         for tool_id, toolbar in registered_tools:
@@ -96,8 +76,6 @@ class CabinetWorkbench (Gui.Workbench):
         pass
 
     def ContextMenu(self, recipient):
-        # self.appendContextMenu("Cabinets", ["Cmd_Base_Box"])
-        # self.appendContextMenu("Features", ["Cmd_Add_Shelf"])
         pass
 
     def GetClassName(self):

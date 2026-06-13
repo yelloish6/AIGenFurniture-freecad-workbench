@@ -24,6 +24,21 @@ project requirements.
 '''
 
 DEFAULT_RULES_PATH = get_resource_path("furniture_design", "default_rules.json")
+DEFAULT_RULES_BASELINE = {
+    "thick_pal": 18,
+    "thick_front": 18,
+    "thick_blat": 38,
+    "height_legs": 100,
+    "general_width": 600,
+    "width_blat": 600,
+    "gap_spate": 50,
+    "gap_fata": 50,
+    "gap_front": 2,
+    "cant_general": 1,
+    "cant_pol": 2,
+    "cant_separator": 1,
+    "pol_depth": 20,
+}
 # TODO move rules to the FreeCAD as spreadsheet
 
 def design_furniture(customer_data):
@@ -75,6 +90,23 @@ def design_furniture(customer_data):
 def load_default_rules(input_file):
     with open(input_file, 'r') as file:
         return json.load(file)
+
+
+def save_default_rules(rules: dict):
+    rules_dir = os.path.dirname(DEFAULT_RULES_PATH)
+    os.makedirs(rules_dir, exist_ok=True)
+
+    temp_path = DEFAULT_RULES_PATH + ".tmp"
+    try:
+        with open(temp_path, "w") as file:
+            json.dump(rules, file, indent=4)
+            file.write("\n")
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(temp_path, DEFAULT_RULES_PATH)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 
 # def element_handler(cabinet, element_data):
