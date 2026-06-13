@@ -1,5 +1,51 @@
 from ..furniture_design.cabinets.elements.board import Board
 
+
+UNKNOWN_MATERIAL = "UnknownMaterial"
+
+
+def _safe_filename_part(value):
+    text = str(value or "").strip()
+    if not text:
+        text = UNKNOWN_MATERIAL
+
+    safe_chars = []
+    for char in text:
+        if char.isalnum() or char in ("-", "_", "."):
+            safe_chars.append(char)
+        elif char.isspace():
+            safe_chars.append("_")
+        else:
+            safe_chars.append("_")
+
+    safe_text = "".join(safe_chars).strip("._")
+    return safe_text or UNKNOWN_MATERIAL
+
+
+def _get_element_material(element):
+    material = getattr(element, "material", "")
+    if material in (None, ""):
+        return UNKNOWN_MATERIAL
+    return str(material).strip() or UNKNOWN_MATERIAL
+
+
+def _get_elements_by_type(order, element_type):
+    elements = []
+    for cabinet in order.cabinets_list:
+        for element in cabinet.elements_list:
+            if getattr(element, "type", None) == element_type:
+                elements.append(element)
+    return elements
+
+
+def _group_elements_by_material(elements):
+    grouped = {}
+    for element in elements:
+        material = _get_element_material(element)
+        grouped.setdefault(material, []).append(element)
+    return grouped
+
+
 def _get_board_type_elements(order, elements_registry):
     if not isinstance(elements_registry, dict):
         return {}

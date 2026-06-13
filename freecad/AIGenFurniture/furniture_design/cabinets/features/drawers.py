@@ -283,7 +283,6 @@ class DrawersMixin:
 
         self.append(sticla)
 
-
         self.append(Accessory("pereche glisiera " + str(self.get_standard_slide_length(sert_depth)) + " mm", 1))
         self.append(Accessory("surub 3.5x16", 12))
         self.append(Accessory("surub", 8))
@@ -419,7 +418,7 @@ class DrawersMixin:
         """
         Return the closest lower standard drawer slide length for a given drawer depth.
         """
-        standard_lengths = [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100]
+        standard_lengths = [250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100]
 
         # Optional warning
         if drawer_depth < standard_lengths[0] or drawer_depth > standard_lengths[-1] + 100:

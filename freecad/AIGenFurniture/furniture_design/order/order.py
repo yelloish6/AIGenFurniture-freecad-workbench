@@ -12,7 +12,7 @@ import math
 from ..cabinets.elements.board import *
 from ..pricing.price_manager import PriceManager as pm
 
-PAL_LOSS = 0.1  # used to calculate number of sheets needed
+PAL_LOSS = 0.2  # used to calculate number of sheets needed
 SHEET_HEIGHT = 2800
 SHEET_WIDTH = 2070
 IMPOZIT = 0.1

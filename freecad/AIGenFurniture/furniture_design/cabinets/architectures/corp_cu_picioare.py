@@ -54,6 +54,8 @@ class CorpCuPicioare(Cabinet):
         sus.move("x", self.thick_pal)
         sus.move("z", self.height - self.thick_pal)
 
+        self.add_pfl()
+
         skirting_board = BoardPal(self.label + ".skirt", self.width - 2 * self.thick_pal, h_skirt, self.thick_pal, self.cant_lab, "", "", "")
         skirting_board.rotate("x"),
         skirting_board.move("x", self.thick_pal)
