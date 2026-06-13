@@ -3,6 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from ..furniture_design.cabinets.elements import ELEMENTS, get_enabled_elements
+from ..furniture_design.order.order_params import ORDER_PARAMS
 
 
 def _col_letter(index):
@@ -37,6 +38,93 @@ def _cell_text(sheet, cell_ref):
 
 def _normalize_header(text):
     return text.strip().lower().replace(" ", "_").replace("-", "_")
+
+
+def _find_order_var_sheet(doc):
+    if doc is None:
+        return None
+
+    sheet = doc.getObject("OrderVar")
+    if sheet is not None and getattr(sheet, "TypeId", "") == "Spreadsheet::Sheet":
+        return sheet
+
+    for obj in doc.Objects:
+        if getattr(obj, "TypeId", "") == "Spreadsheet::Sheet" and getattr(obj, "Label", "") == "OrderVar":
+            return obj
+
+    return None
+
+
+def _order_var_value_by_label(sheet, field_label):
+    if sheet is None:
+        return ""
+
+    target_label = field_label.strip().lower()
+    empty_streak = 0
+    for row_index in range(1, 2001):
+        label = _cell_text(sheet, f"A{row_index}")
+        if not label:
+            empty_streak += 1
+            if empty_streak >= 25:
+                break
+            continue
+
+        empty_streak = 0
+        if label.strip().lower() == target_label:
+            return _cell_text(sheet, f"B{row_index}")
+
+    return ""
+
+
+def _order_var_value_by_alias(sheet, alias_name):
+    if sheet is None or not alias_name:
+        return ""
+
+    try:
+        value = sheet.get(alias_name)
+    except Exception:
+        return ""
+
+    if value in (None, ""):
+        return ""
+
+    text = str(value).strip()
+    if text.startswith("'"):
+        text = text[1:].strip()
+    return text
+
+
+def _material_order_param_name(element_name):
+    material_attr = ELEMENTS.get(element_name, {}).get("material_attr")
+    if not material_attr:
+        return ""
+
+    for param_name, param_def in ORDER_PARAMS.items():
+        if param_def.get("order_attr") == material_attr:
+            return param_name
+
+    return ""
+
+
+def _order_var_material_default(doc, element_name):
+    sheet = _find_order_var_sheet(doc)
+    if sheet is None:
+        return ""
+
+    material = _order_var_value_by_label(sheet, f"{element_name} Material")
+    if material:
+        return material
+
+    param_name = _material_order_param_name(element_name)
+    material = _order_var_value_by_alias(sheet, param_name)
+    if material:
+        return material
+
+    param_label = ORDER_PARAMS.get(param_name, {}).get("label", "")
+    if param_label:
+        return _order_var_value_by_label(sheet, param_label)
+
+    return ""
 
 
 def _sheet_column_values(doc, sheet_name, column_name):
@@ -155,6 +243,8 @@ def make_element_command(element_name, data):
                 params = data.get("params", element_name)
                 for pname, value in params.items():
                     ptype, default, desc, options = _resolve_property_spec(doc, pname, value)
+                    if pname == "Material":
+                        default = _order_var_material_default(doc, element_name) or default
                     if not hasattr(box, pname):
                         box.addProperty(ptype, pname, "Element", desc)
                     if ptype == "App::PropertyEnumeration":

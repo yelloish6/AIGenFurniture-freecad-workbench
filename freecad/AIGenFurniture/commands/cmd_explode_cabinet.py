@@ -5,7 +5,7 @@ import FreeCADGui as Gui
 import os
 from .._resources import get_command_icon
 from ..furniture_design.cabinets.elements import ELEMENTS
-from .cmd_make_element import _resolve_property_spec
+from .cmd_make_element import _order_var_material_default, _resolve_property_spec
 
 from . import resources
 from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
@@ -122,6 +122,8 @@ def ensure_registry_params(doc_obj, element_type):
             param_name,
             param_spec,
         )
+        if param_name == "Material":
+            default_value = _order_var_material_default(doc_obj.Document, element_type) or default_value
         if not hasattr(doc_obj, param_name):
             doc_obj.addProperty(fc_type, param_name, "Element", doc_string)
             if fc_type == "App::PropertyEnumeration":
@@ -142,6 +144,8 @@ def apply_registry_param_values(doc_obj, element_type, element):
             param_name,
             param_spec,
         )
+        if param_name == "Material":
+            default_value = _order_var_material_default(doc_obj.Document, element_type) or default_value
         element_value = _get_element_param_value(element, param_name, default_value)
 
         if fc_type == "App::PropertyEnumeration":

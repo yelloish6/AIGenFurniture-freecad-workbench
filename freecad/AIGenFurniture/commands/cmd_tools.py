@@ -6,7 +6,7 @@ from .cmd_about import AboutCommand
 from .cmd_explode_cabinet import ExplodeBoxCommand
 from .cmd_generate_from_geometry import GenerateFromGeometryCommand
 from .cmd_aigenfurniture import AIGenFurnitureCommand
-from .cmd_make_ordervar import CreateGlobalsSpreadsheetCommand
+from .cmd_make_ordervar import CreateOrderSpreadsheetCommand
 from .cmd_json_export import ExportJSONCommand
 from .cmd_design_rules import DesignRulesCommand
 
@@ -25,6 +25,12 @@ TOOLS = [
         "enabled": True,
     },
     {
+        "id": "Create_Order_Spreadsheet",
+        "command": CreateOrderSpreadsheetCommand(),
+        "toolbar": "Cabinet Tools",
+        "enabled": True,
+    },
+    {
         "id": "Explode_Box_To_Cabinet",
         "command": ExplodeBoxCommand(),
         "toolbar": "Cabinet Tools",
@@ -33,12 +39,6 @@ TOOLS = [
     {
         "id": "Generate_From_Geometry",
         "command": GenerateFromGeometryCommand(),
-        "toolbar": "Cabinet Tools",
-        "enabled": True,
-    },
-    {
-        "id": "Create_Globals_Spreadsheet",
-        "command": CreateGlobalsSpreadsheetCommand(),
         "toolbar": "Cabinet Tools",
         "enabled": True,
     },

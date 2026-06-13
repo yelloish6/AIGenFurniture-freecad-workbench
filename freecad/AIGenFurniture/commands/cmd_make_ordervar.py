@@ -9,7 +9,7 @@ from ..furniture_design.order import get_enabled_order_params
 from .._resources import get_command_icon
 
 
-def create_globals_spreadsheet(doc):
+def create_order_spreadsheet(doc):
     """Create a spreadsheet with enabled order parameters prefilled and aliases set.
 
     Uses centralized ORDER_PARAMS definition for consistency.
@@ -55,12 +55,12 @@ def create_globals_spreadsheet(doc):
     )
 
 
-class CreateGlobalsSpreadsheetCommand:
+class CreateOrderSpreadsheetCommand:
     def GetResources(self):
         return {
-            "Pixmap": get_command_icon("icon_create_spreadsheet"),
-            "MenuText": "Create Globals Spreadsheet",
-            "ToolTip": "Create a spreadsheet with all global aliases and default values",
+            "Pixmap": get_command_icon("icon_order"),
+            "MenuText": "Create Order Variables",
+            "ToolTip": "Create a spreadsheet with all order aliases and default values",
         }
 
     def IsActive(self):
@@ -74,7 +74,7 @@ class CreateGlobalsSpreadsheetCommand:
 
         doc.openTransaction("Create Globals Spreadsheet")
         try:
-            create_globals_spreadsheet(doc)
+            create_order_spreadsheet(doc)
             doc.commitTransaction()
         except Exception as e:
             doc.abortTransaction()
@@ -82,4 +82,4 @@ class CreateGlobalsSpreadsheetCommand:
 
 
 # Register command
-Gui.addCommand("Create_Globals_Spreadsheet", CreateGlobalsSpreadsheetCommand())
+Gui.addCommand("Create_Order_Spreadsheet", CreateOrderSpreadsheetCommand())
