@@ -40,19 +40,19 @@ EXPORT_DEFINITIONS = {
     },
     # this export is generic for all elements
     "export_cost_sheet":{
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "export_cost_sheet",
         "module": "generate_offer_cost",
     },
     # this is shop specific - each shop will want a different type of print
     "print_order_summary":{
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "print_order_summary",
         "module": "generate_offer_cost",
     },
     # this is shop specific - each shop will want a different offer file format
     "generate_offer_file":{
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "generate_offer_file",
         "module": "generate_offer_cost",
     },

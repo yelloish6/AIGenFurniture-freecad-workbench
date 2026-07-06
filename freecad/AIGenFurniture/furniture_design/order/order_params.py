@@ -63,6 +63,44 @@ ORDER_PARAMS = OrderedDict([
         "order": 5,
         "enabled": False  # MVP: only used in disabled export_for_proficut
     }),
+
+    # Material parameters
+    ("material_pal", {
+        "default": "Alb W962ST2",
+        "required": False,
+        "label": "Chipboard Material",
+        "type": "string",
+        "order_attr": "mat_pal",
+        "order": 30,
+        "enabled": True  # MVP: used in cost calculations
+    }),
+    ("material_front", {
+        "default": "A34R3",
+        "required": False,
+        "label": "Front Material",
+        "type": "string",
+        "order_attr": "mat_front",
+        "order": 31,
+        "enabled": True  # MVP: used in cost calculations
+    }),
+    ("material_blat", {
+        "default": "Stejar Alpin Keindl",
+        "required": False,
+        "label": "Countertop Material",
+        "type": "string",
+        "order_attr": "mat_blat",
+        "order": 32,
+        "enabled": True  # MVP: used in cost calculations
+    }),
+    ("material_pfl", {
+        "default": "Alb",
+        "required": False,
+        "label": "HDF Material",
+        "type": "string",
+        "order_attr": "mat_pfl",
+        "order": 33,
+        "enabled": True  # MVP: used in cost calculations
+    }),
     
     # Dimension parameters
     ("h_bucatarie", {

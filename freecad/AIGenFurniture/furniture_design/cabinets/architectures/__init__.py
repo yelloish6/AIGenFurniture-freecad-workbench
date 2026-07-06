@@ -233,12 +233,12 @@ CABINET_DEFINITIONS = {
 
 
     },
-    "CorpDressing": {
+    "Tower": {
         "class": CorpDressing,
         "factory": make_corp_dressing,
         "ui": {
-            "label": "Tower with skirt",
-            "enabled": False,
+            "label": "Tower with Plinth",
+            "enabled": True,
             "tooltip": "Add a wardrobe cabinet",
         },
         "params": {

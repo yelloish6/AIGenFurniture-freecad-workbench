@@ -59,7 +59,7 @@ class CreateOrderSpreadsheetCommand:
     def GetResources(self):
         return {
             "Pixmap": get_command_icon("icon_order"),
-            "MenuText": "Create Order Variables",
+            "MenuText": "Create Customer Default",
             "ToolTip": "Create a spreadsheet with all order aliases and default values",
         }
 
