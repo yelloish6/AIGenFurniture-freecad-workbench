@@ -59,8 +59,8 @@ class CreateOrderSpreadsheetCommand:
     def GetResources(self):
         return {
             "Pixmap": get_command_icon("icon_order"),
-            "MenuText": "Create Customer Default",
-            "ToolTip": "Create a spreadsheet with all order aliases and default values",
+            "MenuText": "Order Setup",
+            "ToolTip": "Set up customer and material parameters for this order.",
         }
 
     def IsActive(self):
