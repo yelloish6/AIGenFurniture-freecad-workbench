@@ -361,8 +361,14 @@ def generate_from_geometry():
             "elements_registry": elements_registry,
             "features_registry": FEATURES,
             "cabinets_registry": CABINETS,
+            "stl": {
+                "is_horizontal_layout": False,
+            },
+            "drill_pdf": {
+                "filename": "Drill_file_reportlab.pdf",
+            },
         }
-        generate_manufacturing_files(order, output_dir, context["elements_registry"])
+        generate_manufacturing_files(order, output_dir, context)
 
         QtGui.QMessageBox.information(
             None,

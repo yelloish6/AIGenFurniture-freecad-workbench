@@ -31,18 +31,27 @@ EXPORT_DEFINITIONS = {
         "enabled": True, #True for MVP
         "runner": "export_csv",
         "module": "export_csv",
+        "kwargs": {
+            "elements_registry": "elements_registry",
+        },
     },
     # this export is generic for all projects
     "export_stl": {
         "enabled": True, #False for MVP
         "runner": "export_stl_order",
         "module": "export_stl_new",
+        "kwargs": {
+            "is_horizontal_layout": "stl.is_horizontal_layout",
+        },
     },
     # this export is generic for all elements
     "export_cost_sheet":{
         "enabled": False, #False for MVP
         "runner": "export_cost_sheet",
         "module": "generate_offer_cost",
+        "kwargs": {
+            "elements_registry": "elements_registry",
+        },
     },
     # this is shop specific - each shop will want a different type of print
     "print_order_summary":{
@@ -73,6 +82,9 @@ EXPORT_DEFINITIONS = {
         "enabled": False, #False for MVP
         "runner": "generate_drill_pdf_reportlab",
         "module": "generate_assembly_file_reportlab",
+        "kwargs": {
+            "filename": "drill_pdf.filename",
+        },
     }
 }
 

@@ -47,6 +47,7 @@ def generate_manufacturing_files(order, output_path, context=None):
     MVP-safe dispatcher.
     """
     exports = get_active_exports()
+    context = context or {}
 
     for export_name, export_def in exports.items():
         runner_name = export_def["runner"]
@@ -65,8 +66,25 @@ def generate_manufacturing_files(order, output_path, context=None):
             continue
 
         try:
-            runner(order, output_path, context)
-        except TypeError:
-            runner(order, output_path) # backward compatibility for old runners
+            kwargs = _resolve_export_kwargs(export_def, context)
+            runner(order, output_path, **kwargs)
         except Exception as e:
             print(f"[ERROR] Export '{export_name}' failed: {e}")
+
+
+def _resolve_context_path(context, path):
+    value = context
+    for part in path.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return None
+        value = value[part]
+    return value
+
+
+def _resolve_export_kwargs(export_def, context):
+    kwargs = {}
+    for arg_name, context_path in export_def.get("kwargs", {}).items():
+        value = _resolve_context_path(context, context_path)
+        if value is not None:
+            kwargs[arg_name] = value
+    return kwargs

@@ -10,7 +10,7 @@ from ..furniture_design.cabinets.elements.board import Board
 from stl import mesh
 
 
-def export_stl_order(order, output_folder, is_horizontal_layout = False):
+def export_stl_order(order, output_folder, *, is_horizontal_layout=False):
     """
     generate STL file based on order object containing all cabinets
     :param order: input object
