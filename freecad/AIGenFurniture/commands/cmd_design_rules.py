@@ -15,33 +15,34 @@ from ..furniture_design.design_engine import (
 RULE_GROUPS = (
     (
         "Board Thickness",
-        ("thick_pal", "thick_front", "thick_blat"),
+        ("thick_pal", "thick_front", "thick_blat", "thick_pfl"),
     ),
     (
         "Cabinet Defaults",
-        ("height_legs", "general_width", "width_blat"),
+        ("height_legs", "general_height", "general_width", "general_depth"),
     ),
     (
         "Gaps and Clearances",
-        ("gap_spate", "gap_fata", "gap_front"),
+        ("gap_front", "front_clearance", "pol_depth"),
     ),
     (
-        "Edging and Shelf Rules",
-        ("cant_general", "cant_pol", "cant_separator", "pol_depth"),
+        "Edging Rules",
+        ("cant_general", "cant_pol", "cant_separator"),
     ),
 )
 
 
 RULE_LABELS = {
-    "thick_pal": "Panel thickness",
+    "thick_pal": "Chipboard thickness",
     "thick_front": "Front thickness",
     "thick_blat": "Countertop thickness",
-    "height_legs": "Leg height",
+    "thick_pfl": "HDF thickness",
+    "height_legs": "Plinth height",
+    "general_height": "Default cabinet height",
     "general_width": "Default cabinet width",
-    "width_blat": "Default countertop depth",
-    "gap_spate": "Back clearance",
-    "gap_fata": "Front clearance",
+    "general_depth": "Default cabinet depth",
     "gap_front": "Front gap",
+    "front_clearance": "Front Clearance",
     "cant_general": "General edging",
     "cant_pol": "Shelf edging",
     "cant_separator": "Separator edging",
@@ -110,7 +111,8 @@ class DesignRulesDialog(QtGui.QDialog):
 
     def _label_for_key(self, key):
         label = RULE_LABELS.get(key, key.replace("_", " ").title())
-        return "{} ({})".format(label, key)
+        # return "{} ({})".format(label, key)
+        return "{}".format(label)
 
     def _create_spinbox(self, key, value):
         if isinstance(value, int) and not isinstance(value, bool):

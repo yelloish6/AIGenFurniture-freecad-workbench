@@ -3,6 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from ..furniture_design.cabinets.architectures import get_enabled_ui_cabinets
+from ..furniture_design.design_engine import DEFAULT_RULES_PATH, load_default_rules
 
 # -------------------------
 # Command class generator
@@ -23,11 +24,12 @@ def make_cabinet_command(cabinet_name, ui, params):
 
             # Create a box placeholder
             try:
+                rules = load_default_rules(DEFAULT_RULES_PATH)
                 box = doc.addObject("Part::Box", f"{cabinet_name}")
                 box.Label = cabinet_name
-                box.Length = 600
-                box.Width = 500
-                box.Height = 720
+                box.Length = rules["general_width"]
+                box.Width = rules["general_depth"]
+                box.Height = rules["general_height"]
 
                 # Add a CabinetType property
                 box.addProperty("App::PropertyString", "CabinetType", "Cabinet", "Type of cabinet").CabinetType = cabinet_name

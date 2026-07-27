@@ -99,6 +99,7 @@ ELEMENTS = {
             "label",
             "length",
             "width",
+            "thick",
         ],
         "params": {
             "Material": ("App::PropertyString", "", "Material"),

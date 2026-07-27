@@ -595,8 +595,8 @@ class Front(Board):
 
 
 class Pfl(Board):
-    def __init__(self, label, length, width):
-        super().__init__(label, length, width, 4)
+    def __init__(self, label, length, width, thick=4):
+        super().__init__(label, length, width, thick)
         self.type = "pfl"
         self.material = ""
 

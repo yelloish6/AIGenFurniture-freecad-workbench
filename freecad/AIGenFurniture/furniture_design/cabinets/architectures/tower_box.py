@@ -66,46 +66,7 @@ class TowerBox(Cabinet):
         if gap_heat > 0:
             self.get_item_by_type_label("pfl",self.label + ".hdf").__setattr__("length", self.width - (2 * self.thick_pal))
             self.get_item_by_type_label("pfl",self.label + ".hdf").move("x", self.thick_pal - 2)
-        # --- Setting the front doors for the tower (loop-based with fg + separator sharing) ---
-        fg = rules["gap_front"]
-
-        # --- Ensure last gap exists ---
-        used_height = sum(gap_list) + len(gap_list) * self.thick_pal
-        last_gap = self.height - used_height - (2 * self.thick_pal)  # subtract top board and bottom board
-        if len(gap_list) < len(front_list):  # only append if needed
-            gap_list = gap_list + [last_gap]
-        offset = 0  # cumulative height from bottom
-        for i, (gap, has_front) in enumerate(zip(gap_list, front_list)):
-            if has_front:
-                # Neighbors
-                below_has_front = (i > 0 and front_list[i - 1] == 1)
-                above_has_front = (i < len(front_list) - 1 and front_list[i + 1] == 1)
-
-                # Bottom trimming
-                if below_has_front:
-                    bottom_trim = (self.thick_pal / 2) + (fg / 2)
-                else:
-                    bottom_trim = fg
-
-                # Top trimming
-                if above_has_front:
-                    top_trim = (self.thick_pal / 2) + (fg / 2)
-                else:
-                    top_trim = fg
-
-                # Front height = gap minus trims
-                front_height = gap + (2 * self.thick_pal) - (bottom_trim + top_trim)
-
-                # Position = offset + bottom_trim
-                self.add_front_manual(
-                    front_height,               # door height
-                    self.width - (2 * fg),      # door width
-                    0,                          # x offset
-                    offset + bottom_trim        # z offset
-                )
-
-            # Move offset for next level
-            offset += gap + self.thick_pal
+        self.add_tower_fronts(gap_list, front_list)
 
         # if front_list[0] == 1:
         #     if front_list[1] == 0:

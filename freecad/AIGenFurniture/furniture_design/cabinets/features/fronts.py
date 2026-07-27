@@ -19,21 +19,23 @@ class FrontMixin:
 
         split_list = parse_split_list(split_list)
 
-        default_reveal = self.front_gap
-        if reveal is None:
+        default_reveal = self.front_clearance
+        if reveal in (None, ""):
             reveal = [default_reveal, default_reveal, default_reveal, default_reveal]
 
         r_left, r_top, r_right, r_bot = parse_split_list(reveal)
+        gap = float(self.front_gap)
 
-        h_tot = self.height - r_top - r_bot + self.front_gap
+        h_tot = self.height - r_top - r_bot + gap
         h_count = 0
         w_count = 0
-        w_tot = self.width - r_right - r_left + self.front_gap
-        origin = [r_left, r_bot]
+        w_tot = self.width - r_right - r_left + gap
+        origin_x0 = r_left
+        origin = [origin_x0, r_bot]
         for i in range(len(split_list)):
             split = split_list[i]
-            h = int((h_tot * split[0] / 100) - self.front_gap)
-            w = int((w_tot * split[1] / 100) - self.front_gap)
+            h = int((h_tot * split[0] / 100) - gap)
+            w = int((w_tot * split[1] / 100) - gap)
             usa = Front(self.label + "_front" + str(i + 1), h, w, self.thick_front)
             usa.rotate("x")
             usa.rotate_cw("y")
@@ -41,13 +43,13 @@ class FrontMixin:
             usa.move("z", origin[1])
             usa.move("x", usa.width)
             if w_count != 100:
-                origin[0] += usa.width + int(self.front_gap)
+                origin[0] += usa.width + int(gap)
                 w_count += split[1]
                 if w_count == 100:
-                    origin[0] = self.front_gap
+                    origin[0] = origin_x0
                     w_count = 0
                     if h_count != 100:
-                        origin[1] += usa.length + int(self.front_gap)
+                        origin[1] += usa.length + int(gap)
                         h_count += split[0]
 
             self.append(usa)
@@ -83,12 +85,12 @@ class FrontMixin:
 
         split_list = parse_split_list(split_list)
 
-        gap = self.front_gap
-        margin = gap + self.thick_front
-        h_tot  = self.height - 2 * margin + gap
-        w_tot  = self.width  - 2 * margin + gap
-        origin = [margin, margin]
-        origin_x0 = margin
+        gap = float(self.front_gap)
+        clearance = float(self.front_clearance)
+        h_tot  = self.height - (2 * self.thick_pal) - (2 * clearance) + gap
+        w_tot  = self.width  - (2 * self.thick_pal) - (2 * clearance) + gap
+        origin_x0 = self.thick_pal + clearance
+        origin = [origin_x0, self.thick_pal + clearance]
 
         h_count = 0
         w_count = 0
@@ -140,6 +142,71 @@ class FrontMixin:
             front.rotate_cw("y")
             front.move("x", self.width)
         self.append(front)
+
+
+    def add_tower_fronts(self, gap_list, front_list, base_offset_z=0, covered_height=None):
+        """
+        Add manual tower fronts over stacked openings.
+        front_clearance controls outer cabinet clearance; front_gap controls only
+        the visible gap between adjacent active fronts.
+        """
+        gaps = list(gap_list)
+        fronts = list(front_list)
+        if not fronts:
+            return
+
+        base_offset_z = float(base_offset_z)
+        covered_height = float(covered_height if covered_height is not None else self.height - base_offset_z)
+        gap = float(self.front_gap)
+        clearance = float(self.front_clearance)
+        thick = float(self.thick_pal)
+
+        if len(gaps) < len(fronts):
+            missing_gaps = len(fronts) - len(gaps)
+            inferred_height = covered_height - sum(gaps) - ((len(fronts) + 1) * thick)
+            inferred_gap = inferred_height / missing_gaps
+            gaps.extend([inferred_gap] * missing_gaps)
+        gaps = gaps[:len(fronts)]
+
+        opening_bottoms = []
+        cursor = base_offset_z + thick
+        for opening_height in gaps:
+            opening_bottoms.append(cursor)
+            cursor += opening_height + thick
+
+        front_width = self.width - (2 * clearance)
+        offset_x = clearance - gap
+        cover_top = base_offset_z + covered_height
+
+        for i, has_front in enumerate(fronts):
+            if not has_front:
+                continue
+
+            opening_bottom = opening_bottoms[i]
+            opening_top = opening_bottom + gaps[i]
+
+            below_has_front = i > 0 and fronts[i - 1] == 1
+            above_has_front = i < len(fronts) - 1 and fronts[i + 1] == 1
+
+            if below_has_front:
+                bottom_edge = opening_bottom - (thick / 2) + (gap / 2)
+            elif i == 0:
+                bottom_edge = base_offset_z + clearance
+            else:
+                bottom_edge = opening_bottom - thick + clearance
+
+            if above_has_front:
+                top_edge = opening_top + (thick / 2) - (gap / 2)
+            elif i == len(fronts) - 1:
+                top_edge = cover_top - clearance
+            else:
+                top_edge = opening_top + thick - clearance
+
+            front_height = top_edge - bottom_edge
+            if front_height <= 0 or front_width <= 0:
+                raise ValueError("Tower front dimensions must be positive.")
+
+            self.add_front_manual(front_height, front_width, offset_x, bottom_edge)
 
 
     def add_front_manual(self, height, width, offset_x, offset_z):

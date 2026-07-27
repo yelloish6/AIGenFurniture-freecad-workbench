@@ -28,16 +28,17 @@ DEFAULT_RULES_BASELINE = {
     "thick_pal": 18,
     "thick_front": 18,
     "thick_blat": 38,
+    "thick_pfl": 4,
     "height_legs": 100,
+    "general_height": 720,
     "general_width": 600,
-    "width_blat": 600,
-    "gap_spate": 50,
-    "gap_fata": 50,
+    "general_depth": 500,
     "gap_front": 2,
+    "front_clearance": 2,
+    "pol_depth": 20,
     "cant_general": 1,
     "cant_pol": 2,
     "cant_separator": 1,
-    "pol_depth": 20,
 }
 # TODO move rules to the FreeCAD as spreadsheet
 
@@ -89,7 +90,20 @@ def design_furniture(customer_data):
 
 def load_default_rules(input_file):
     with open(input_file, 'r') as file:
-        return json.load(file)
+        loaded_rules = json.load(file)
+
+    rules = dict(DEFAULT_RULES_BASELINE)
+    rules.update(loaded_rules)
+
+    if "general_depth" not in loaded_rules and "width_blat" in loaded_rules:
+        rules["general_depth"] = loaded_rules["width_blat"]
+    if "front_clearance" not in loaded_rules and "gap_front" in loaded_rules:
+        rules["front_clearance"] = loaded_rules["gap_front"]
+
+    for deprecated_key in ("width_blat", "gap_spate", "gap_fata"):
+        rules.pop(deprecated_key, None)
+
+    return rules
 
 
 def save_default_rules(rules: dict):

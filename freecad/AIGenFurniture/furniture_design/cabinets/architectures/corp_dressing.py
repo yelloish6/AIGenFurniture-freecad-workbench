@@ -70,35 +70,10 @@ class CorpDressing(Cabinet):
 
         self.add_pfl()
 
-        # Se seteaza fronturile pentru turn
-        # gap_list[0]
-        if (front_list[0] == 1) and (front_list[1] == 0):
-            self.add_front_manual(gap_list[0] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (front_list[0] == 1) and (front_list[1] == 1):
-            self.add_front_manual(gap_list[0] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        # gap_list[1]
-        if (front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 0):
-            self.add_front_manual(gap_list[1] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (((front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 0))
-                or ((front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 1))):
-            self.add_front_manual(gap_list[1] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        if (front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 1):
-            self.add_front_manual(gap_list[1] + self.thick_pal - 4, self.width - 4)
-
-        # gap_list[2]
-        if (front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 0):
-            self.add_front_manual(gap_list[2] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (((front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 0))
-                or ((front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 1))):
-            self.add_front_manual(gap_list[2] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        if (front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 1):
-            self.add_front_manual(gap_list[2] + self.thick_pal - 4, self.width - 4)
-
-        # gap4
-        if (front_list[3] == 1) and (front_list[2] == 0):
-            self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3 * self.thick_pal) - 4,
-                                  self.width - 4)
-        if (front_list[3] == 1) and (front_list[2] == 1):
-            self.add_front_manual(
-                self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.thick_pal) - 3,
-                self.width - 4)
+        plinth_height = rules["height_legs"]
+        self.add_tower_fronts(
+            gap_list,
+            front_list,
+            base_offset_z=plinth_height,
+            covered_height=self.height - plinth_height,
+        )

@@ -55,7 +55,7 @@ class DrawersMixin:
 
         self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
 
-        pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+        pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
         pfl.move("x", self.thick_pal + gap_glisiera + 2)
         pfl.move("y", 2)
         pfl.move("z", height_offset - pfl.thick)
@@ -105,7 +105,7 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".drw", sert_width - 4, sert_depth - 4)
+            pfl = Pfl(self.label + ".drw", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_slide + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
@@ -151,7 +151,7 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_glisiera + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
@@ -192,7 +192,7 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4)
+            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_glisiera + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)

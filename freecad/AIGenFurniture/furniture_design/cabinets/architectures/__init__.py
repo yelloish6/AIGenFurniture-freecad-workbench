@@ -22,6 +22,11 @@ from ..cabinet import Cabinet
 
 # TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
 
+def _box_value(box, name, default=None):
+    if isinstance(box, dict):
+        return box.get(name, default)
+    return getattr(box, name, default)
+
 # Special cases: cabinets that require extra arguments
 def make_base_corner_shelf(label, height, width, depth, rules, box=None):
     """Factory for BaseCornerShelf with extra shelves parameter."""
@@ -83,6 +88,12 @@ def make_bench(label, height, width, depth, rules, box=None):
     gap_lat = getattr(box, "gap_lat")
     height_base = getattr(box, "height_base")
     return Banca(label, height, width, depth, rules, gap_front = gap_front, gap_lat = gap_lat, height_base = height_base)
+
+def make_bar(label, height, width, depth, rules, box=None):
+    """Factory for Bar with cabinet-specific clearances."""
+    front_clearance = _box_value(box, "front_clearance", 50)
+    back_clearance = _box_value(box, "back_clearance", 0)
+    return Bar(label, height, width, depth, rules, front_clearance=front_clearance, back_clearance=back_clearance)
 
 CABINET_DEFINITIONS = {
     "BaseBox": {
@@ -259,13 +270,16 @@ CABINET_DEFINITIONS = {
 
     "Bar": {
         "class": Bar,
-        "factory": None,
+        "factory": make_bar,
         "ui": {
             "label": "Bar",
             "enabled": False,
             "tooltip": "Add a bar cabinet",
         },
-        "params": {}
+        "params": {
+            "front_clearance": ("App::PropertyInteger", 50, "Front clearance"),
+            "back_clearance": ("App::PropertyInteger", 0, "Back clearance"),
+        }
 
     },
     "Banca": {

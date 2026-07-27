@@ -172,7 +172,7 @@ def freecad_box_to_element(fc_box):
         "length": length,
         "width": width,
     }
-    # Only add thick if it's in the constructor keys (Pfl doesn't accept it)
+    # Only add thick if it's in the constructor keys.
     if "thick" in ctor_keys:
         ctor_args["thick"] = height
 

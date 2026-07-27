@@ -14,7 +14,7 @@ FEATURES = {
         "params": {
             "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
             "front_type": ("App::PropertyString", "door", "Front type"),
-            "reveal": ("App::PropertyString", "[2,2,2,2]", "Distance to reveal on each side [left, top, right, bottom]"),
+            "reveal": ("App::PropertyString", "", "Optional reveal override [left, top, right, bottom]. Blank uses Design Rules > Front Clearance."),
         }
     },
 

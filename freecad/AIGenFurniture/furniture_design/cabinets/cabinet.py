@@ -29,10 +29,13 @@ class Cabinet(DrawersMixin, ShelvesMixin, FrontMixin, BackMixin):
         self.thick_pal = rules["thick_pal"]
         self.thick_front = rules["thick_front"]
         self.thick_blat = rules["thick_blat"]
-        self.width_blat = rules["width_blat"]
+        self.thick_pfl = rules["thick_pfl"]
+        self.general_depth = rules["general_depth"]
+        self.width_blat = self.general_depth
         self.cant_lab = rules["cant_general"]
         self.cant = round(rules["cant_general"])
         self.front_gap = float(rules["gap_front"])
+        self.front_clearance = float(rules["front_clearance"])
         self.pol_depth = rules["pol_depth"]
         self.cant_pol = rules["cant_pol"]
         self.cant_separator = rules["cant_separator"]
