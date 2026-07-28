@@ -3,7 +3,16 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from ..furniture_design.cabinets.elements import ELEMENTS, get_enabled_elements
+from ..furniture_design.design_engine import DEFAULT_RULES_PATH, load_default_rules
 from ..furniture_design.order.order_params import ORDER_PARAMS
+
+
+THICKNESS_RULE_BY_ELEMENT = {
+    "BoardPal": "thick_pal",
+    "Blat": "thick_blat",
+    "Front": "thick_front",
+    "Pfl": "thick_pfl",
+}
 
 
 def _col_letter(index):
@@ -209,6 +218,23 @@ def _resolve_property_spec(doc, pname, spec):
     raise TypeError(f"Unsupported property definition for '{pname}'")
 
 
+def _element_thickness_default(element_name, defaults):
+    fallback = defaults.get("thickness", f"{element_name}")
+    rule_key = THICKNESS_RULE_BY_ELEMENT.get(element_name)
+    if not rule_key:
+        return fallback
+
+    try:
+        rules = load_default_rules(DEFAULT_RULES_PATH)
+    except Exception as exc:
+        App.Console.PrintWarning(
+            f"[AIGenFurniture] Could not load design rules for {element_name} thickness: {exc}\n"
+        )
+        return fallback
+
+    return rules.get(rule_key, fallback)
+
+
 # -------------------------
 # Command class generator
 # -------------------------
@@ -232,7 +258,7 @@ def make_element_command(element_name, data):
                 box.Label = defaults.get("label", f"{element_name}")
                 box.Length = defaults.get("length", f"{element_name}")
                 box.Width = defaults.get("width", f"{element_name}")
-                box.Height = defaults.get("thickness", f"{element_name}")
+                box.Height = _element_thickness_default(element_name, defaults)
 
                 # Add an ElementType property
                 box.addProperty(

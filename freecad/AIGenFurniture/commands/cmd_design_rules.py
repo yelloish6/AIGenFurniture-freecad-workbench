@@ -42,7 +42,7 @@ RULE_LABELS = {
     "general_width": "Default cabinet width",
     "general_depth": "Default cabinet depth",
     "gap_front": "Front gap",
-    "front_clearance": "Front Clearance",
+    "front_clearance": "Front clearance",
     "cant_general": "General edging",
     "cant_pol": "Shelf edging",
     "cant_separator": "Separator edging",
