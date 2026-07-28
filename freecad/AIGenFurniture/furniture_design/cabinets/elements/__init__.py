@@ -29,12 +29,18 @@ ELEMENTS = {
             "cant_l1",
             "cant_l2",
         ],
+        "param_aliases": {
+            "Edge_L1": "cant_L1",
+            "Edge_L2": "cant_L2",
+            "Edge_l1": "cant_l1",
+            "Edge_l2": "cant_l2",
+        },
         "params": {
             "Material": ("App::PropertyString", "", "Material"),
-            "cant_L1": ("App::PropertyString", "", "Edge length 1"),
-            "cant_L2": ("App::PropertyString", "", "Edge length 2"),
-            "cant_l1": ("App::PropertyString", "", "Edge width 1"),
-            "cant_l2": ("App::PropertyString", "", "Edge width 2"),
+            "Edge_L1": ("App::PropertyString", "", "Edge L1"),
+            "Edge_L2": ("App::PropertyString", "", "Edge L2"),
+            "Edge_l1": ("App::PropertyString", "", "Edge l1"),
+            "Edge_l2": ("App::PropertyString", "", "Edge l2"),
         },
 
     },

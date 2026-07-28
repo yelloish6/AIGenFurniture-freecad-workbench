@@ -85,8 +85,19 @@ def placement_from_position_list(position_list):
 
 
 def _get_element_param_value(element, param_name, default_value=""):
+    edge_aliases = {
+        "Edge_L1": "cant_L1",
+        "Edge_L2": "cant_L2",
+        "Edge_l1": "cant_l1",
+        "Edge_l2": "cant_l2",
+    }
+    canonical_param_name = edge_aliases.get(param_name, param_name)
+
     if hasattr(element, param_name):
         return getattr(element, param_name)
+
+    if canonical_param_name != param_name and hasattr(element, canonical_param_name):
+        return getattr(element, canonical_param_name)
 
     if param_name == "Material":
         return getattr(element, "material", default_value)
@@ -99,8 +110,8 @@ def _get_element_param_value(element, param_name, default_value=""):
         return getattr(element, lower_name)
 
     cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
-    if param_name in cant_names and hasattr(element, "cant_list"):
-        cant_index = cant_names.index(param_name)
+    if canonical_param_name in cant_names and hasattr(element, "cant_list"):
+        cant_index = cant_names.index(canonical_param_name)
         if cant_index < len(element.cant_list):
             return element.cant_list[cant_index]
 
@@ -299,12 +310,6 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
             registry_element_type = registry_type_map.get(elem.type)
             ensure_registry_params(part, registry_element_type)
             apply_registry_param_values(part, registry_element_type, elem)
-
-            # Preserve actual board-specific edge values from the generated element.
-            if elem.type == "pal":
-                cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
-                for name, value in zip(cant_names, elem.cant_list):
-                    setattr(part, name, str(value))
 
             # Apply recorded transformations of the element (match STL)
             part.Placement = placement_from_position_list(elem.position_list)

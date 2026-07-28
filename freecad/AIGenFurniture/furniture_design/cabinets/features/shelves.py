@@ -6,28 +6,33 @@ from ..elements.board import BoardPal
 
 class ShelvesMixin:
 
-    def add_pol(self, nr, cant):
+    def add_pol(self, Number=None, cant=None, nr=None):
         """
         adauga polite intr-un corp
-        :param nr: numarul politelor de adaugat in corp
-        :param cant: tipul de cant 0,4 sau 2 (ca si numar)
+        :param Number: numarul politelor de adaugat in corp
+        :param cant: deprecated; shelf edging comes from design rules
+        :param nr: deprecated name for Number
         :return: none
         """
-        # TODO: adancimea trebe scazuta cu grosimea cantului si inca nu merge corect
+        # pol_depth is the shelf setback from the cabinet front.
+        nr = Number if Number is not None else nr
+        if nr is None:
+            nr = 1
+        cant = self.cant_pol
         pol_lung = self.width - (2 * self.thick_pal)
-        pol_lat = (self.depth - 20)
+        pol_lat = self.depth - self.pol_depth
         for i in range(nr):
             pol = BoardPal(self.label + ".shelf", pol_lung, pol_lat, self.thick_pal, cant, "", "", "")
             pol.move("x", self.thick_pal)
             pol.move("z", round(self.height / (nr + 1)) * (i + 1))
-            pol.move("y", 20)
+            pol.move("y", self.pol_depth)
             self.append(pol)
             self.append(Accessory("bolt polita", 4))
             self.append(Accessory("surub PFL", 2))
 
     def add_pol_2(self, orient, length, height, offset):
         """
-        adds a polita in the cabinet, but you can adjust length height and offset
+        adds a shelf in the cabinet, but you can adjust length height and offset
         :param orient: orientation ["h" or "v"]
         :param length: length of the board, 0 for default width
         :param height: positioning height
@@ -165,4 +170,3 @@ class ShelvesMixin:
         sep.move("z", self.thick_pal + offset_z)
         sep.move("y", edge_gap)
         self.append(Accessory("surub", 4))
-

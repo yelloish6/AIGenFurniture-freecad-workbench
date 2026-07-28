@@ -31,62 +31,62 @@ def _box_value(box, name, default=None):
 def make_base_corner_shelf(label, height, width, depth, rules, box=None):
     """Factory for BaseCornerShelf with extra shelves parameter."""
     # Read shelves count from the box if present, otherwise default = 3
-    shelves = getattr(box, "shelves", 3)
-    rounded = getattr(box, "rounded", False)
+    shelves = _box_value(box, "shelves", 3)
+    rounded = _box_value(box, "rounded", False)
     return BaseCornerShelf(label, height, width, depth, rules, shelves=shelves, rounded=rounded)
 
 def make_base_corner(label, height, width, depth, rules, box=None):
     """Factory for BaseCorner with extra cut_width, cut_depth, l_r, with_polita parameters."""
-    cut_width = getattr(box, "cut_width", 0)
-    cut_depth = getattr(box, "cut_depth", 0)
-    l_r = getattr(box, "l_r", 0)
-    with_polita = getattr(box, "with_polita", True)
+    cut_width = _box_value(box, "cut_width", 0)
+    cut_depth = _box_value(box, "cut_depth", 0)
+    l_r = _box_value(box, "l_r", 0)
+    with_polita = _box_value(box, "with_polita", True)
     return BaseCorner(label, height, width, depth, rules, cut_width, cut_depth, l_r, with_polita)
 
 def make_top_corner(label, height, width, depth, rules, box=None):
     """Factory for TopCorner with extra cut_width, cut_depth, l_r, with_polita parameters."""
-    cut_width = getattr(box, "cut_width", 0)
-    cut_depth = getattr(box, "cut_depth", 0)
-    l_r = getattr(box, "l_r", 0)
-    polite = getattr(box, "polite", 1)
+    cut_width = _box_value(box, "cut_width", 0)
+    cut_depth = _box_value(box, "cut_depth", 0)
+    l_r = _box_value(box, "l_r", 0)
+    polite = _box_value(box, "polite", 1)
     return TopCorner(label, height, width, depth, rules, cut_width, cut_depth, l_r, polite)
 
 def make_raft(label, height, width, depth, rules, box=None):
     """Factory for BaseCornerShelf with extra shelves parameter."""
     # Read shelves count from the box if present, otherwise default = 3
-    shelves = getattr(box, "shelves", 3)
+    shelves = _box_value(box, "shelves", 3)
     return Raft(label, height, width, depth, rules, shelves=shelves)
 
 def make_tower_box(label, height, width, depth, rules, box=None):
     """Factory for TowerBox with extra tower_height parameter."""
-    gap_list = getattr(box, "gap_list", [20, 40])
-    gap_heat = getattr(box, "gap_heat", 50)
-    front_list = getattr(box, "front_list", [0, 0, 0, 0])
+    gap_list = _box_value(box, "gap_list", [20, 40])
+    gap_heat = _box_value(box, "gap_heat", 50)
+    front_list = _box_value(box, "front_list", [0, 0, 0, 0])
     return TowerBox(label, height, width, depth, rules, gap_list = gap_list, gap_heat = gap_heat, front_list = front_list)
 
 def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
     """Factory for CorpCuPicioare with extra shelves parameter."""
-    h_skirt = getattr(box, "skirt_height", 100)
-    has_skirting_board = getattr(box, "skirting_board", True)
+    h_skirt = _box_value(box, "skirt_height", 100)
+    has_skirting_board = _box_value(box, "skirting_board", True)
     return CorpCuPicioare(label, height, width, depth, rules, h_skirt=h_skirt, has_skirting_board=has_skirting_board)
 
 def make_corp_dressing(label, height, width, depth, rules, box=None):
     """Factory for Corp Dressing with extra parameter."""
-    gap_list = getattr(box, "gap_list", [200, 400])
-    front_list = getattr(box, "front_list", [0, 0, 0, 0])
+    gap_list = _box_value(box, "gap_list", [200, 400])
+    front_list = _box_value(box, "front_list", [0, 0, 0, 0])
     return CorpDressing(label, height, width, depth, rules, gap_list = gap_list, front_list = front_list)
 
 def make_etajera(label, height, width, depth, rules, box=None):
     """Factory for Etajera with extra shelves parameter."""
     # Read shelves count from the box if present, otherwise default = 3
-    shelves = getattr(box, "shelves", 3)
+    shelves = _box_value(box, "shelves", 3)
     return Etajera(label, height, width, depth, rules, shelves=shelves)
 
 def make_bench(label, height, width, depth, rules, box=None):
     """Factory for Bench with extra parameters."""
-    gap_front = getattr(box, "gap_front")
-    gap_lat = getattr(box, "gap_lat")
-    height_base = getattr(box, "height_base")
+    gap_front = _box_value(box, "gap_front")
+    gap_lat = _box_value(box, "gap_lat")
+    height_base = _box_value(box, "height_base")
     return Banca(label, height, width, depth, rules, gap_front = gap_front, gap_lat = gap_lat, height_base = height_base)
 
 def make_bar(label, height, width, depth, rules, box=None):

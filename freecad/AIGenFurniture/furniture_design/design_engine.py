@@ -190,11 +190,17 @@ def element_handler(cabinet, element_data):
         )
 
     ctor_keys = element_def["constructor"]
-    ctor_args = {
-        k: element_data[k]
-        for k in ctor_keys
-        if k in element_data
-    }
+    param_aliases = element_def.get("param_aliases", {})
+    canonical_aliases = {target: alias for alias, target in param_aliases.items()}
+    ctor_args = {}
+    for key in ctor_keys:
+        if key in element_data:
+            ctor_args[key] = element_data[key]
+            continue
+
+        alias = canonical_aliases.get(key)
+        if alias in element_data:
+            ctor_args[key] = element_data[alias]
     # allowed_params = element_def.get("params")
     # print(allowed_params)
     #

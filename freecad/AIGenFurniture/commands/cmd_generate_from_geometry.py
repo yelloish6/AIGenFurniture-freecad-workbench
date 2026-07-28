@@ -177,16 +177,18 @@ def freecad_box_to_element(fc_box):
         ctor_args["thick"] = height
 
     # Add element-specific properties (e.g., cant_L1, cant_L2 for BoardPal)
+    param_aliases = element_def.get("param_aliases", {})
     for prop in fc_box.PropertiesList:
         if fc_box.getGroupOfProperty(prop) == "Element":
             prop_name = prop
+            ctor_prop_name = param_aliases.get(prop_name, prop_name)
             prop_value = getattr(fc_box, prop)
             # Convert FreeCAD Quantity to float if needed
             if hasattr(prop_value, "Value"):
                 prop_value = prop_value.Value
             # Only add if it's in constructor keys
-            if prop_name in ctor_keys:
-                ctor_args[prop_name] = prop_value
+            if ctor_prop_name in ctor_keys:
+                ctor_args[ctor_prop_name] = prop_value
 
     # Create element object
     element_cls = element_def["class"]
@@ -212,6 +214,9 @@ def freecad_box_to_element(fc_box):
             prop_value = prop_value.Value
 
         setattr(element, prop, prop_value)
+        canonical_prop = param_aliases.get(prop, prop)
+        if canonical_prop != prop:
+            setattr(element, canonical_prop, prop_value)
         if prop == "Material":
             element.material = prop_value
         elif prop == "ManufacturingRoute":

@@ -101,10 +101,9 @@ FEATURES = {
     "add_pol": {
         "label": "Shelves",
         "enabled": True,
-        "tooltip": "Add a shelves",
+        "tooltip": "Add shelves",
         "params": {
-            "nr": ("App::PropertyInteger", 1, "Number of shelves"),
-            "cant": ("App::PropertyString", "2", "Edge type"),
+            "Number": ("App::PropertyInteger", 1, "Number of shelves"),
         }
     },
     "add_pol_2": {

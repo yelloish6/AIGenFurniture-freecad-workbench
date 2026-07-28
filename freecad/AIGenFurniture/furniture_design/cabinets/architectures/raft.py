@@ -48,4 +48,4 @@ class Raft(Cabinet):
 
         self.add_pfl()
 
-        self.add_pol(shelves, 2)
+        self.add_pol(shelves)
