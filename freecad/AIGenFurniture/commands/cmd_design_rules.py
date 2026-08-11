@@ -5,8 +5,7 @@ from PySide import QtGui, QtCore
 
 from .._resources import get_command_icon
 from ..furniture_design.design_engine import (
-    DEFAULT_RULES_BASELINE,
-    DEFAULT_RULES_PATH,
+    load_factory_rules,
     load_default_rules,
     save_default_rules,
 )
@@ -57,7 +56,7 @@ class DesignRulesDialog(QtGui.QDialog):
         self.setModal(True)
         self.setMinimumWidth(420)
 
-        self._rules = load_default_rules(DEFAULT_RULES_PATH)
+        self._rules = load_default_rules()
         self._widgets = {}
 
         layout = QtGui.QVBoxLayout(self)
@@ -129,9 +128,10 @@ class DesignRulesDialog(QtGui.QDialog):
         return widget
 
     def restore_defaults(self):
+        factory_rules = load_factory_rules()
         for key, widget in self._widgets.items():
-            if key in DEFAULT_RULES_BASELINE:
-                widget.setValue(DEFAULT_RULES_BASELINE[key])
+            if key in factory_rules:
+                widget.setValue(factory_rules[key])
 
     def _collect_rules(self):
         rules = {}

@@ -12,7 +12,7 @@ from ..furniture_design.cabinets.cabinet import Cabinet
 from ..furniture_design.cabinets.features import FEATURES
 from ..furniture_design.cabinets.architectures import CABINETS
 from .cmd_make_element import get_elements_registry
-from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
+from ..furniture_design.design_engine import load_default_rules
 from ..manufacturing.generate_files import generate_manufacturing_files
 
 
@@ -262,7 +262,7 @@ def freecad_document_to_order(doc):
     order = Order(customer_data)
 
     # Load default rules
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
 
     # Find all App::Part objects that represent exploded cabinets (Assy_*)
     for obj in doc.Objects:

@@ -3,7 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from ..furniture_design.cabinets.elements import ELEMENTS, get_enabled_elements
-from ..furniture_design.design_engine import DEFAULT_RULES_PATH, load_default_rules
+from ..furniture_design.design_engine import load_default_rules
 from ..furniture_design.order.order_params import ORDER_PARAMS
 
 
@@ -225,7 +225,7 @@ def _element_thickness_default(element_name, defaults):
         return fallback
 
     try:
-        rules = load_default_rules(DEFAULT_RULES_PATH)
+        rules = load_default_rules()
     except Exception as exc:
         App.Console.PrintWarning(
             f"[AIGenFurniture] Could not load design rules for {element_name} thickness: {exc}\n"

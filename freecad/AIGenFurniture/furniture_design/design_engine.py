@@ -7,10 +7,15 @@ from .._resources import get_resource_path
 # from .cabinets.elements.board import *
 # from .cabinets.elements.accessory import *
 
-import os, json
+import os, json, tempfile
 from .cabinets.elements import ELEMENTS
 from .cabinets.architectures import get_cabinet_factory
 from .cabinets.features import get_feature_handler
+
+try:
+    import FreeCAD
+except ImportError:
+    FreeCAD = None
 
 '''
 The design_furniture function is the main entry point for designing furniture. It checks the cabinet_type from the 
@@ -23,6 +28,7 @@ and customer input data. Additionally, you might want to add error handling and 
 project requirements.
 '''
 
+# Deprecated public alias for the packaged factory rules file.
 DEFAULT_RULES_PATH = get_resource_path("furniture_design", "default_rules.json")
 DEFAULT_RULES_BASELINE = {
     "thick_pal": 18,
@@ -41,6 +47,62 @@ DEFAULT_RULES_BASELINE = {
     "cant_separator": 1,
 }
 # TODO move rules to the FreeCAD as spreadsheet
+
+
+def get_user_rules_path():
+    if FreeCAD is None:
+        raise RuntimeError("FreeCAD is required to resolve the user design rules path")
+
+    return os.path.join(
+        FreeCAD.getUserAppDataDir(),
+        "AIGenFurniture",
+        "design_rules.json",
+    )
+
+
+def _print_rules_warning(message):
+    text = "[AIGenFurniture] {}\n".format(message)
+    if FreeCAD is not None and hasattr(FreeCAD, "Console"):
+        FreeCAD.Console.PrintWarning(text)
+    else:
+        print(text, end="")
+
+
+def _load_rules_file(input_file):
+    with open(input_file, "r") as file:
+        rules = json.load(file)
+
+    if not isinstance(rules, dict):
+        raise ValueError("design rules JSON must contain an object")
+
+    return rules
+
+
+def _migrate_rules(rules):
+    migrated = dict(rules)
+
+    if "general_depth" not in migrated and "width_blat" in migrated:
+        migrated["general_depth"] = migrated["width_blat"]
+    if "front_clearance" not in migrated and "gap_front" in migrated:
+        migrated["front_clearance"] = migrated["gap_front"]
+
+    for deprecated_key in ("width_blat", "gap_spate", "gap_fata"):
+        migrated.pop(deprecated_key, None)
+
+    return migrated
+
+
+def _overlay_rules(base_rules, loaded_rules):
+    rules = dict(base_rules)
+    rules.update(_migrate_rules(loaded_rules))
+    return rules
+
+
+def load_factory_rules():
+    rules = dict(DEFAULT_RULES_BASELINE)
+    rules = _overlay_rules(rules, _load_rules_file(DEFAULT_RULES_PATH))
+    return rules
+
 
 def design_furniture(customer_data):
     """
@@ -80,7 +142,7 @@ def design_furniture(customer_data):
 
         order.append(designed_cabinet)
     # define dummy cabinet for additional elements
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
     generic_cab = Cabinet("Generic", 100, 100, 100, rules)
     for element_data in elements_data:
         element_handler(generic_cab, element_data)
@@ -88,36 +150,48 @@ def design_furniture(customer_data):
     return order
 
 
-def load_default_rules(input_file):
-    with open(input_file, 'r') as file:
-        loaded_rules = json.load(file)
+def load_default_rules(input_file=None):
+    if input_file is not None:
+        return _overlay_rules(DEFAULT_RULES_BASELINE, _load_rules_file(input_file))
 
-    rules = dict(DEFAULT_RULES_BASELINE)
-    rules.update(loaded_rules)
+    rules = load_factory_rules()
+    user_rules_path = get_user_rules_path()
+    if not os.path.exists(user_rules_path):
+        return rules
 
-    if "general_depth" not in loaded_rules and "width_blat" in loaded_rules:
-        rules["general_depth"] = loaded_rules["width_blat"]
-    if "front_clearance" not in loaded_rules and "gap_front" in loaded_rules:
-        rules["front_clearance"] = loaded_rules["gap_front"]
-
-    for deprecated_key in ("width_blat", "gap_spate", "gap_fata"):
-        rules.pop(deprecated_key, None)
-
-    return rules
-
-
-def save_default_rules(rules: dict):
-    rules_dir = os.path.dirname(DEFAULT_RULES_PATH)
-    os.makedirs(rules_dir, exist_ok=True)
-
-    temp_path = DEFAULT_RULES_PATH + ".tmp"
     try:
-        with open(temp_path, "w") as file:
+        return _overlay_rules(rules, _load_rules_file(user_rules_path))
+    except (OSError, ValueError, TypeError) as exc:
+        _print_rules_warning(
+            "Could not read user design rules from '{}': {}. Using factory defaults.".format(
+                user_rules_path,
+                exc,
+            )
+        )
+        return rules
+
+
+def save_default_rules(rules: dict, output_file=None):
+    rules_path = output_file or get_user_rules_path()
+    rules_dir = os.path.dirname(rules_path)
+    if rules_dir:
+        os.makedirs(rules_dir, exist_ok=True)
+
+    temp_file = tempfile.NamedTemporaryFile(
+        "w",
+        delete=False,
+        dir=rules_dir or ".",
+        prefix=".design_rules.",
+        suffix=".tmp",
+    )
+    temp_path = temp_file.name
+    try:
+        with temp_file as file:
             json.dump(rules, file, indent=4)
             file.write("\n")
             file.flush()
             os.fsync(file.fileno())
-        os.replace(temp_path, DEFAULT_RULES_PATH)
+        os.replace(temp_path, rules_path)
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
@@ -363,7 +437,7 @@ def cabinet_handler(cabinet_data):
     width = cabinet_data.get("width")
     depth = cabinet_data.get("depth")
 
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
 
     factory = get_cabinet_factory(cabinet_type)
     if not factory:

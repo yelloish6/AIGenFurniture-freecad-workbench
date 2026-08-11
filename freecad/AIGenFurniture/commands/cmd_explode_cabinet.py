@@ -8,7 +8,7 @@ from ..furniture_design.cabinets.elements import ELEMENTS
 from .cmd_make_element import _order_var_material_default, _resolve_property_spec
 
 from . import resources
-from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
+from ..furniture_design.design_engine import load_default_rules
 from ..furniture_design.cabinets.architectures import get_cabinet_factory
 
 def is_valid_cabinet_object(obj):
@@ -195,7 +195,7 @@ def explode_box_to_cabinet(box):
     cab_type = getattr(box, "CabinetType", "BaseBox")
 
     # Rules (normally from spreadsheet / OrderVar)
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
 
     factory = get_cabinet_factory(cab_type)
     if not factory:
