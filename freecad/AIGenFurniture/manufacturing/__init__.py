@@ -10,19 +10,19 @@ EXPORT_DEFINITIONS_SCHEMA_VERSION = "1.0"
 EXPORT_DEFINITIONS = {
     # this export is shop-specific for my shop. Should not be part of any release
     "export_pal_for_proficut":{
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "export_pal_for_proficut",
         "module": "export_for_proficut",
     },
     # this export is shop-specific for my shop. Should not be part of any release
     "export_pfl_for_proficut": {
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "export_pfl_for_proficut",
         "module": "export_for_proficut",
     },
     # this export is shop-specific for my shop. Should not be part of any release
     "export_front_for_nettfront": {
-        "enabled": True, #False for MVP
+        "enabled": False, #False for MVP
         "runner": "export_front_for_nettfront",
         "module": "export_for_nettfront",
     },
