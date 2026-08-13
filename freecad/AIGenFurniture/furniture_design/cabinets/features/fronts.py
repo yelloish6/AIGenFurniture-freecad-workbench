@@ -4,6 +4,94 @@ from ..elements.board import Front
 from ..elements.accessory import Accessory
 import ast, math
 
+
+def validate_tower_opening_layout(gap_list, front_list, covered_height, board_thickness):
+    """
+    Validate and normalize the tower opening/front schema.
+
+    gap_list contains explicitly dimensioned openings ordered bottom to top.
+    The final top opening is calculated from the remaining covered height.
+    """
+    if gap_list is None:
+        raise ValueError("gap_list must be a sequence of positive numeric explicit opening heights.")
+    if front_list is None:
+        raise ValueError(
+            "front_list must be a non-empty sequence of 0/1 values with len(front_list) == len(gap_list) + 1."
+        )
+    if isinstance(gap_list, (str, bytes)):
+        raise ValueError("gap_list must be a sequence of positive numeric explicit opening heights, not a string.")
+    if isinstance(front_list, (str, bytes)):
+        raise ValueError(
+            "front_list must be a non-empty sequence of 0/1 values, not a string; expected len(front_list) == len(gap_list) + 1."
+        )
+
+    try:
+        gaps_in = list(gap_list)
+    except TypeError as exc:
+        raise ValueError("gap_list must be a sequence of positive numeric explicit opening heights.") from exc
+
+    try:
+        fronts_in = list(front_list)
+    except TypeError as exc:
+        raise ValueError(
+            "front_list must be a non-empty sequence of 0/1 values with len(front_list) == len(gap_list) + 1."
+        ) from exc
+
+    if not fronts_in:
+        raise ValueError("front_list must be non-empty; expected len(front_list) == len(gap_list) + 1.")
+
+    try:
+        covered_height = float(covered_height)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("covered_height must be numeric and large enough to leave a positive final opening.") from exc
+    try:
+        board_thickness = float(board_thickness)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("board_thickness must be numeric and positive.") from exc
+    if board_thickness <= 0:
+        raise ValueError("board_thickness must be positive.")
+
+    normalized_gaps = []
+    for index, gap in enumerate(gaps_in):
+        if isinstance(gap, (str, bytes, bool)) or gap is None:
+            raise ValueError(f"gap_list[{index}] must be a positive numeric explicit opening height.")
+        try:
+            normalized_gap = float(gap)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"gap_list[{index}] must be a positive numeric explicit opening height.") from exc
+        if normalized_gap <= 0:
+            raise ValueError(f"gap_list[{index}] must be strictly positive.")
+        normalized_gaps.append(normalized_gap)
+
+    normalized_fronts = []
+    for index, front in enumerate(fronts_in):
+        if not (front is False or front is True or (type(front) is int and front in (0, 1))):
+            raise ValueError(
+                f"front_list[{index}] must be one of 0, 1, False or True; expected len(front_list) == len(gap_list) + 1."
+            )
+        normalized_fronts.append(1 if bool(front) else 0)
+
+    expected_front_count = len(normalized_gaps) + 1
+    if len(normalized_fronts) != expected_front_count:
+        raise ValueError(
+            "front_list length must equal len(gap_list) + 1; "
+            f"got len(front_list)={len(normalized_fronts)} and len(gap_list)={len(normalized_gaps)}."
+        )
+
+    final_opening_height = (
+        covered_height
+        - sum(normalized_gaps)
+        - ((len(normalized_fronts) + 1) * board_thickness)
+    )
+    if final_opening_height <= 0:
+        raise ValueError(
+            "covered_height must leave a strictly positive calculated final opening; "
+            "expected covered_height - sum(gap_list) - ((len(front_list) + 1) * board_thickness) > 0."
+        )
+
+    return normalized_gaps + [final_opening_height], normalized_fronts
+
+
 class FrontMixin:
     def add_front(self, split_list, front_type, reveal = None):
         """
@@ -144,33 +232,29 @@ class FrontMixin:
         self.append(front)
 
 
-    def add_tower_fronts(self, gap_list, front_list, base_offset_z=0, covered_height=None):
+    def add_tower_fronts(self, opening_heights, front_list, base_offset_z=0, covered_height=None):
         """
         Add manual tower fronts over stacked openings.
+        opening_heights must already include the calculated final/top opening.
         front_clearance controls outer cabinet clearance; front_gap controls only
         the visible gap between adjacent active fronts.
         """
-        gaps = list(gap_list)
-        fronts = list(front_list)
-        if not fronts:
-            return
-
         base_offset_z = float(base_offset_z)
         covered_height = float(covered_height if covered_height is not None else self.height - base_offset_z)
         gap = float(self.front_gap)
         clearance = float(self.front_clearance)
         thick = float(self.thick_pal)
+        openings = list(opening_heights)
+        fronts = list(front_list)
 
-        if len(gaps) < len(fronts):
-            missing_gaps = len(fronts) - len(gaps)
-            inferred_height = covered_height - sum(gaps) - ((len(fronts) + 1) * thick)
-            inferred_gap = inferred_height / missing_gaps
-            gaps.extend([inferred_gap] * missing_gaps)
-        gaps = gaps[:len(fronts)]
+        if len(openings) != len(fronts):
+            raise ValueError(
+                "opening_heights length must equal front_list length; use validate_tower_opening_layout first."
+            )
 
         opening_bottoms = []
         cursor = base_offset_z + thick
-        for opening_height in gaps:
+        for opening_height in openings:
             opening_bottoms.append(cursor)
             cursor += opening_height + thick
 
@@ -183,7 +267,7 @@ class FrontMixin:
                 continue
 
             opening_bottom = opening_bottoms[i]
-            opening_top = opening_bottom + gaps[i]
+            opening_top = opening_bottom + openings[i]
 
             below_has_front = i > 0 and fronts[i - 1] == 1
             above_has_front = i < len(fronts) - 1 and fronts[i + 1] == 1

@@ -204,45 +204,52 @@ def explode_box_to_cabinet(box):
         )
         factory = get_cabinet_factory("BaseBox")
 
-    cabinet = factory(box.Label, height, width, depth, rules, box=box)
-
-    import re
-    from collections import defaultdict
-
-# TODO rewrite the section below to use the get_feature_handler() method defined in the __init__.py for features.
-    # === AUTO-APPLY BOX FEATURES ===
-    feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
-    features = defaultdict(lambda: defaultdict(dict))
-
-    # Collect features grouped by (feature_name, index)
-    for prop in box.PropertiesList:
-        match = feature_pattern.match(prop)
-        if not match:
-            continue
-        feature_name, index, param = match.groups()
-        value = getattr(box, prop)
-        features[feature_name][index][param] = value
-
-    # Execute feature methods dynamically
-    for feature_name, instances in features.items():
-        if not hasattr(cabinet, feature_name):
-            App.Console.PrintWarning(f"[WARNING] cmd_explode_cabinet.py: Cabinet has no method '{feature_name}' (skipping)\n")
-            continue
-        method = getattr(cabinet, feature_name)
-        for index, params in instances.items():
-            try:
-                method(**params)
-                App.Console.PrintMessage(f"[OK] Applied feature '{feature_name}' #{index} with {params}\n")
-            except TypeError as e:
-                App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
-
     # ── UNDO TRANSACTION ──────────────────────────────────────────────────────
     # Open a named transaction BEFORE any document mutations so that a single
     # Ctrl+Z reverses the entire cabinet generation as one atomic undo step.
     doc.openTransaction("Generate Cabinet")
     try:
+        cabinet = factory(box.Label, height, width, depth, rules, box=box)
+
+        import re
+        from collections import defaultdict
+
+        # TODO rewrite the section below to use the get_feature_handler() method defined in the __init__.py for features.
+        # === AUTO-APPLY BOX FEATURES ===
+        feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
+        features = defaultdict(lambda: defaultdict(dict))
+
+        # Collect features grouped by (feature_name, index)
+        for prop in box.PropertiesList:
+            match = feature_pattern.match(prop)
+            if not match:
+                continue
+            feature_name, index, param = match.groups()
+            value = getattr(box, prop)
+            features[feature_name][index][param] = value
+
+        # Execute feature methods dynamically
+        for feature_name, instances in features.items():
+            if not hasattr(cabinet, feature_name):
+                App.Console.PrintWarning(f"[WARNING] cmd_explode_cabinet.py: Cabinet has no method '{feature_name}' (skipping)\n")
+                continue
+            method = getattr(cabinet, feature_name)
+            for index, params in instances.items():
+                try:
+                    method(**params)
+                    App.Console.PrintMessage(f"[OK] Applied feature '{feature_name}' #{index} with {params}\n")
+                except TypeError as e:
+                    App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
+
         _do_explode(doc, box, cabinet, cab_type, height, width, depth)
         doc.commitTransaction()
+    except ValueError as e:
+        doc.abortTransaction()   # rolls back every addObject / property change
+        App.Console.PrintError(
+            f"[ERROR] cmd_explode_cabinet.py: Generation failed, changes rolled back.\n"
+            f"{e}\n"
+        )
+        raise
     except Exception as e:
         doc.abortTransaction()   # rolls back every addObject / property change
         import traceback

@@ -59,9 +59,9 @@ def make_raft(label, height, width, depth, rules, box=None):
 
 def make_tower_box(label, height, width, depth, rules, box=None):
     """Factory for TowerBox with extra tower_height parameter."""
-    gap_list = _box_value(box, "gap_list", [20, 40])
+    gap_list = _box_value(box, "gap_list", [200, 400])
     gap_heat = _box_value(box, "gap_heat", 50)
-    front_list = _box_value(box, "front_list", [0, 0, 0, 0])
+    front_list = _box_value(box, "front_list", [0, 0, 0])
     return TowerBox(label, height, width, depth, rules, gap_list = gap_list, gap_heat = gap_heat, front_list = front_list)
 
 def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
@@ -73,7 +73,7 @@ def make_corp_cu_picioare(label, height, width, depth, rules, box=None):
 def make_corp_dressing(label, height, width, depth, rules, box=None):
     """Factory for Corp Dressing with extra parameter."""
     gap_list = _box_value(box, "gap_list", [200, 400])
-    front_list = _box_value(box, "front_list", [0, 0, 0, 0])
+    front_list = _box_value(box, "front_list", [0, 0, 0])
     return CorpDressing(label, height, width, depth, rules, gap_list = gap_list, front_list = front_list)
 
 def make_etajera(label, height, width, depth, rules, box=None):
@@ -227,7 +227,7 @@ CABINET_DEFINITIONS = {
         "params": {
             "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
             "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
-            "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors")
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "List which gaps should be closed by doors")
         },
     },
     "Etajera": {
@@ -254,7 +254,7 @@ CABINET_DEFINITIONS = {
         },
         "params": {
             "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-            "front_list": ("App::PropertyIntegerList", [0, 0, 0, 0], "List which gaps should be closed by doors"),
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "List which gaps should be closed by doors"),
         }
     },
     "Dulap": {

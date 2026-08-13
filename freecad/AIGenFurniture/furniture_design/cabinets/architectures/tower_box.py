@@ -5,9 +5,10 @@ import math
 from ..cabinet import Cabinet
 from ..elements.accessory import Accessory
 from ..elements.board import BoardPal
+from ..features.fronts import validate_tower_opening_layout
 
 class TowerBox(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list = [200, 400], gap_heat = 50, front_list = [0, 0, 0, 0]):
+    def __init__(self, label, height, width, depth, rules, gap_list=None, gap_heat=50, front_list=None):
         """
 
         :param label:
@@ -20,6 +21,16 @@ class TowerBox(Cabinet):
         :param front_list: care gap-uri au front (ex. [0, 0, 0, 1])
         """
         super().__init__(label, height, width, depth, rules)
+        if gap_list is None:
+            gap_list = [200, 400]
+        if front_list is None:
+            front_list = [0, 0, 0]
+        opening_heights, front_flags = validate_tower_opening_layout(
+            gap_list,
+            front_list,
+            covered_height=self.height,
+            board_thickness=self.thick_pal,
+        )
         self.depth = self.depth - gap_heat
         jos = BoardPal(self.label + ".down", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                        self.cant_lab)
@@ -46,11 +57,11 @@ class TowerBox(Cabinet):
         self.append(sus)
 
         # adding horizontal separators
-        offset = 0
-        for gap in range(len(gap_list)):
-            offset += gap_list[gap]  # + self.thick_pal
-            self.add_sep_h(self.width - 2 * self.thick_pal, 0, offset, self.cant_lab)
-            offset += self.thick_pal
+        boundary_z = self.thick_pal
+        for opening_height in opening_heights[:-1]:
+            boundary_z += opening_height
+            self.add_sep_h(self.width - 2 * self.thick_pal, 0, boundary_z - self.thick_pal, self.cant_lab)
+            boundary_z += self.thick_pal
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0], self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + self.thick_pal, self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.thick_pal),
@@ -66,7 +77,7 @@ class TowerBox(Cabinet):
         if gap_heat > 0:
             self.get_item_by_type_label("pfl",self.label + ".hdf").__setattr__("length", self.width - (2 * self.thick_pal))
             self.get_item_by_type_label("pfl",self.label + ".hdf").move("x", self.thick_pal - 2)
-        self.add_tower_fronts(gap_list, front_list)
+        self.add_tower_fronts(opening_heights, front_flags)
 
         # if front_list[0] == 1:
         #     if front_list[1] == 0:
