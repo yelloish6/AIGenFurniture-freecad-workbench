@@ -20,8 +20,6 @@ from .top_corner import TopCorner
 from .tower_box import TowerBox
 from ..cabinet import Cabinet
 
-# TODO: rules need to be moved to FreeCAD as a new sheet, or include it in the existing OrderVar sheet
-
 def _box_value(box, name, default=None):
     if isinstance(box, dict):
         return box.get(name, default)

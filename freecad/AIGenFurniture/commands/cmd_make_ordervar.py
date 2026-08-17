@@ -4,9 +4,40 @@ import FreeCAD as App
 import FreeCADGui as Gui
 
 import os
+from PySide import QtGui
 # Import centralized order parameters - uses deterministic ordering
 from ..furniture_design.order import get_enabled_order_params
 from .._resources import get_command_icon
+
+
+def find_order_spreadsheet(doc):
+    """Return the existing OrderVar spreadsheet, if present."""
+    for obj in doc.Objects:
+        if obj.TypeId == "Spreadsheet::Sheet" and obj.Label == "OrderVar":
+            return obj
+    return None
+
+
+def confirm_overwrite_order_spreadsheet():
+    """Ask the user whether to overwrite an existing OrderVar spreadsheet."""
+    message = QtGui.QMessageBox()
+    message.setIcon(QtGui.QMessageBox.Warning)
+    message.setWindowTitle("OrderVar already exists")
+    message.setText(
+        "\u26a0 An OrderVar already exists in this document.\n"
+        "Creating a new order will overwrite it.\n"
+        "Continue?"
+    )
+
+    cancel_button = message.addButton("Cancel", QtGui.QMessageBox.RejectRole)
+    create_button = message.addButton(
+        "Yes, create new order", QtGui.QMessageBox.AcceptRole
+    )
+    message.setDefaultButton(cancel_button)
+    message.setEscapeButton(cancel_button)
+
+    message.exec_()
+    return message.clickedButton() == create_button
 
 
 def create_order_spreadsheet(doc):
@@ -18,11 +49,7 @@ def create_order_spreadsheet(doc):
     Column B: Value (with alias set to parameter key for programmatic access)
     """
     # Check if spreadsheet "OrderVar" already exists
-    spreadsheet = None
-    for obj in doc.Objects:
-        if obj.TypeId == "Spreadsheet::Sheet" and obj.Label == "OrderVar":
-            spreadsheet = obj
-            break
+    spreadsheet = find_order_spreadsheet(doc)
 
     if not spreadsheet:
         spreadsheet = doc.addObject("Spreadsheet::Sheet", "OrderVar")
@@ -70,6 +97,10 @@ class CreateOrderSpreadsheetCommand:
         doc = App.ActiveDocument
         if not doc:
             App.Console.PrintError("No active document open.\n")
+            return
+
+        if find_order_spreadsheet(doc) and not confirm_overwrite_order_spreadsheet():
+            App.Console.PrintMessage("OrderVar creation cancelled.\n")
             return
 
         doc.openTransaction("Create Globals Spreadsheet")
