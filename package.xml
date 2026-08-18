@@ -14,7 +14,7 @@
 
   <license file="LICENSE">LGPL-2.1-or-later</license>
 
-  <url type="repository" branch="main">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
+  <url type="repository" branch="feature/standardized-predesign-input">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
   <url type="readme">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/blob/main/Resources/Documents/Overview.md</url>
   <url type="bugtracker">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/issues</url>
 
