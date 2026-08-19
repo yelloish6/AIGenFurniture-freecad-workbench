@@ -11,6 +11,8 @@ import os, json, tempfile
 from .cabinets.elements import ELEMENTS
 from .cabinets.architectures import get_cabinet_factory
 from .cabinets.features import get_feature_handler
+from .cabinets.elements.accessory import Accessory
+from .accessory_spreadsheet import decimal_to_number, parse_quantity
 
 try:
     import FreeCAD
@@ -139,6 +141,21 @@ def design_furniture(customer_data):
             additional_elements = cabinet_data.get("additional_elements")
             for element in additional_elements:
                 element_handler(designed_cabinet, element)
+
+        if "accessories" in cabinet_data:
+            designed_cabinet.elements_list = [
+                element for element in designed_cabinet.elements_list
+                if getattr(element, "type", None) != "accessory"
+            ]
+
+        for accessory_data in cabinet_data.get("accessories", []) or []:
+            if not isinstance(accessory_data, dict):
+                continue
+            label = accessory_data.get("Accessory Name", accessory_data.get("label", ""))
+            quantity = accessory_data.get("Quantity", accessory_data.get("pieces", ""))
+            designed_cabinet.append(
+                Accessory(label, decimal_to_number(parse_quantity(quantity, "JSON accessory quantity", label)))
+            )
 
         order.append(designed_cabinet)
     # define dummy cabinet for additional elements

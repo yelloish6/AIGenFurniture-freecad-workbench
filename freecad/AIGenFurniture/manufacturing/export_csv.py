@@ -3,6 +3,7 @@
 import os
 import csv
 
+from ..furniture_design.accessory_spreadsheet import write_accessories_csv
 from ._board_utils import (
     _get_board_type_elements,
     _get_elements_by_type,
@@ -209,3 +210,5 @@ def export_csv(order, output_folder, elements_registry=None):
                                 _get_registry_param_value(element, element_def, param_name, default_value)
                             )
                         writer.writerow(row)
+
+    write_accessories_csv(order, folder_name, delimiter=",")

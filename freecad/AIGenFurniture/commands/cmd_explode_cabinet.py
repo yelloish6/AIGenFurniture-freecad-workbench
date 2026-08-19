@@ -10,6 +10,7 @@ from .cmd_make_element import _order_var_material_default, _resolve_property_spe
 from . import resources
 from ..furniture_design.design_engine import load_default_rules
 from ..furniture_design.cabinets.architectures import get_cabinet_factory
+from ..furniture_design.accessory_spreadsheet import create_accessory_spreadsheet
 
 def is_valid_cabinet_object(obj):
     if obj is None:
@@ -275,14 +276,7 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
     cab_group.addProperty("App::PropertyFloat", "Width", "Box", "Cabinet Height").Width = width
     cab_group.addProperty("App::PropertyFloat", "Depth", "Box", "Cabinet Height").Depth = depth
 
-    # Add accessories properties (parallel arrays: names + counts)
-    cab_group.addProperty("App::PropertyStringList", "AccessoryTypes", "Cabinet",
-                          "List of accessory types")
-    cab_group.addProperty("App::PropertyIntegerList", "AccessoryCounts", "Cabinet",
-                          "List of accessory counts")
-
-    accessory_types = []
-    accessory_counts = []
+    create_accessory_spreadsheet(doc, cab_group, cabinet, box.Label)
 
     # Place elements
     for elem in cabinet.elements_list:
@@ -323,15 +317,11 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
             cab_group.addObject(part)   # ← single call (duplicate removed)
 
         elif elem.type == "accessory":
-            accessory_types.append(elem.label)
-            accessory_counts.append(int(elem.pieces))
+            continue
 
         else:
             App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown element type: {elem.type}\n")
 
-    # Store accessories
-    cab_group.AccessoryTypes = accessory_types
-    cab_group.AccessoryCounts = accessory_counts
     cab_group.Placement = box.Placement.multiply(placement_from_position_list(cabinet.position_list))
 
     # Hide original box

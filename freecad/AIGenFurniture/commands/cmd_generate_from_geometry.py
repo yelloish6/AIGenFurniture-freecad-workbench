@@ -14,6 +14,7 @@ from ..furniture_design.cabinets.architectures import CABINETS
 from .cmd_make_element import get_elements_registry
 from ..furniture_design.design_engine import load_default_rules
 from ..manufacturing.generate_files import generate_manufacturing_files
+from ..furniture_design.accessory_spreadsheet import read_accessories_from_assembly
 
 
 _ROT_STEPS_TABLE = None
@@ -294,14 +295,11 @@ def freecad_document_to_order(doc):
                         if element:
                             cabinet.append(element)
 
-            # Read accessories from cabinet properties
-            if hasattr(obj, "AccessoryTypes") and hasattr(obj, "AccessoryCounts"):
-                from ..furniture_design.cabinets.elements.accessory import Accessory
-                accessory_types = obj.AccessoryTypes
-                accessory_counts = obj.AccessoryCounts
-                for acc_type, acc_count in zip(accessory_types, accessory_counts):
-                    accessory = Accessory(acc_type, acc_count)
-                    cabinet.append(accessory)
+            for accessory in read_accessories_from_assembly(obj, doc):
+                cabinet.append(accessory)
+
+            cabinet.source_assembly = obj
+            cabinet.source_document = doc
 
             # Apply cabinet positioning from Part Placement
             position_list = freecad_placement_to_position_list(obj.Placement)

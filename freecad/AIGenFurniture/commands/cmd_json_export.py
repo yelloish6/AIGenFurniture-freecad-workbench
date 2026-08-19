@@ -5,6 +5,13 @@ import FreeCADGui
 import json
 import os
 from .._resources import get_command_icon
+from ..furniture_design.accessory_spreadsheet import (
+    HEADER_NAME,
+    HEADER_QUANTITY,
+    find_accessory_spreadsheet,
+    format_quantity,
+    read_accessories_from_assembly,
+)
 
 def serialize_property_value(value):
     """Convert FreeCAD property values into JSON-serializable Python types."""
@@ -193,6 +200,17 @@ def export(doc, output_path):
         except Exception:
             pass
 
+        accessory_sheet = find_accessory_spreadsheet(part)
+        accessories = read_accessories_from_assembly(part, doc)
+        if accessory_sheet is not None or accessories:
+            cabinet["accessories"] = [
+                {
+                    HEADER_NAME: accessory.label,
+                    HEADER_QUANTITY: format_quantity(accessory.pieces),
+                }
+                for accessory in accessories
+            ]
+
         part_cabinets.append(cabinet)
 
     # ✅ Final elements and cabinets
@@ -277,6 +295,8 @@ def export(doc, output_path):
     for obj in doc.Objects:
         if obj.TypeId in ["Part::Box", "Part::Cut"]:
             if not hasattr(obj, "CabinetType"):
+                continue
+            if _is_hidden_generated_source_box(obj):
                 continue
 
             placement = obj.Placement
@@ -375,6 +395,17 @@ def export(doc, output_path):
             if features:
                 cabinet["additional_features"] = features
 
+            accessory_sheet = find_accessory_spreadsheet(obj)
+            accessories = read_accessories_from_assembly(obj, doc)
+            if accessory_sheet is not None or accessories:
+                cabinet["accessories"] = [
+                    {
+                        HEADER_NAME: accessory.label,
+                        HEADER_QUANTITY: format_quantity(accessory.pieces),
+                    }
+                    for accessory in accessories
+                ]
+
             cabinets.append(cabinet)
 
     # ✅ Combine and export
@@ -385,6 +416,13 @@ def export(doc, output_path):
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(export_data, f, indent=2, ensure_ascii=False)
     # FreeCAD.Console.PrintMessage(f"✅ Exported {len(cabinets)} cabinets to: {output_path}\n")
+
+
+def _is_hidden_generated_source_box(obj):
+    view_object = getattr(obj, "ViewObject", None)
+    if view_object is None:
+        return False
+    return getattr(view_object, "Visibility", True) is False
 
 
 class ExportJSONCommand:
