@@ -124,6 +124,7 @@ def create_order_spreadsheet(doc, overwrite=False):
     App.Console.PrintMessage(
         f"\u2705 Spreadsheet 'OrderVar' created/updated with {enabled_count} enabled parameters.\n"
     )
+    return spreadsheet
 
 
 class CreateOrderSpreadsheetCommand:
@@ -150,9 +151,10 @@ class CreateOrderSpreadsheetCommand:
 
         doc.openTransaction("Create Globals Spreadsheet")
         try:
-            create_order_spreadsheet(doc, overwrite=existing_spreadsheet is not None)
+            spreadsheet = create_order_spreadsheet(doc, overwrite=existing_spreadsheet is not None)
             apply_order_setup_addon_if_available(doc)
             doc.commitTransaction()
+            Gui.ActiveDocument.setEdit(spreadsheet.Name)
         except Exception as e:
             doc.abortTransaction()
             App.Console.PrintError(str(e) + "\n")
