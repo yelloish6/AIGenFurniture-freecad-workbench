@@ -35,8 +35,12 @@ def apply_order_setup_addon_if_available(doc):
 
 def find_order_spreadsheet(doc):
     """Return the existing OrderVar spreadsheet, if present."""
+    spreadsheet = doc.getObject("OrderVar")
+    if spreadsheet is not None and getattr(spreadsheet, "TypeId", "") == "Spreadsheet::Sheet":
+        return spreadsheet
+
     for obj in doc.Objects:
-        if obj.TypeId == "Spreadsheet::Sheet" and obj.Label == "OrderVar":
+        if getattr(obj, "TypeId", "") == "Spreadsheet::Sheet" and getattr(obj, "Label", "") == "OrderVar":
             return obj
     return None
 
@@ -63,24 +67,25 @@ def confirm_overwrite_order_spreadsheet():
     return message.clickedButton() == create_button
 
 
-def create_order_spreadsheet(doc):
-    """Create a spreadsheet with enabled order parameters prefilled and aliases set.
-
-    Uses centralized ORDER_PARAMS definition for consistency.
-    Only enabled parameters are included (MVP cleanliness).
-    Column A: English label (user-facing)
-    Column B: Value (with alias set to parameter key for programmatic access)
-    """
-    # Check if spreadsheet "OrderVar" already exists
+def get_or_create_order_spreadsheet(doc):
+    """Return the existing OrderVar spreadsheet or create it."""
     spreadsheet = find_order_spreadsheet(doc)
-
-    if not spreadsheet:
+    if spreadsheet is None:
         spreadsheet = doc.addObject("Spreadsheet::Sheet", "OrderVar")
 
-    # Get enabled parameters only
-    enabled_params = get_enabled_order_params()
+    return spreadsheet
 
-    # Fill spreadsheet from enabled ORDER_PARAMS only
+
+def clear_order_spreadsheet(spreadsheet):
+    """Clear all sheet contents, formatting, sizing, and aliases."""
+    spreadsheet.clearAll()
+
+
+def populate_order_spreadsheet(spreadsheet, enabled_params=None):
+    """Fill a spreadsheet from enabled ORDER_PARAMS only."""
+    if enabled_params is None:
+        enabled_params = get_enabled_order_params()
+
     row = 1
     for param_name, param_def in enabled_params.items():
         # Column A: English label (user-facing, no parameter keys visible)
@@ -92,16 +97,32 @@ def create_order_spreadsheet(doc):
         spreadsheet.set(f"B{row}", str(default_value))
 
         # Set alias of cell in column B to parameter key (for programmatic access, not visible)
-        try:
-            spreadsheet.setAlias(f"B{row}", param_name)
-        except Exception as e:
-            App.Console.PrintError(f"\u26a0 Could not set alias for {param_name}: {e}\n")
+        spreadsheet.setAlias(f"B{row}", param_name)
 
         row += 1
 
+    return len(enabled_params)
+
+
+def create_order_spreadsheet(doc, overwrite=False):
+    """Create or rebuild the OrderVar spreadsheet from enabled order parameters.
+
+    Uses centralized ORDER_PARAMS definition for consistency.
+    Only enabled parameters are included (MVP cleanliness).
+    Column A: English label (user-facing)
+    Column B: Value (with alias set to parameter key for programmatic access)
+    """
+    spreadsheet = get_or_create_order_spreadsheet(doc)
+    if overwrite:
+        clear_order_spreadsheet(spreadsheet)
+
+    # Keep current label-based consumers working while preserving the object's Name.
+    spreadsheet.Label = "OrderVar"
+
+    enabled_count = populate_order_spreadsheet(spreadsheet)
     doc.recompute()
     App.Console.PrintMessage(
-        f"\u2705 Spreadsheet 'OrderVar' created/updated with {len(enabled_params)} enabled parameters.\n"
+        f"\u2705 Spreadsheet 'OrderVar' created/updated with {enabled_count} enabled parameters.\n"
     )
 
 
@@ -122,13 +143,14 @@ class CreateOrderSpreadsheetCommand:
             App.Console.PrintError("No active document open.\n")
             return
 
-        if find_order_spreadsheet(doc) and not confirm_overwrite_order_spreadsheet():
+        existing_spreadsheet = find_order_spreadsheet(doc)
+        if existing_spreadsheet and not confirm_overwrite_order_spreadsheet():
             App.Console.PrintMessage("OrderVar creation cancelled.\n")
             return
 
         doc.openTransaction("Create Globals Spreadsheet")
         try:
-            create_order_spreadsheet(doc)
+            create_order_spreadsheet(doc, overwrite=existing_spreadsheet is not None)
             apply_order_setup_addon_if_available(doc)
             doc.commitTransaction()
         except Exception as e:
