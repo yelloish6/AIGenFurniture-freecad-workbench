@@ -3,7 +3,6 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 
-import os
 import sys
 from PySide import QtGui
 # Import centralized order parameters - uses deterministic ordering
@@ -11,31 +10,18 @@ from ..furniture_design.order import get_enabled_order_params
 from .._resources import get_command_icon
 
 
-def get_pro_order_setup_apply_func():
-    """Return the Pro order setup hook from the loaded plugin, if available."""
+def get_order_setup_apply_func():
+    """Return the order setup hook from a loaded addon, if available."""
     for module in tuple(sys.modules.values()):
-        if getattr(module, "PLUGIN_ID", None) != "aigenfurniture_pro":
-            continue
         apply_func = getattr(module, "APPLY_ORDER_SETUP_TO_PROJECT", None)
         if apply_func is not None:
             return apply_func
 
-    try:
-        from aigenfurniture_pro.shop_setup.order_setup import apply_shop_setup_to_project
-    except ModuleNotFoundError as exc:
-        if exc.name == "aigenfurniture_pro" or exc.name.startswith("aigenfurniture_pro."):
-            App.Console.PrintWarning(
-                f"[AIGenFurniture Pro] Order Setup extras skipped: {exc}\n"
-            )
-            return None
-        raise
+    return None
 
-    return apply_shop_setup_to_project
-
-
-def apply_pro_order_setup_if_available(doc):
-    """Run Pro order setup extras when the Pro package is installed."""
-    apply_func = get_pro_order_setup_apply_func()
+def apply_order_setup_addon_if_available(doc):
+    """Run order setup addon extras when an addon exposes them."""
+    apply_func = get_order_setup_apply_func()
     if apply_func is None:
         return
 
@@ -43,7 +29,7 @@ def apply_pro_order_setup_if_available(doc):
         apply_func(doc)
     except Exception as exc:
         App.Console.PrintError(
-            f"[AIGenFurniture Pro] Order Setup extras failed: {exc}\n"
+            f"[AIGenFurniture] Order Setup addon extras failed: {exc}\n"
         )
 
 
@@ -143,7 +129,7 @@ class CreateOrderSpreadsheetCommand:
         doc.openTransaction("Create Globals Spreadsheet")
         try:
             create_order_spreadsheet(doc)
-            apply_pro_order_setup_if_available(doc)
+            apply_order_setup_addon_if_available(doc)
             doc.commitTransaction()
         except Exception as e:
             doc.abortTransaction()

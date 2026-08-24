@@ -37,7 +37,7 @@ EXPORT_DEFINITIONS = {
     },
     # this export is generic for all projects
     "export_stl": {
-        "enabled": True, #False for MVP
+        "enabled": True, #True for MVP
         "runner": "export_stl_order",
         "module": "export_stl_new",
         "kwargs": {
