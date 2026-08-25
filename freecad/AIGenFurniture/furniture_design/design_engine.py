@@ -7,6 +7,8 @@ from .._resources import get_resource_path
 # from .cabinets.elements.board import *
 # from .cabinets.elements.accessory import *
 
+import math
+import numbers
 import os, json, tempfile
 from .cabinets.elements import ELEMENTS
 from .cabinets.architectures import get_cabinet_factory
@@ -48,7 +50,178 @@ DEFAULT_RULES_BASELINE = {
     "cant_pol": 2,
     "cant_separator": 1,
 }
+DESIGN_RULE_LABELS = {
+    "thick_pal": "Chipboard thickness",
+    "thick_front": "Front thickness",
+    "thick_blat": "Countertop thickness",
+    "thick_pfl": "HDF thickness",
+    "height_legs": "Plinth height",
+    "general_height": "Default cabinet height",
+    "general_width": "Default cabinet width",
+    "general_depth": "Default cabinet depth",
+    "gap_front": "Front gap",
+    "front_clearance": "Front clearance",
+    "cant_general": "General edging",
+    "cant_pol": "Shelf edging",
+    "cant_separator": "Separator edging",
+    "pol_depth": "Shelf setback",
+}
+REQUIRED_DESIGN_RULE_KEYS = tuple(DEFAULT_RULES_BASELINE.keys())
+POSITIVE_DESIGN_RULE_KEYS = (
+    "thick_pal",
+    "thick_front",
+    "thick_blat",
+    "thick_pfl",
+    "general_height",
+    "general_width",
+    "general_depth",
+)
+NON_NEGATIVE_DESIGN_RULE_KEYS = (
+    "height_legs",
+    "gap_front",
+    "front_clearance",
+    "pol_depth",
+    "cant_general",
+    "cant_pol",
+    "cant_separator",
+)
 # TODO move rules to the FreeCAD as spreadsheet
+
+
+class DesignRulesValidationError(ValueError):
+    def __init__(self, errors):
+        self.errors = list(errors)
+        super().__init__("\n".join(self.errors))
+
+
+def _rule_label(key):
+    return DESIGN_RULE_LABELS.get(key, key.replace("_", " ").title())
+
+
+def _format_rule_value(value):
+    return repr(value)
+
+
+def validate_design_rules(rules):
+    """Validate Community Design Rules and return a migrated copy."""
+    if not isinstance(rules, dict):
+        raise DesignRulesValidationError(["Design rules must be a JSON object."])
+
+    migrated = _migrate_rules(rules)
+    errors = []
+    normalized_values = {}
+
+    for key in REQUIRED_DESIGN_RULE_KEYS:
+        label = _rule_label(key)
+        if key not in migrated:
+            errors.append("{} is required.".format(label))
+            continue
+
+        value = migrated[key]
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            errors.append(
+                "{} must be a finite number; got {}.".format(
+                    label,
+                    _format_rule_value(value),
+                )
+            )
+            continue
+
+        numeric_value = float(value)
+        if not math.isfinite(numeric_value):
+            errors.append(
+                "{} must be a finite number; got {}.".format(
+                    label,
+                    _format_rule_value(value),
+                )
+            )
+            continue
+
+        normalized_values[key] = numeric_value
+        if key in POSITIVE_DESIGN_RULE_KEYS and numeric_value <= 0:
+            errors.append(
+                "{} must be greater than 0 mm; got {}.".format(
+                    label,
+                    _format_rule_value(value),
+                )
+            )
+        elif key in NON_NEGATIVE_DESIGN_RULE_KEYS and numeric_value < 0:
+            errors.append(
+                "{} must be 0 mm or greater; got {}.".format(
+                    label,
+                    _format_rule_value(value),
+                )
+            )
+
+    if not errors:
+        height = normalized_values["general_height"]
+        width = normalized_values["general_width"]
+        depth = normalized_values["general_depth"]
+        thick_pal = normalized_values["thick_pal"]
+        height_legs = normalized_values["height_legs"]
+        front_clearance = normalized_values["front_clearance"]
+        pol_depth = normalized_values["pol_depth"]
+        cant_general = normalized_values["cant_general"]
+
+        relational_checks = (
+            (
+                height - height_legs,
+                "Plinth height must leave positive usable cabinet height; got {} with Default cabinet height {}.".format(
+                    _format_rule_value(migrated["height_legs"]),
+                    _format_rule_value(migrated["general_height"]),
+                ),
+            ),
+            (
+                depth - pol_depth,
+                "Shelf setback must leave positive shelf depth; got {} with Default cabinet depth {}.".format(
+                    _format_rule_value(migrated["pol_depth"]),
+                    _format_rule_value(migrated["general_depth"]),
+                ),
+            ),
+            (
+                width - (2 * front_clearance),
+                "Front clearance must leave positive front width; got {} with Default cabinet width {}.".format(
+                    _format_rule_value(migrated["front_clearance"]),
+                    _format_rule_value(migrated["general_width"]),
+                ),
+            ),
+            (
+                height - (2 * front_clearance),
+                "Front clearance must leave positive front height; got {} with Default cabinet height {}.".format(
+                    _format_rule_value(migrated["front_clearance"]),
+                    _format_rule_value(migrated["general_height"]),
+                ),
+            ),
+            (
+                width - (2 * thick_pal),
+                "Chipboard thickness must leave positive internal cabinet width; got {} with Default cabinet width {}.".format(
+                    _format_rule_value(migrated["thick_pal"]),
+                    _format_rule_value(migrated["general_width"]),
+                ),
+            ),
+            (
+                height - (2 * thick_pal),
+                "Chipboard thickness must leave positive internal cabinet height; got {} with Default cabinet height {}.".format(
+                    _format_rule_value(migrated["thick_pal"]),
+                    _format_rule_value(migrated["general_height"]),
+                ),
+            ),
+            (
+                depth - cant_general,
+                "General edging must leave positive cabinet depth where edging is subtracted; got {} with Default cabinet depth {}.".format(
+                    _format_rule_value(migrated["cant_general"]),
+                    _format_rule_value(migrated["general_depth"]),
+                ),
+            ),
+        )
+        for remaining, message in relational_checks:
+            if remaining <= 0:
+                errors.append(message)
+
+    if errors:
+        raise DesignRulesValidationError(errors)
+
+    return migrated
 
 
 def get_user_rules_path():
@@ -103,7 +276,10 @@ def _overlay_rules(base_rules, loaded_rules):
 def load_factory_rules():
     rules = dict(DEFAULT_RULES_BASELINE)
     rules = _overlay_rules(rules, _load_rules_file(DEFAULT_RULES_PATH))
-    return rules
+    try:
+        return validate_design_rules(rules)
+    except DesignRulesValidationError as exc:
+        raise RuntimeError("Packaged factory design rules are invalid: {}".format(exc)) from exc
 
 
 def design_furniture(customer_data):
@@ -169,7 +345,7 @@ def design_furniture(customer_data):
 
 def load_default_rules(input_file=None):
     if input_file is not None:
-        return _overlay_rules(DEFAULT_RULES_BASELINE, _load_rules_file(input_file))
+        return validate_design_rules(_overlay_rules(DEFAULT_RULES_BASELINE, _load_rules_file(input_file)))
 
     rules = load_factory_rules()
     user_rules_path = get_user_rules_path()
@@ -177,8 +353,8 @@ def load_default_rules(input_file=None):
         return rules
 
     try:
-        return _overlay_rules(rules, _load_rules_file(user_rules_path))
-    except (OSError, ValueError, TypeError) as exc:
+        return validate_design_rules(_overlay_rules(rules, _load_rules_file(user_rules_path)))
+    except (OSError, ValueError, TypeError, DesignRulesValidationError) as exc:
         _print_rules_warning(
             "Could not read user design rules from '{}': {}. Using factory defaults.".format(
                 user_rules_path,
@@ -189,6 +365,7 @@ def load_default_rules(input_file=None):
 
 
 def save_default_rules(rules: dict, output_file=None):
+    rules = validate_design_rules(rules)
     rules_path = output_file or get_user_rules_path()
     rules_dir = os.path.dirname(rules_path)
     if rules_dir:

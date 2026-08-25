@@ -5,6 +5,10 @@ from PySide import QtGui, QtCore
 
 from .._resources import get_command_icon
 from ..furniture_design.design_engine import (
+    DESIGN_RULE_LABELS,
+    NON_NEGATIVE_DESIGN_RULE_KEYS,
+    POSITIVE_DESIGN_RULE_KEYS,
+    DesignRulesValidationError,
     load_factory_rules,
     load_default_rules,
     save_default_rules,
@@ -29,24 +33,6 @@ RULE_GROUPS = (
         ("cant_general", "cant_pol", "cant_separator"),
     ),
 )
-
-
-RULE_LABELS = {
-    "thick_pal": "Chipboard thickness",
-    "thick_front": "Front thickness",
-    "thick_blat": "Countertop thickness",
-    "thick_pfl": "HDF thickness",
-    "height_legs": "Plinth height",
-    "general_height": "Default cabinet height",
-    "general_width": "Default cabinet width",
-    "general_depth": "Default cabinet depth",
-    "gap_front": "Front gap",
-    "front_clearance": "Front clearance",
-    "cant_general": "General edging",
-    "cant_pol": "Shelf edging",
-    "cant_separator": "Separator edging",
-    "pol_depth": "Shelf setback",
-}
 
 
 class DesignRulesDialog(QtGui.QDialog):
@@ -109,7 +95,7 @@ class DesignRulesDialog(QtGui.QDialog):
             layout.addWidget(group)
 
     def _label_for_key(self, key):
-        label = RULE_LABELS.get(key, key.replace("_", " ").title())
+        label = DESIGN_RULE_LABELS.get(key, key.replace("_", " ").title())
         # return "{} ({})".format(label, key)
         return "{}".format(label)
 
@@ -123,6 +109,10 @@ class DesignRulesDialog(QtGui.QDialog):
             widget.setRange(-1000000.0, 1000000.0)
             widget.setDecimals(3)
             widget.setValue(float(value))
+        if key in POSITIVE_DESIGN_RULE_KEYS:
+            widget.setMinimum(1)
+        elif key in NON_NEGATIVE_DESIGN_RULE_KEYS:
+            widget.setMinimum(0)
         widget.setSuffix(" mm")
         self._widgets[key] = widget
         return widget
@@ -146,6 +136,13 @@ class DesignRulesDialog(QtGui.QDialog):
     def save_rules(self):
         try:
             save_default_rules(self._collect_rules())
+        except DesignRulesValidationError as exc:
+            QtGui.QMessageBox.critical(
+                self,
+                "Design Rules",
+                "Design rules were not saved:\n{}".format("\n".join(exc.errors)),
+            )
+            return
         except Exception as exc:
             QtGui.QMessageBox.critical(self, "Design Rules", "Could not save design rules:\n{}".format(exc))
             return
