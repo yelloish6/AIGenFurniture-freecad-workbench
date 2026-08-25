@@ -24,9 +24,9 @@ of the Material attribute for every element in an order.
 
 ### Changed
 
-- Manufacturing exports (export_csv, export_cost_sheet) are now registry-driven:
+- Manufacturing BOM export (export_csv) is now registry-driven:
 all Board subclasses registered by core or addons are automatically included
-in BOM and cost sheet outputs without requiring changes to the workbench.
+in BOM outputs without requiring changes to the workbench.
 
 ## [0.1.4] - 2026-04-23
 

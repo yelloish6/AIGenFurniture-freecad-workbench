@@ -154,7 +154,9 @@ class CreateOrderSpreadsheetCommand:
             spreadsheet = create_order_spreadsheet(doc, overwrite=existing_spreadsheet is not None)
             apply_order_setup_addon_if_available(doc)
             doc.commitTransaction()
-            Gui.ActiveDocument.setEdit(spreadsheet.Name)
+            active_gui_doc = getattr(Gui, "ActiveDocument", None)
+            if active_gui_doc is not None:
+                active_gui_doc.setEdit(spreadsheet.Name)
         except Exception as e:
             doc.abortTransaction()
             App.Console.PrintError(str(e) + "\n")

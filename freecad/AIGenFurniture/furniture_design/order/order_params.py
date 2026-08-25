@@ -34,7 +34,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "string",
         "order_attr": "client_proficut",
         "order": 2,
-        "enabled": False  # MVP: only used in disabled export_for_proficut
+        "enabled": False  # Reserved for shop-specific export plugins
     }),
     ("tel_proficut", {
         "default": "07xxxxxxxx",
@@ -43,7 +43,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "string",
         "order_attr": "tel_proficut",
         "order": 3,
-        "enabled": False  # MVP: only used in disabled export_for_proficut
+        "enabled": False  # Reserved for shop-specific export plugins
     }),
     ("transport", {
         "default": "Yes",
@@ -61,7 +61,7 @@ ORDER_PARAMS = OrderedDict([
         "type": "string",
         "order_attr": "address",
         "order": 5,
-        "enabled": False  # MVP: only used in disabled export_for_proficut
+        "enabled": False  # Reserved for shop-specific export plugins
     }),
 
     # Material parameters
