@@ -184,7 +184,7 @@ def apply_registry_param_values(doc_obj, element_type, element):
 def explode_box_to_cabinet(box):
     doc = App.ActiveDocument
     if not box:
-        App.Console.PrintError("[WARNING] cmd_explode_cabinet.py: No box selected.\n")
+        App.Console.PrintWarning("Select one cabinet placeholder before running Generate Cabinet.\n")
         return
 
     # Get box dimensions
@@ -272,9 +272,9 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
 
     # Transfer cabinet properties to part
     cab_group.addProperty("App::PropertyString", "CabinetType", "Cabinet", "Type of cabinet").CabinetType = cab_type
-    cab_group.addProperty("App::PropertyFloat", "Height", "Box", "Cabinet Height").Height = height
-    cab_group.addProperty("App::PropertyFloat", "Width", "Box", "Cabinet Height").Width = width
-    cab_group.addProperty("App::PropertyFloat", "Depth", "Box", "Cabinet Height").Depth = depth
+    cab_group.addProperty("App::PropertyFloat", "Height", "Dimensions", "Cabinet height").Height = height
+    cab_group.addProperty("App::PropertyFloat", "Width", "Dimensions", "Cabinet width").Width = width
+    cab_group.addProperty("App::PropertyFloat", "Depth", "Dimensions", "Cabinet depth").Depth = depth
 
     create_accessory_spreadsheet(doc, cab_group, cabinet, box.Label)
 
@@ -351,8 +351,8 @@ class ExplodeBoxCommand:
     def Activated(self):
         sel = Gui.Selection.getSelection()
         if len(sel) != 1 or not is_valid_cabinet_object(sel[0]):
-            App.Console.PrintError(
-                "[WARNING] cmd_explode_cabinet.py: Please select one valid cabinet box first.\n"
+            App.Console.PrintWarning(
+                "Select one cabinet placeholder before running Generate Cabinet.\n"
             )
             return
         explode_box_to_cabinet(sel[0])

@@ -15,14 +15,14 @@ class Bar(Cabinet):
         self.append(Accessory("surub", 14))
 
         # arhitectura
-        lat1 = BoardPal(self.label + ".lat1", self.height, inner_depth,
+        lat1 = BoardPal(self.label + ".left_side", self.height, inner_depth,
                         self.thick_pal, self.cant_lab, self.cant_lab, self.cant_lab, "")
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         lat1.move("y", self.front_clearance)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat2", self.height, inner_depth,
+        lat2 = BoardPal(self.label + ".right_side", self.height, inner_depth,
                         self.thick_pal, self.cant_lab, self.cant_lab, self.cant_lab, "")
         lat2.rotate_cw("y")
         lat2.move("x", self.width)
@@ -43,7 +43,7 @@ class Bar(Cabinet):
         leg2.move("x", lat1.thick)
         self.append(leg2)
 
-        spate = BoardPal(self.label + ".spate", self.height, self.width - 2 * self.thick_pal,
+        spate = BoardPal(self.label + ".back", self.height, self.width - 2 * self.thick_pal,
                          self.thick_pal, self.cant_lab, "", "", "")
         spate.rotate("x")
         spate.rotate_cw("y")
@@ -54,6 +54,6 @@ class Bar(Cabinet):
         spate.move("x", self.thick_pal)
         self.append(spate)
 
-        bl = Blat(self.label + ".blat", self.width, self.depth, self.thick_blat)
+        bl = Blat(self.label + ".countertop", self.width, self.depth, self.thick_blat)
         bl.move("z", self.height)
         self.append(bl)

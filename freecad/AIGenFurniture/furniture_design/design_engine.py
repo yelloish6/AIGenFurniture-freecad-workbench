@@ -59,12 +59,12 @@ DESIGN_RULE_LABELS = {
     "general_height": "Default cabinet height",
     "general_width": "Default cabinet width",
     "general_depth": "Default cabinet depth",
-    "gap_front": "Front gap",
-    "front_clearance": "Front clearance",
-    "cant_general": "General edging",
-    "cant_pol": "Shelf edging",
-    "cant_separator": "Separator edging",
-    "pol_depth": "Shelf setback",
+    "gap_front": "Gap between adjacent fronts",
+    "front_clearance": "Outer front clearance",
+    "cant_general": "General edge-band thickness",
+    "cant_pol": "Shelf edge-band thickness",
+    "cant_separator": "Separator edge-band thickness",
+    "pol_depth": "Shelf setback from front",
 }
 REQUIRED_DESIGN_RULE_KEYS = tuple(DEFAULT_RULES_BASELINE.keys())
 POSITIVE_DESIGN_RULE_KEYS = (
@@ -173,21 +173,21 @@ def validate_design_rules(rules):
             ),
             (
                 depth - pol_depth,
-                "Shelf setback must leave positive shelf depth; got {} with Default cabinet depth {}.".format(
+                "Shelf setback from front must leave positive shelf depth; got {} with Default cabinet depth {}.".format(
                     _format_rule_value(migrated["pol_depth"]),
                     _format_rule_value(migrated["general_depth"]),
                 ),
             ),
             (
                 width - (2 * front_clearance),
-                "Front clearance must leave positive front width; got {} with Default cabinet width {}.".format(
+                "Outer front clearance must leave positive front width; got {} with Default cabinet width {}.".format(
                     _format_rule_value(migrated["front_clearance"]),
                     _format_rule_value(migrated["general_width"]),
                 ),
             ),
             (
                 height - (2 * front_clearance),
-                "Front clearance must leave positive front height; got {} with Default cabinet height {}.".format(
+                "Outer front clearance must leave positive front height; got {} with Default cabinet height {}.".format(
                     _format_rule_value(migrated["front_clearance"]),
                     _format_rule_value(migrated["general_height"]),
                 ),
@@ -208,7 +208,7 @@ def validate_design_rules(rules):
             ),
             (
                 depth - cant_general,
-                "General edging must leave positive cabinet depth where edging is subtracted; got {} with Default cabinet depth {}.".format(
+                "General edge-band thickness must leave positive cabinet depth where edging is subtracted; got {} with Default cabinet depth {}.".format(
                     _format_rule_value(migrated["cant_general"]),
                     _format_rule_value(migrated["general_depth"]),
                 ),
@@ -329,8 +329,9 @@ def design_furniture(customer_data):
                 continue
             label = accessory_data.get("Accessory Name", accessory_data.get("label", ""))
             quantity = accessory_data.get("Quantity", accessory_data.get("pieces", ""))
+            unit = accessory_data.get("Unit", accessory_data.get("unit"))
             designed_cabinet.append(
-                Accessory(label, decimal_to_number(parse_quantity(quantity, "JSON accessory quantity", label)))
+                Accessory(label, decimal_to_number(parse_quantity(quantity, "JSON accessory quantity", label)), unit)
             )
 
         order.append(designed_cabinet)

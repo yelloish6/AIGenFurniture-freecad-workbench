@@ -10,13 +10,13 @@ class AboutCommand:
         # ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "")
         return {
             "Pixmap": get_command_icon("icon_support"),
-            "MenuText": "Support",
-            "ToolTip": "Contact, feedback, and donation info for AIGenFurniture"
+            "MenuText": "About & Support",
+            "ToolTip": "About & Support for AIGenFurniture"
         }
 
     def Activated(self):
         dialog = QtGui.QDialog()
-        dialog.setWindowTitle("About AIGenFurniture")
+        dialog.setWindowTitle("About & Support")
         dialog.setMinimumWidth(400)
 
         layout = QtGui.QVBoxLayout()

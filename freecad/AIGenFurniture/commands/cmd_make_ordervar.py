@@ -49,16 +49,15 @@ def confirm_overwrite_order_spreadsheet():
     """Ask the user whether to overwrite an existing OrderVar spreadsheet."""
     message = QtGui.QMessageBox()
     message.setIcon(QtGui.QMessageBox.Warning)
-    message.setWindowTitle("OrderVar already exists")
+    message.setWindowTitle("Order Setup Already Exists")
     message.setText(
-        "\u26a0 An OrderVar already exists in this document.\n"
-        "Creating a new order will overwrite it.\n"
-        "Continue?"
+        "This document already contains order settings. Rebuilding them will replace "
+        "the current customer and material values. Continue?"
     )
 
     cancel_button = message.addButton("Cancel", QtGui.QMessageBox.RejectRole)
     create_button = message.addButton(
-        "Yes, create new order", QtGui.QMessageBox.AcceptRole
+        "Rebuild Order Setup", QtGui.QMessageBox.AcceptRole
     )
     message.setDefaultButton(cancel_button)
     message.setEscapeButton(cancel_button)
@@ -122,7 +121,7 @@ def create_order_spreadsheet(doc, overwrite=False):
     enabled_count = populate_order_spreadsheet(spreadsheet)
     doc.recompute()
     App.Console.PrintMessage(
-        f"\u2705 Spreadsheet 'OrderVar' created/updated with {enabled_count} enabled parameters.\n"
+        f"Order Setup created or updated with {enabled_count} parameters.\n"
     )
     return spreadsheet
 
@@ -146,10 +145,10 @@ class CreateOrderSpreadsheetCommand:
 
         existing_spreadsheet = find_order_spreadsheet(doc)
         if existing_spreadsheet and not confirm_overwrite_order_spreadsheet():
-            App.Console.PrintMessage("OrderVar creation cancelled.\n")
+            App.Console.PrintMessage("Order Setup was not changed.\n")
             return
 
-        doc.openTransaction("Create Globals Spreadsheet")
+        doc.openTransaction("Create Order Setup")
         try:
             spreadsheet = create_order_spreadsheet(doc, overwrite=existing_spreadsheet is not None)
             apply_order_setup_addon_if_available(doc)

@@ -109,14 +109,14 @@ CABINET_DEFINITIONS = {
         "class": BaseCorner,
         "factory": make_base_corner,
         "ui": {
-            "label": "Base Corner",
+            "label": "Base Corner Cabinet",
             "enabled": False,
             "tooltip": "Add a base corner cabinet",
         },
         "params": {
             "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
             "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-            "l_r": ("App::PropertyString", "right", "left or right Corner"),
+            "l_r": ("App::PropertyString", "right", "Corner side (left or right)"),
             "with_polita": ("App::PropertyBool", True, "Has a shelf")
         }
     },
@@ -124,9 +124,9 @@ CABINET_DEFINITIONS = {
         "class": Raft,
         "factory": make_raft,
         "ui": {
-            "label": "Base Shelf",
+            "label": "Open Base Shelving Unit",
             "enabled": False,
-            "tooltip": "Add a shelf unit (Raft)",
+            "tooltip": "Add an open base shelving unit",
         },
         "params":{
             "shelves": ("App::PropertyInteger", 1, "Number of shelves included")
@@ -136,22 +136,22 @@ CABINET_DEFINITIONS = {
         "class": CorpCuPicioare,
         "factory": make_corp_cu_picioare,
         "ui": {
-            "label": "Base Shelf with Skirt",
+            "label": "Open Base Shelving Unit with Plinth",
             "enabled": False,
-            "tooltip": "Add a cabinet with legs (CorpCuPicioare)",
+            "tooltip": "Add an open base shelving unit with a plinth",
         },
         "params": {
-            "skirt_height": ("App::PropertyInteger", 100, "Height of skirting area"),
-            "skirting_board": ("App::PropertyBool", True, "Has a skirting board"),
+            "skirt_height": ("App::PropertyInteger", 100, "Plinth height"),
+            "skirting_board": ("App::PropertyBool", True, "Include plinth"),
         }
     },
     "JollyBox": {
         "class": JollyBox,
         "factory": None,
         "ui": {
-            "label": "Base Jolly",
+            "label": "Pull-out Base Cabinet",
             "enabled": False,
-            "tooltip": "Add a JollyBox cabinet",
+            "tooltip": "Add a pull-out base cabinet",
         },
         "params": {}
     },
@@ -182,9 +182,9 @@ CABINET_DEFINITIONS = {
         "class": MsVBox,
         "factory": None,
         "ui": {
-            "label": "Dishwasher",
+            "label": "Dishwasher Housing",
             "enabled": False,
-            "tooltip": "Add a MsVBox cabinet",
+            "tooltip": "Add a dishwasher housing",
         },
         "params": {}
     },
@@ -192,9 +192,9 @@ CABINET_DEFINITIONS = {
         "class": TopBox,
         "factory": None,
         "ui": {
-            "label": "Top Cabinet",
+            "label": "Wall Cabinet",
             "enabled": True,
-            "tooltip": "Add a top box cabinet",
+            "tooltip": "Add a wall cabinet",
         },
         "params": {}
     },
@@ -202,14 +202,14 @@ CABINET_DEFINITIONS = {
         "class": TopCorner,
         "factory": make_top_corner,
         "ui": {
-            "label": "Top Corner",
+            "label": "Wall Corner Cabinet",
             "enabled": False,
-            "tooltip": "Add a top corner cabinet",
+            "tooltip": "Add a wall corner cabinet",
         },
         "params": {
             "cut_width": ("App::PropertyInteger", 300, "Cut Width"),
             "cut_depth": ("App::PropertyInteger", 200, "Cut Depth"),
-            "l_r": ("App::PropertyString", "right", "Left or Right Corner"),
+            "l_r": ("App::PropertyString", "right", "Corner side (left or right)"),
             "polite": ("App::PropertyInteger", 1, "Number of shelves included")
         }
 
@@ -218,23 +218,23 @@ CABINET_DEFINITIONS = {
         "class": TowerBox,
         "factory": make_tower_box,
         "ui": {
-            "label": "Tower",
+            "label": "Tall Cabinet",
             "enabled": True,
-            "tooltip": "Add a tower cabinet",
+            "tooltip": "Add a tall cabinet",
         },
         "params": {
-            "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-            "gap_heat": ("App::PropertyInteger", 50, "Gap for heat dissipation on the back of the cabinet"),
-            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "List which gaps should be closed by doors")
+            "gap_list": ("App::PropertyIntegerList", [200, 400], "Opening Heights (bottom to top)"),
+            "gap_heat": ("App::PropertyInteger", 50, "Rear ventilation clearance"),
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "Fronts per opening (0 = open, 1 = front), bottom to top")
         },
     },
     "Etajera": {
         "class": Etajera,
         "factory": make_etajera,
         "ui": {
-            "label": "Etajera (n.a)",
+            "label": "Shelving Unit (Unavailable)",
             "enabled": False,
-            "tooltip": "Add an Etajera (shelf unit)",
+            "tooltip": "Add a shelving unit",
         },
         "params": {
             "shelves": ("App::PropertyInteger", 1, "Number of shelves included"),
@@ -246,22 +246,22 @@ CABINET_DEFINITIONS = {
         "class": CorpDressing,
         "factory": make_corp_dressing,
         "ui": {
-            "label": "Tower with Plinth",
+            "label": "Tall Cabinet with Plinth",
             "enabled": True,
-            "tooltip": "Add a wardrobe cabinet",
+            "tooltip": "Add a tall cabinet with an integrated plinth",
         },
         "params": {
-            "gap_list": ("App::PropertyIntegerList", [200, 400], "Gap List"),
-            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "List which gaps should be closed by doors"),
+            "gap_list": ("App::PropertyIntegerList", [200, 400], "Opening Heights (bottom to top)"),
+            "front_list": ("App::PropertyIntegerList", [0, 0, 0], "Fronts per opening (0 = open, 1 = front), bottom to top"),
         }
     },
     "Dulap": {
         "class": Dulap,
         "factory": None,
         "ui": {
-            "label": "Base Cabinet (n.a)",
+            "label": "Wardrobe (Unavailable)",
             "enabled": False,
-            "tooltip": "Add a simple closet (Dulap)",
+            "tooltip": "Add a wardrobe",
         },
         "params": {}
     },

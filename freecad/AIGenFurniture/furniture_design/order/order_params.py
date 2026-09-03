@@ -19,7 +19,7 @@ from collections import OrderedDict
 ORDER_PARAMS = OrderedDict([
     # Customer information
     ("client", {
-        "default": "Customer Name",
+        "default": "",
         "required": True,
         "label": "Customer Name",
         "type": "string",
@@ -28,7 +28,7 @@ ORDER_PARAMS = OrderedDict([
         "enabled": True  # MVP: used in exports and filenames
     }),
     ("client_proficut", {
-        "default": "Your Company Name",
+        "default": "",
         "required": False,
         "label": "Company Name",
         "type": "string",
@@ -37,7 +37,7 @@ ORDER_PARAMS = OrderedDict([
         "enabled": False  # Reserved for shop-specific export plugins
     }),
     ("tel_proficut", {
-        "default": "07xxxxxxxx",
+        "default": "",
         "required": False,
         "label": "Company Phone",
         "type": "string",
@@ -46,60 +46,22 @@ ORDER_PARAMS = OrderedDict([
         "enabled": False  # Reserved for shop-specific export plugins
     }),
     ("transport", {
-        "default": "Yes",
+        "default": False,
         "required": False,
         "label": "Transport",
-        "type": "string",
+        "type": "bool",
         "order_attr": "transport",
         "order": 4,
         "enabled": False  # MVP: used in cost calculation
     }),
     ("address", {
-        "default": "Your Address",
+        "default": "",
         "required": False,
         "label": "Delivery Address",
         "type": "string",
         "order_attr": "address",
         "order": 5,
         "enabled": False  # Reserved for shop-specific export plugins
-    }),
-
-    # Material parameters
-    ("material_pal", {
-        "default": "Alb W962ST2",
-        "required": False,
-        "label": "Chipboard Material",
-        "type": "string",
-        "order_attr": "mat_pal",
-        "order": 30,
-        "enabled": True  # MVP: used in cost calculations
-    }),
-    ("material_front", {
-        "default": "A34R3",
-        "required": False,
-        "label": "Front Material",
-        "type": "string",
-        "order_attr": "mat_front",
-        "order": 31,
-        "enabled": True  # MVP: used in cost calculations
-    }),
-    ("material_blat", {
-        "default": "Stejar Alpin Keindl",
-        "required": False,
-        "label": "Countertop Material",
-        "type": "string",
-        "order_attr": "mat_blat",
-        "order": 32,
-        "enabled": True  # MVP: used in cost calculations
-    }),
-    ("material_pfl", {
-        "default": "Alb",
-        "required": False,
-        "label": "HDF Material",
-        "type": "string",
-        "order_attr": "mat_pfl",
-        "order": 33,
-        "enabled": True  # MVP: used in cost calculations
     }),
     
     # Dimension parameters
@@ -175,15 +137,6 @@ ORDER_PARAMS = OrderedDict([
         "order": 17,
         "enabled": False  # MVP: not used in enabled exports
     }),
-    ("blat_height", {
-        "default": "40",  # String default for spreadsheet; converted in Order.__init__
-        "required": False,
-        "label": "Countertop Height (mm)",
-        "type": "number",
-        "order_attr": "blat_height",
-        "order": 18,
-        "enabled": False  # MVP: not used in enabled exports
-    }),
     ("cuptor_height", {
         "default": "600",  # String default for spreadsheet; converted in Order.__init__
         "required": False,
@@ -214,7 +167,7 @@ ORDER_PARAMS = OrderedDict([
     
     # Material parameters
     ("material_pal", {
-        "default": "Alb W962ST2",
+        "default": "White Chipboard",
         "required": False,
         "label": "Chipboard Material",
         "type": "string",
@@ -223,7 +176,7 @@ ORDER_PARAMS = OrderedDict([
         "enabled": True  # MVP: used in cost calculations
     }),
     ("material_front", {
-        "default": "A34R3",
+        "default": "White Front Panel",
         "required": False,
         "label": "Front Material",
         "type": "string",
@@ -232,7 +185,7 @@ ORDER_PARAMS = OrderedDict([
         "enabled": True  # MVP: used in cost calculations
     }),
     ("material_blat", {
-        "default": "Stejar Alpin Keindl",
+        "default": "Oak-effect Countertop",
         "required": False,
         "label": "Countertop Material",
         "type": "string",
@@ -241,7 +194,7 @@ ORDER_PARAMS = OrderedDict([
         "enabled": True  # MVP: used in cost calculations
     }),
     ("material_pfl", {
-        "default": "Alb",
+        "default": "White HDF",
         "required": False,
         "label": "HDF Material",
         "type": "string",

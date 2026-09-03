@@ -33,31 +33,31 @@ class CorpDressing(Cabinet):
             board_thickness=self.thick_pal,
         )
 
-        jos = BoardPal(self.label + ".jos", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
+        jos = BoardPal(self.label + ".bottom", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
                        self.cant_lab, self.cant_lab)
         jos.move("x", self.thick_pal)
         jos.move("z", rules["height_legs"])
         self.append(jos)
 
-        lat1 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
+        lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
+        lat2 = BoardPal(self.label + ".right_side", self.height, self.depth, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat2.rotate_cw("y")
         lat2.move("x", self.width)
         self.append(lat2)
 
-        sus = BoardPal(self.label + ".sus", self.width - (2 * self.thick_pal), self.depth - self.cant,
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - self.cant,
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("x", lat1.thick)
         sus.move("z", lat1.length - self.thick_pal)
         self.append(sus)
 
-        plinta = BoardPal(self.label + ".plinta", self.width - (2 * self.thick_pal), rules["height_legs"],
+        plinta = BoardPal(self.label + ".plinth", self.width - (2 * self.thick_pal), rules["height_legs"],
                           self.thick_pal, self.cant_lab, "", "", "")
         plinta.rotate("x")
         plinta.move("x", self.thick_pal)

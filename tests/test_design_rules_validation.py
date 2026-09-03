@@ -124,17 +124,17 @@ class DesignRulesValidationTest(unittest.TestCase):
         self.assertGreaterEqual(len(errors), 3)
         self.assertTrue(any("Chipboard thickness" in error for error in errors))
         self.assertTrue(any("Default cabinet width" in error for error in errors))
-        self.assertTrue(any("Shelf setback" in error for error in errors))
+        self.assertTrue(any("Shelf setback from front" in error for error in errors))
 
     def test_relational_constraints_are_enforced_at_boundaries(self):
         cases = (
             ("height_legs", "general_height", "Plinth height"),
-            ("pol_depth", "general_depth", "Shelf setback"),
+            ("pol_depth", "general_depth", "Shelf setback from front"),
             ("front_clearance", "general_width", "positive front width"),
             ("front_clearance", "general_height", "positive front height"),
             ("thick_pal", "general_width", "internal cabinet width"),
             ("thick_pal", "general_height", "internal cabinet height"),
-            ("cant_general", "general_depth", "General edging"),
+            ("cant_general", "general_depth", "General edge-band thickness"),
         )
 
         for changed_key, boundary_key, expected in cases:

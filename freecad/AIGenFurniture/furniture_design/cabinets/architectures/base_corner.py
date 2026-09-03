@@ -42,7 +42,7 @@ class BaseCorner(Cabinet):
         super().__init__(label, height, width, depth, rules)
 
         if l_r == "left":
-            jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal, "", "", "", "")
+            jos = BoardPal(self.label + ".bottom", self.width, self.depth, self.thick_pal, "", "", "", "")
             jos.add_obs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                         str(self.width) + ":" + # cota1
                         str(self.depth - cut_depth) + ":" + # cota2
@@ -61,7 +61,7 @@ class BaseCorner(Cabinet):
             self.append(jos)
             # self.append(Accessory("decupare pal", 1))
 
-            lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
+            lat1 = BoardPal(self.label + ".left_side", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat1.rotate("x")
             lat1.rotate("y")
@@ -71,7 +71,7 @@ class BaseCorner(Cabinet):
             lat1.move("y", cut_depth)
             self.append(lat1)
 
-            lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
+            lat2 = BoardPal(self.label + ".right_side", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat2.rotate("x")
             lat2.rotate("y")
@@ -81,7 +81,7 @@ class BaseCorner(Cabinet):
             lat2.move("y", self.thick_pal)
             self.append(lat2)
 
-            spate = BoardPal(self.label + ".spate", self.depth - self.thick_pal, self.height - self.thick_pal,
+            spate = BoardPal(self.label + ".back", self.depth - self.thick_pal, self.height - self.thick_pal,
                              self.thick_pal, "", "", "", "")
             # spate.rotate("x")
             # spate.move("z", self.thick_pal)
@@ -126,7 +126,7 @@ class BaseCorner(Cabinet):
             self.append(leg3)
 
             if with_polita:
-                pol = BoardPal(self.label + ".pol", self.width - (2 * self.thick_pal),
+                pol = BoardPal(self.label + ".shelf_1", self.width - (2 * self.thick_pal),
                                self.depth - (1 * self.thick_pal),
                                self.thick_pal, "", "", "", "")
 
@@ -152,7 +152,7 @@ class BaseCorner(Cabinet):
                 self.append(pol)
                 # self.append(Accessory("decupare pal", 1))
 
-            front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"],
+            front1 = Front(self.label + ".front_1", self.height - 2 * rules["gap_front"],
                            cut_depth - 3 - rules["thick_front"], rules["thick_front"])
             front1.rotate_cw("y")
             front1.move("x", width - cut_width + rules["thick_front"])
@@ -160,7 +160,7 @@ class BaseCorner(Cabinet):
             front1.move("y", rules["gap_front"])
             self.append(front1)
 
-            front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"],
+            front2 = Front(self.label + ".front_2", self.height - 2 * rules["gap_front"],
                            cut_width - 3 - rules["thick_front"], rules["thick_front"])
             front2.rotate_cw("y")
             front2.rotate_cw("z")
@@ -177,7 +177,7 @@ class BaseCorner(Cabinet):
             # self.append(blat2)
 
         elif l_r == "right":
-            jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal, "", "", "", "")
+            jos = BoardPal(self.label + ".bottom", self.width, self.depth, self.thick_pal, "", "", "", "")
             jos.add_obs(
                 str("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                     str(self.width) + ":" + # cota1
@@ -197,7 +197,7 @@ class BaseCorner(Cabinet):
             self.append(jos)
             # self.append(Accessory("decupare pal", 1))
 
-            lat1 = BoardPal(self.label + ".lat1", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
+            lat1 = BoardPal(self.label + ".left_side", self.height - self.thick_pal, self.depth - cut_depth, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat1.rotate("x")
             lat1.rotate_cw("y")
@@ -207,7 +207,7 @@ class BaseCorner(Cabinet):
             lat1.move("y", cut_depth)
             self.append(lat1)
 
-            lat2 = BoardPal(self.label + ".lat2", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
+            lat2 = BoardPal(self.label + ".right_side", self.height - self.thick_pal, self.width - cut_width, self.thick_pal,
                             self.cant_lab, "", "", "")
             lat2.rotate("x")
             lat2.rotate_cw("y")
@@ -216,7 +216,7 @@ class BaseCorner(Cabinet):
             lat2.move("y", self.thick_pal)
             self.append(lat2)
 
-            spate = BoardPal(self.label + ".spate", self.depth - self.thick_pal, self.height - self.thick_pal,
+            spate = BoardPal(self.label + ".back", self.depth - self.thick_pal, self.height - self.thick_pal,
                              self.thick_pal, "", "", "", "")
             spate.rotate("x")
             spate.rotate_cw("z")
@@ -255,7 +255,7 @@ class BaseCorner(Cabinet):
             self.append(leg3)
 
             if with_polita:
-                pol = BoardPal(self.label + ".pol", self.width - (2 * self.thick_pal),
+                pol = BoardPal(self.label + ".shelf_1", self.width - (2 * self.thick_pal),
                                self.depth - (1 * self.thick_pal),
                                self.thick_pal, "", "", "", "")
 
@@ -282,7 +282,7 @@ class BaseCorner(Cabinet):
                 self.append(pol)
                 # self.append(Accessory("decupare pal", 1))
 
-            front1 = Front(self.label + "_1", self.height - 2 * rules["gap_front"], cut_depth - 3 -
+            front1 = Front(self.label + ".front_1", self.height - 2 * rules["gap_front"], cut_depth - 3 -
                            rules["thick_front"], rules["thick_front"])
             front1.rotate_cw("y")
             front1.move("x", cut_width)
@@ -290,7 +290,7 @@ class BaseCorner(Cabinet):
             front1.move("y", rules["gap_front"])
             self.append(front1)
 
-            front2 = Front(self.label + "_2", self.height - 2 * rules["gap_front"], cut_width - 3 -
+            front2 = Front(self.label + ".front_2", self.height - 2 * rules["gap_front"], cut_width - 3 -
                            rules["thick_front"], rules["thick_front"])
             front2.rotate_cw("y")
             front2.rotate_cw("z")

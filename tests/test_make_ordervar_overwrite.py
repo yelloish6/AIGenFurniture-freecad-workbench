@@ -65,9 +65,9 @@ from freecad.AIGenFurniture.commands import cmd_make_ordervar  # noqa: E402
 
 
 ENABLED_PARAMS = {
-    "client": {"label": "Customer Name", "default": "Customer Name"},
-    "material_pal": {"label": "Chipboard Material", "default": "Alb W962ST2"},
-    "material_front": {"label": "Front Material", "default": "A34R3"},
+    "client": {"label": "Customer Name", "default": ""},
+    "material_pal": {"label": "Chipboard Material", "default": "White Chipboard"},
+    "material_front": {"label": "Front Material", "default": "White Front Panel"},
 }
 
 
@@ -323,9 +323,9 @@ class MakeOrderVarOverwriteTest(unittest.TestCase):
         self.run_command(doc, confirm=True)
 
         expected_rows = [
-            ("Customer Name", "Customer Name"),
-            ("Chipboard Material", "Alb W962ST2"),
-            ("Front Material", "A34R3"),
+            ("Customer Name", ""),
+            ("Chipboard Material", "White Chipboard"),
+            ("Front Material", "White Front Panel"),
         ]
         self.assertEqual(sheet_rows(sheet), expected_rows)
         self.assertEqual(

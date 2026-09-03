@@ -2,10 +2,16 @@
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
 import csv, os
 from ...pricing.price_manager import PriceManager as pm
+from ...accessory_catalog import resolve_accessory
 
 class Accessory:
-    def __init__(self, name, pieces):
-        self.label = name
+    def __init__(self, name, pieces, unit=None):
+        definition = resolve_accessory(name, unit)
+        self.code = definition.code
+        self.label = definition.label
+        self.unit = definition.unit
+        self.legacy_label = name
+        self.pricing_key = name
         self.pieces = pieces
         self.type = "accessory"
         self.price = 0
@@ -24,6 +30,4 @@ class Accessory:
         self.obs = obs
 
     def get_price(self):
-        return pm.get_price_for_item("accessory", self.label) * self.pieces
-
-
+        return pm.get_price_for_item("accessory", self.pricing_key) * self.pieces

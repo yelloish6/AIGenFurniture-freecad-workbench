@@ -315,7 +315,7 @@ def generate_from_geometry():
     """Main function to generate manufacturing files from FreeCAD geometry."""
     doc = App.ActiveDocument
     if not doc:
-        QtGui.QMessageBox.warning(None, "Error", "No active document.")
+        QtGui.QMessageBox.warning(None, "Generate Manufacturing Files", "No active document.")
         return
 
     # Check if document has exploded cabinets
@@ -328,7 +328,7 @@ def generate_from_geometry():
     if not has_cabinets:
         QtGui.QMessageBox.warning(
             None,
-            "No Cabinets Found",
+            "Generate Manufacturing Files",
             "No exploded cabinets found in the document.\n"
             "Please use 'Generate Cabinet' command first."
         )
@@ -339,6 +339,29 @@ def generate_from_geometry():
             None,
             "Cabinet Generator",
             "Please save the FreeCAD file before running."
+        )
+        return
+
+    try:
+        order = freecad_document_to_order(doc)
+    except Exception as exc:
+        App.Console.PrintError(f"Error reading cabinet geometry: {exc}\n")
+        QtGui.QMessageBox.critical(
+            None,
+            "Generate Manufacturing Files",
+            f"Could not read cabinet geometry:\n{exc}",
+        )
+        return
+    is_valid, missing_params = order.validate()
+    if not is_valid:
+        missing_labels = []
+        from ..furniture_design.order import ORDER_PARAMS
+        for param_name in missing_params:
+            missing_labels.append(ORDER_PARAMS.get(param_name, {}).get("label", param_name))
+        QtGui.QMessageBox.warning(
+            None,
+            "Generate Manufacturing Files",
+            "Complete these required Order Setup fields before exporting: " + ", ".join(missing_labels),
         )
         return
 
@@ -353,8 +376,6 @@ def generate_from_geometry():
     try:
         # Read FreeCAD geometry and create Order directly
         App.Console.PrintMessage("Reading exploded cabinets from FreeCAD document...\n")
-        order = freecad_document_to_order(doc)
-
         App.Console.PrintMessage(f"Found {len(order.cabinets_list)} cabinet(s)\n")
 
         # Generate manufacturing files
@@ -366,9 +387,6 @@ def generate_from_geometry():
             "cabinets_registry": CABINETS,
             "stl": {
                 "is_horizontal_layout": False,
-            },
-            "drill_pdf": {
-                "filename": "Drill_file_reportlab.pdf",
             },
         }
         generate_manufacturing_files(order, output_dir, context)
@@ -384,7 +402,7 @@ def generate_from_geometry():
         App.Console.PrintError(traceback.format_exc())
         QtGui.QMessageBox.critical(
             None,
-            "Error",
+            "Generate Manufacturing Files",
             f"Failed to generate manufacturing files:\n{str(e)}"
         )
 
@@ -393,7 +411,7 @@ class GenerateFromGeometryCommand:
     def GetResources(self):
         return {
             "Pixmap": get_command_icon("icon_AIGenFurniture"),
-            "MenuText": "Generate from Geometry",
+            "MenuText": "Generate Manufacturing Files",
             "ToolTip": "Generate manufacturing files from exploded cabinets in FreeCAD"
         }
 

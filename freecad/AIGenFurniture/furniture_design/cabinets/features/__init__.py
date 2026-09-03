@@ -8,22 +8,22 @@ from .backs import BackMixin
 # FEATURE REGISTRY
 FEATURES = {
     "add_front": {
-        "label": "Front - overlay",
+        "label": "Overlay Fronts",
         "enabled": True,
         "tooltip": "Add fronts to the cabinet",
         "params": {
-            "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
+            "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Front layout percentages, for example [[100, 50], [100, 50]]"),
             "front_type": ("App::PropertyString", "door", "Front type"),
             "reveal": ("App::PropertyString", "", "Optional reveal override [left, top, right, bottom]. Blank uses Design Rules > Front Clearance."),
         }
     },
 
     "add_inset_front": {
-        "label": "Front - inset",
+        "label": "Inset Fronts",
         "enabled": True,
         "tooltip": "Add inset fronts to the cabinet",
         "params": {
-            "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Split list of tuples"),
+            "split_list": ("App::PropertyString", "[[100,50],[100,50]]", "Front layout percentages, for example [[100, 50], [100, 50]]"),
             "front_type": ("App::PropertyString", "door", "Front type"),
         }
     },
@@ -41,9 +41,9 @@ FEATURES = {
     },
 
     "remove_all_pfl": {
-        "label": "Remove all HDF",
+        "label": "Remove All HDF Panels",
         "enabled": False,
-        "tooltip": "Remove all HDF elements",
+        "tooltip": "Remove all HDF panels",
         "params": {
             "remove_all_pfl": ("App::PropertyBool", True, "Remove HDF"),
         }
@@ -59,15 +59,15 @@ FEATURES = {
         }
     },
     "add_pfl": {
-        "label": "Add HDF",
+        "label": "Add HDF Back Panel",
         "enabled": False,
-        "tooltip": "Add HDF on the back of the cabinet",
+        "tooltip": "Add an HDF back panel",
         "params": {}
     },
 
     # drawers
     "add_tandem_box": {
-        "label": "Tandembox",
+        "label": "TANDEMBOX",
         "enabled": False,
         "tooltip": "Add a Tandembox drawer",
         "params": {
@@ -82,13 +82,13 @@ FEATURES = {
         "params": {
             "height": ("App::PropertyFloat", 100.0, "Drawer height"),
             "offset": ("App::PropertyFloat", 24.0, "Offset"),
-            "box_type": ("App::PropertyString", "a", "(a) lateral assembles on the edge of the front board, or (b) on the back"),
-            "bottom": ("App::PropertyString", "pfl", "material of the bottom. Can be (pal) or (pfl) -> (default and not defined)"),
-            "slider_gap": ("App::PropertyFloat", 13.0, "Gap of the slider"),
+            "box_type": ("App::PropertyString", "a", "Drawer construction: A = sides overlap front/back; B = front/back overlap sides"),
+            "bottom": ("App::PropertyString", "pfl", "Drawer bottom material: HDF or chipboard"),
+            "slider_gap": ("App::PropertyFloat", 13.0, "Drawer-slide side clearance (mm)"),
         }
     },
     "add_drawer_pal_glass": {
-        "label": "Drawer Glass",
+        "label": "Glass-sided Drawer",
         "enabled": False,
         "tooltip": "Add a drawer with glass front",
         "params": {
@@ -99,7 +99,7 @@ FEATURES = {
 
     # shelves
     "add_pol": {
-        "label": "Shelves",
+        "label": "Add Shelves",
         "enabled": True,
         "tooltip": "Add shelves",
         "params": {
@@ -111,7 +111,7 @@ FEATURES = {
         "enabled": False,
         "tooltip": "Add a shelf that can be configured",
         "params": {
-            "orient": ("App::PropertyString", "h", "orientation [h or v]"),
+            "orient": ("App::PropertyString", "h", "Orientation (horizontal or vertical)"),
             "length": ("App::PropertyFloat", 0.0, "length of the board, 0 for default width"),
             "height": ("App::PropertyFloat", 0.0, "Position offset of the shelf in the cabinet on Z"),
             "offset": ("App::PropertyFloat", 0.0, "Position offset of the shelf in the cabinet on X"),
@@ -148,7 +148,7 @@ FEATURES = {
         }
     },
     "add_sep_h": {
-        "label": "Horizontal separator",
+        "label": "Horizontal Separator",
         "enabled": False,
         "tooltip": "Add a horizontal separator",
         "params": {

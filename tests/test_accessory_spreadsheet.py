@@ -139,7 +139,9 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         self.assertIs(cabinet.elements_list[0], accessory)
         self.assertEqual(accessory.type, "accessory")
-        self.assertEqual(accessory.label, "maner")
+        self.assertEqual(accessory.code, "handle")
+        self.assertEqual(accessory.label, "Handle")
+        self.assertEqual(accessory.unit, "pcs")
         self.assertEqual(accessory.pieces, 2)
 
     def test_create_sheet_grouped_global_link_tagged_and_headers_even_when_empty(self):
@@ -159,6 +161,7 @@ class AccessorySpreadsheetTest(unittest.TestCase):
         self.assertIs(assembly.AccessorySpreadsheet, sheet)
         self.assertEqual(sheet.get("A1"), HEADER_NAME)
         self.assertEqual(sheet.get("B1"), HEADER_QUANTITY)
+        self.assertEqual(sheet.get("C1"), "Unit")
         self.assertEqual(sheet.get("A2"), "")
 
     def test_create_sheet_can_use_source_box_label_instead_of_assembly_label(self):
@@ -181,10 +184,11 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         sheet = create_accessory_spreadsheet(doc, assembly, cabinet)
 
-        self.assertEqual(sheet.get("A2"), "maner")
-        self.assertEqual(sheet.get("B2"), "3.5")
-        self.assertEqual(sheet.get("A3"), "surub")
-        self.assertEqual(sheet.get("B3"), "4")
+        self.assertEqual(sheet.get("A2"), "Cabinet assembly screw")
+        self.assertEqual(sheet.get("B2"), "4")
+        self.assertEqual(sheet.get("C2"), "pcs")
+        self.assertEqual(sheet.get("A3"), "Handle")
+        self.assertEqual(sheet.get("B3"), "3.5")
 
     def test_reconstruction_reads_spreadsheet_blank_rows_and_formula_values(self):
         doc = FakeDoc()
@@ -200,7 +204,7 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         self.assertEqual(len(accessories), 1)
         self.assertIsInstance(accessories[0], Accessory)
-        self.assertEqual(accessories[0].label, "maner")
+        self.assertEqual(accessories[0].label, "Handle")
         self.assertEqual(accessories[0].pieces, 2.5)
 
     def test_header_only_sheet_reconstructs_no_accessories(self):
@@ -235,6 +239,19 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         self.assertEqual([(item.label, item.pieces) for item in accessories], [("legacy", 1.25)])
 
+    def test_legacy_two_column_sheet_infers_known_accessory_unit(self):
+        doc = FakeDoc()
+        assembly = doc.addObject("App::Part", "Assy")
+        sheet = create_accessory_spreadsheet(doc, assembly, FakeCabinet())
+        sheet.set("C1", "")
+        sheet.set("A2", "pereche glisiera 500 mm")
+        sheet.set("B2", "1")
+
+        accessories = read_accessories_from_spreadsheet(sheet, doc)
+
+        self.assertEqual(accessories[0].label, "Drawer slide — 500 mm")
+        self.assertEqual(accessories[0].unit, "pair")
+
     def test_invalid_quantity_raises(self):
         doc = FakeDoc()
         assembly = doc.addObject("App::Part", "Assy")
@@ -253,7 +270,10 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         rows = aggregate_order_accessories(order)
 
-        self.assertEqual([(label, format_quantity(quantity)) for label, quantity in rows], [("maner", "2.5"), ("surub", "4")])
+        self.assertEqual(
+            [(label, format_quantity(quantity), unit) for label, quantity, unit in rows],
+            [("Cabinet assembly screw", "4", "pcs"), ("Handle", "2.5", "pcs")],
+        )
 
     def test_order_csv_reads_each_source_assembly_spreadsheet_as_authority(self):
         doc = FakeDoc()
@@ -276,14 +296,17 @@ class AccessorySpreadsheetTest(unittest.TestCase):
 
         rows = aggregate_order_accessories(order)
 
-        self.assertEqual([(label, format_quantity(quantity)) for label, quantity in rows], [("maner", "2.5"), ("surub", "4")])
+        self.assertEqual(
+            [(label, format_quantity(quantity), unit) for label, quantity, unit in rows],
+            [("Cabinet assembly screw", "4", "pcs"), ("Handle", "2.5", "pcs")],
+        )
 
     def test_accessories_csv_filename_header_and_no_accessories(self):
         order = FakeOrder([FakeCabinet()])
         with tempfile.TemporaryDirectory() as tmpdir:
             path = write_accessories_csv(order, tmpdir)
-            self.assertEqual(Path(path).name, "BOM_accessories_Client.csv")
-            self.assertEqual(Path(path).read_text(encoding="utf-8"), "Accessory Name,Quantity\n")
+            self.assertEqual(Path(path).name, "BOM_Accessories_Client.csv")
+            self.assertEqual(Path(path).read_text(encoding="utf-8"), "Accessory Name,Quantity,Unit\n")
 
     def test_accessories_csv_quotes_special_labels(self):
         order = FakeOrder([FakeCabinet([Accessory('Handle, brushed "steel"', 1)])])
@@ -291,7 +314,14 @@ class AccessorySpreadsheetTest(unittest.TestCase):
             path = write_accessories_csv(order, tmpdir)
             with open(path, newline="", encoding="utf-8") as handle:
                 rows = list(csv.reader(handle))
-        self.assertEqual(rows[1], ['Handle, brushed "steel"', "1"])
+        self.assertEqual(rows[1], ['Handle, brushed "steel"', "1", "pcs"])
+
+    def test_accessories_csv_rejects_blank_customer(self):
+        order = FakeOrder([])
+        order.client = ""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with self.assertRaisesRegex(ValueError, "Customer Name is required in Order Setup"):
+                write_accessories_csv(order, tmpdir)
 
     def test_export_csv_adds_accessories_file_without_suppressing_existing_outputs(self):
         order = FakeOrder([FakeCabinet([FakeBoard(), Accessory("maner", 2)])])
@@ -299,7 +329,7 @@ class AccessorySpreadsheetTest(unittest.TestCase):
             export_csv(order, tmpdir)
             names = sorted(path.name for path in Path(tmpdir).iterdir())
 
-        self.assertEqual(names, ["BOM_accessories_Client.csv", "PanelsCuttingList_chipboard_White_Client.csv"])
+        self.assertEqual(names, ["BOM_Accessories_Client.csv", "CuttingList_Chipboard_White_Client.csv"])
 
     def test_resolver_hook_is_optional_and_neutral(self):
         register_accessory_name_resolver(lambda _doc, name: "HANDLE_A" if name == "Handle A" else None)

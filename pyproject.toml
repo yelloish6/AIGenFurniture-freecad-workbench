@@ -2,7 +2,7 @@
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
 
 [project]
-version = '0.1.6' # No need to update
+version = '0.2.0' # No need to update
 name = 'AIGenFurniture' # these two properties.
 
 requires-python = '>=3.11'

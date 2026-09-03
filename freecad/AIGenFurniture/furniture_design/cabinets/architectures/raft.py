@@ -20,12 +20,12 @@ class Raft(Cabinet):
 
         # arhitectura
         # jos
-        jos = BoardPal(self.label + ".jos", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
+        jos = BoardPal(self.label + ".bottom", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                        self.cant_lab)
         self.append(jos)
 
         # lat rotit pe Y si ridicat pe z cu grosimea lui jos
-        lat1 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        lat1 = BoardPal(self.label + ".left_side", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
@@ -33,14 +33,14 @@ class Raft(Cabinet):
         self.append(lat1)
 
         # lat rotit pe y, translatat pe x cu (jos - grosime), translatat pe z cu grosime jos
-        lat2 = BoardPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        lat2 = BoardPal(self.label + ".right_side", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat2.rotate_cw("y")
         lat2.move("x", jos.length)
         lat2.move("z", jos.thick)
         self.append(lat2)
 
-        sus = BoardPal(self.label + ".sus", self.width - (2 * self.thick_pal), self.depth - (self.cant),
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - (self.cant),
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("z", lat1.length)
         sus.move("x", lat1.thick)

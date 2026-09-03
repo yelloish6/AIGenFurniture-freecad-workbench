@@ -17,7 +17,7 @@ from ..furniture_design.design_engine import (
 
 RULE_GROUPS = (
     (
-        "Board Thickness",
+        "Board Thicknesses",
         ("thick_pal", "thick_front", "thick_blat", "thick_pfl"),
     ),
     (

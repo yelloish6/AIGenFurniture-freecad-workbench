@@ -8,6 +8,7 @@ from .._resources import get_command_icon
 from ..furniture_design.accessory_spreadsheet import (
     HEADER_NAME,
     HEADER_QUANTITY,
+    HEADER_UNIT,
     find_accessory_spreadsheet,
     format_quantity,
     read_accessories_from_assembly,
@@ -44,7 +45,7 @@ def export(doc, output_path):
             break
 
     if not spreadsheet:
-        FreeCAD.Console.PrintError("Spreadsheet with label 'OrderVar' not found.\n")
+        FreeCAD.Console.PrintError("Order Setup is missing. Run Order Setup before exporting.\n")
         return
 
     # ✅ Load global variables from spreadsheet aliases using centralized definition
@@ -207,6 +208,7 @@ def export(doc, output_path):
                 {
                     HEADER_NAME: accessory.label,
                     HEADER_QUANTITY: format_quantity(accessory.pieces),
+                    HEADER_UNIT: accessory.unit,
                 }
                 for accessory in accessories
             ]
@@ -402,6 +404,7 @@ def export(doc, output_path):
                     {
                         HEADER_NAME: accessory.label,
                         HEADER_QUANTITY: format_quantity(accessory.pieces),
+                        HEADER_UNIT: accessory.unit,
                     }
                     for accessory in accessories
                 ]
@@ -429,8 +432,8 @@ class ExportJSONCommand:
     def GetResources(self):
         return {
             "Pixmap": get_command_icon("icon_json_export.svg"),  # replace with actual icon path
-            "MenuText": "Export Cabinets JSON",
-            "ToolTip": "Export all cabinets and global parameters to a JSON file"
+            "MenuText": "Export Cabinet Layout (JSON)",
+            "ToolTip": "Export cabinets and order parameters to a JSON file"
         }
 
     def IsActive(self):

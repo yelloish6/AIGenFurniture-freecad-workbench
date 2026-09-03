@@ -32,25 +32,25 @@ class TowerBox(Cabinet):
             board_thickness=self.thick_pal,
         )
         self.depth = self.depth - gap_heat
-        jos = BoardPal(self.label + ".down", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
+        jos = BoardPal(self.label + ".bottom", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                        self.cant_lab)
         self.append(jos)
 
-        lat1 = BoardPal(self.label + ".lat_l", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
+        lat1 = BoardPal(self.label + ".left_side", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat1.rotate_cw("y")
         lat1.move("z", jos.thick)
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat_r", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
+        lat2 = BoardPal(self.label + ".right_side", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat2.rotate_cw("y")
         lat2.move("z", jos.thick)
         lat2.move("x", jos.length)
         self.append(lat2)
 
-        sus = BoardPal(self.label + ".up", self.width - (2 * self.thick_pal), self.depth - (self.cant),
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - (self.cant),
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("x", lat1.thick)
         sus.move("z", lat1.length)
@@ -75,8 +75,8 @@ class TowerBox(Cabinet):
 
         self.add_pfl()
         if gap_heat > 0:
-            self.get_item_by_type_label("pfl",self.label + ".hdf").__setattr__("length", self.width - (2 * self.thick_pal))
-            self.get_item_by_type_label("pfl",self.label + ".hdf").move("x", self.thick_pal - 2)
+            self.get_item_by_type_label("pfl", self.label + ".back").__setattr__("length", self.width - (2 * self.thick_pal))
+            self.get_item_by_type_label("pfl", self.label + ".back").move("x", self.thick_pal - 2)
         self.add_tower_fronts(opening_heights, front_flags)
 
         # if front_list[0] == 1:

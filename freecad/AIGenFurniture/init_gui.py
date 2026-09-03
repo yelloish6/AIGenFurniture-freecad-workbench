@@ -14,7 +14,7 @@ class CabinetWorkbench (Gui.Workbench):
         from freecad.AIGenFurniture import __version__
 
         self.__class__.MenuText = "Cabinet Generator"
-        self.__class__.ToolTip = "Tools for generating cabinets from boxes (v{__version__})"
+        self.__class__.ToolTip = f"Tools for generating cabinets from boxes (v{__version__})"
         self.__class__.Icon = icon_path
 
         # Save for later use when registering commands

@@ -19,25 +19,25 @@ class TopBox(Cabinet):
         self.append(Accessory("surub diblu perete", round(self.width / 201)))
 
         # arhitectura
-        lat1 = BoardPal(self.label + ".lat_l", self.height, self.depth, self.thick_pal, self.cant_lab, "",
+        lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal, self.cant_lab, "",
                         self.cant_lab, self.cant_lab)
         lat1.rotate_cw("y")
         lat1.move("x", lat1.thick)
         self.append(lat1)
         # self.palOO.append(lat1)
-        jos = BoardPal(self.label + ".down", self.width - (2 * self.thick_pal), self.depth - (self.cant),
+        jos = BoardPal(self.label + ".bottom", self.width - (2 * self.thick_pal), self.depth - (self.cant),
                        self.thick_pal, self.cant_lab, "", "", "")
         jos.move("x", lat1.thick)
         jos.move("y", self.cant_lab)
         self.append(jos)
         # self.palOO.append(jos)
-        lat2 = BoardPal(self.label + ".lat_r", self.height, self.depth, self.thick_pal, self.cant_lab, "",
+        lat2 = BoardPal(self.label + ".right_side", self.height, self.depth, self.thick_pal, self.cant_lab, "",
                         self.cant_lab, self.cant_lab)
         lat2.rotate_cw("y")
         lat2.move("x", jos.length + 2 * lat2.thick)
         self.append(lat2)
         # self.palOO.append(lat2)
-        sus = BoardPal(self.label + ".up", self.width - (2 * self.thick_pal), self.depth - (self.cant),
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - (self.cant),
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("z", lat1.length - sus.thick)
         sus.move("x", lat1.thick)

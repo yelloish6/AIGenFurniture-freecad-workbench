@@ -66,7 +66,7 @@ def export_csv(order, output_folder, elements_registry=None):
     fields: Label, Length, Width, Thickness, m2, m3, plus any extra element
     params declared in the registry.
 
-    PanelsCuttingList files are generated for chipboard and HDF/PFL, split by
+    CuttingList files are generated for chipboard and HDF/PFL, split by
     element.material.
 
     :param order: Order object as input
@@ -81,7 +81,9 @@ def export_csv(order, output_folder, elements_registry=None):
         elements_registry = elements_registry["elements_registry"]
 
     # Ensure client name is not None for filename
-    client_name = order.client if order.client else "Unknown"
+    client_name = str(getattr(order, "client", "") or "").strip()
+    if not client_name or client_name == "Customer Name":
+        raise ValueError("Customer Name is required in Order Setup before exporting.")
 
     # ------------------------------------------------------------------
     # Legacy exports — kept exactly as before
@@ -149,7 +151,7 @@ def export_csv(order, output_folder, elements_registry=None):
         safe_material = _safe_filename_part(material)
         name = os.path.join(
             folder_name,
-            f"PanelsCuttingList_chipboard_{safe_material}_{client_name}.csv",
+            f"CuttingList_Chipboard_{safe_material}_{client_name}.csv",
         )
         with open(name, mode='w', newline="") as pal_opt_file:
             order_writer = csv.writer(pal_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -163,7 +165,7 @@ def export_csv(order, output_folder, elements_registry=None):
         safe_material = _safe_filename_part(material)
         name = os.path.join(
             folder_name,
-            f"PanelsCuttingList_hdf_{safe_material}_{client_name}.csv",
+            f"CuttingList_HDF_{safe_material}_{client_name}.csv",
         )
         with open(name, mode='w', newline="") as pfl_opt_file:
             order_writer = csv.writer(pfl_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -193,7 +195,7 @@ def export_csv(order, output_folder, elements_registry=None):
                 )
                 with open(bom_name, mode='w', newline="") as bom_file:
                     writer = csv.writer(bom_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                    writer.writerow(["Label", "Length", "Width", "Thickness", "m2", "m3"] + param_names)
+                    writer.writerow(["Label", "Length", "Width", "Thickness", "Area (m²)", "Volume (m³)"] + param_names)
                     for element in material_elements:
                         row = [
                             element.label,

@@ -4,7 +4,7 @@
 
 Accessories remain the existing ``Accessory`` domain objects in
 ``cabinet.elements_list``. This module only persists and reconstructs them
-through a two-column FreeCAD spreadsheet.
+through a FreeCAD spreadsheet. Legacy two-column sheets remain readable.
 """
 
 from __future__ import annotations
@@ -15,6 +15,8 @@ import re
 from decimal import Decimal, InvalidOperation
 from typing import Any, Callable, Iterable
 
+from .accessory_catalog import resolve_accessory
+
 
 ACCESSORY_SPREADSHEET_PROPERTY = "AccessorySpreadsheet"
 ACCESSORY_SPREADSHEET_LABEL = "Accessories"
@@ -22,6 +24,7 @@ SHEET_TYPE_PROPERTY = "AIGenFurnitureSheetType"
 ACCESSORY_SHEET_TYPE = "CabinetAccessories"
 HEADER_NAME = "Accessory Name"
 HEADER_QUANTITY = "Quantity"
+HEADER_UNIT = "Unit"
 LEGACY_ACCESSORY_TYPES = "AccessoryTypes"
 LEGACY_ACCESSORY_COUNTS = "AccessoryCounts"
 
@@ -43,7 +46,7 @@ def resolve_accessory_name(doc, name: str) -> str:
         resolved = resolver(doc, text)
         if resolved:
             return normalize_display_label(resolved)
-    return text
+    return resolve_accessory(text).label
 
 
 def create_accessory_spreadsheet(doc, assembly, cabinet, cabinet_label=None) -> Any:
@@ -104,7 +107,8 @@ def _tag_accessory_spreadsheet(sheet) -> None:
 def _write_accessory_sheet_header(sheet) -> None:
     sheet.set("A1", HEADER_NAME)
     sheet.set("B1", HEADER_QUANTITY)
-    for cell in ("A1", "B1"):
+    sheet.set("C1", HEADER_UNIT)
+    for cell in ("A1", "B1", "C1"):
         try:
             sheet.setStyle(cell, "bold")
         except Exception:
@@ -112,6 +116,7 @@ def _write_accessory_sheet_header(sheet) -> None:
     try:
         sheet.setColumnWidth("A", 240)
         sheet.setColumnWidth("B", 90)
+        sheet.setColumnWidth("C", 70)
     except Exception:
         pass
 
@@ -119,9 +124,10 @@ def _write_accessory_sheet_header(sheet) -> None:
 def populate_accessory_spreadsheet(sheet, cabinet, doc=None) -> None:
     rows = aggregate_accessory_elements(get_accessory_elements(cabinet), doc)
     row_index = 2
-    for label, quantity in rows:
+    for label, quantity, unit in rows:
         sheet.set(f"A{row_index}", label)
         sheet.set(f"B{row_index}", format_quantity(quantity))
+        sheet.set(f"C{row_index}", unit)
         row_index += 1
 
 
@@ -134,21 +140,27 @@ def get_accessory_elements(cabinet) -> list[Any]:
     ]
 
 
-def aggregate_accessory_elements(elements: Iterable[Any], doc=None) -> list[tuple[str, Decimal]]:
+def aggregate_accessory_elements(elements: Iterable[Any], doc=None) -> list[tuple[str, Decimal, str]]:
     grouped: dict[str, dict[str, Any]] = {}
     for element in elements:
-        raw_label = getattr(element, "label", "")
+        raw_label = getattr(element, "legacy_label", getattr(element, "label", ""))
+        definition = resolve_accessory(raw_label, getattr(element, "unit", None))
         label = resolve_accessory_name(doc, raw_label)
         if not label:
             _warn(f"Accessory with empty label was skipped")
             continue
         quantity = parse_quantity(getattr(element, "pieces", None), "accessory quantity", label)
-        key = normalize_identity(label)
+        key = definition.code
         if key not in grouped:
-            grouped[key] = {"label": label, "quantity": Decimal("0")}
+            grouped[key] = {"label": label, "quantity": Decimal("0"), "unit": definition.unit}
+        elif grouped[key]["unit"] != definition.unit:
+            raise ValueError(
+                f"Accessory '{label}' uses conflicting units: "
+                f"{grouped[key]['unit']} and {definition.unit}"
+            )
         grouped[key]["quantity"] += quantity
 
-    rows = [(data["label"], data["quantity"]) for data in grouped.values()]
+    rows = [(data["label"], data["quantity"], data["unit"]) for data in grouped.values()]
     rows.sort(key=lambda item: normalize_identity(item[0]))
     return rows
 
@@ -194,6 +206,7 @@ def read_accessories_from_spreadsheet(sheet, doc=None) -> list[Any]:
     for row_index in _used_data_rows(sheet):
         name = _sheet_cell_value(sheet, f"A{row_index}")
         quantity_value = _sheet_cell_value(sheet, f"B{row_index}")
+        unit_value = normalize_display_label(_sheet_cell_value(sheet, f"C{row_index}"))
         name_text = normalize_display_label(name)
         quantity_text = normalize_display_label(quantity_value)
         if not name_text and not quantity_text:
@@ -202,7 +215,7 @@ def read_accessories_from_spreadsheet(sheet, doc=None) -> list[Any]:
             raise ValueError(f"Invalid accessory row {row_index}: name and quantity are both required")
         canonical_name = resolve_accessory_name(doc, name_text)
         quantity = parse_quantity(quantity_value, f"accessory row {row_index} quantity", canonical_name)
-        accessories.append(Accessory(canonical_name, decimal_to_number(quantity)))
+        accessories.append(Accessory(canonical_name, decimal_to_number(quantity), unit_value or None))
     return accessories
 
 
@@ -301,7 +314,7 @@ def normalize_identity(value) -> str:
     return re.sub(r"\s+", " ", normalize_display_label(value)).casefold()
 
 
-def aggregate_order_accessories(order) -> list[tuple[str, Decimal]]:
+def aggregate_order_accessories(order) -> list[tuple[str, Decimal, str]]:
     return aggregate_accessory_elements(_iter_order_accessories(order), None)
 
 
@@ -320,14 +333,16 @@ def _iter_order_accessories(order):
 
 
 def write_accessories_csv(order, output_folder: str, delimiter: str = ",") -> str:
-    client_name = getattr(order, "client", None) or "Unknown"
-    path = os.path.join(output_folder, f"BOM_accessories_{client_name}.csv")
+    client_name = normalize_display_label(getattr(order, "client", None))
+    if not client_name or client_name == "Customer Name":
+        raise ValueError("Customer Name is required in Order Setup before exporting.")
+    path = os.path.join(output_folder, f"BOM_Accessories_{client_name}.csv")
     rows = aggregate_order_accessories(order)
     with open(path, mode="w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([HEADER_NAME, HEADER_QUANTITY])
-        for label, quantity in rows:
-            writer.writerow([label, format_quantity(quantity)])
+        writer.writerow([HEADER_NAME, HEADER_QUANTITY, HEADER_UNIT])
+        for label, quantity, unit in rows:
+            writer.writerow([label, format_quantity(quantity), unit])
     return path
 
 

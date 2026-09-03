@@ -124,7 +124,7 @@ class FrontMixin:
             split = split_list[i]
             h = int((h_tot * split[0] / 100) - gap)
             w = int((w_tot * split[1] / 100) - gap)
-            usa = Front(self.label + "_front" + str(i + 1), h, w, self.thick_front)
+            usa = Front(self.label + ".front_" + str(i + 1), h, w, self.thick_front)
             usa.rotate("x")
             usa.rotate_cw("y")
             usa.move("x", origin[0])
@@ -187,7 +187,7 @@ class FrontMixin:
             h = int((h_tot * split[0] / 100) - gap)
             w = int((w_tot * split[1] / 100) - gap)
 
-            usa = Front(self.label + "_front" + str(i + 1), h, w, self.thick_front)
+            usa = Front(self.label + ".front_" + str(i + 1), h, w, self.thick_front)
             usa.rotate("x")
             usa.rotate_cw("y")
             usa.move("x", origin[0])
@@ -222,7 +222,7 @@ class FrontMixin:
                 self.append(Accessory("maner", 1))
 
     def add_front_lateral(self, left_right):
-        front = Front(self.label + ".fr_lat", self.height, self.depth + self.thick_front, self.thick_front)
+        front = Front(self.label + (".left_side_front" if left_right == "left" else ".right_side_front"), self.height, self.depth + self.thick_front, self.thick_front)
         if left_right == "left":
             front.rotate_cw("y")
             front.move("y", -self.thick_front)
@@ -288,13 +288,17 @@ class FrontMixin:
 
             front_height = top_edge - bottom_edge
             if front_height <= 0 or front_width <= 0:
-                raise ValueError("Tower front dimensions must be positive.")
+                raise ValueError("Tall Cabinet front dimensions must be positive.")
 
             self.add_front_manual(front_height, front_width, offset_x, bottom_edge)
 
 
     def add_front_manual(self, height, width, offset_x, offset_z):
-        fr = Front(self.label + ".front", height, width, self.thick_front)
+        front_number = 1 + sum(
+            1 for element in self.elements_list
+            if getattr(element, "type", None) == "front" and getattr(element, "label", "").startswith(self.label + ".front_")
+        )
+        fr = Front(self.label + ".front_" + str(front_number), height, width, self.thick_front)
         fr.rotate("x")
         fr.rotate_cw("y")
         fr.move("x", fr.width)

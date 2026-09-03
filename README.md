@@ -1,104 +1,238 @@
 # AIGenFurniture FreeCAD Workbench
 
-A FreeCAD workbench that automatically generates furniture structures from
-predefined parametric cabinet boxes — dramatically reducing the manual work
-involved in furniture design and manufacturing preparation.
+**From idea to production in less than 10 minutes.**
 
-⚠️ **Project status:** Beta / Early-stage MVP  
-📦 **Current version:** v0.1.5  
-🖥️ **Tested on:** Windows · Linux  _(macOS not yet tested)_
+AIGenFurniture is a FreeCAD workbench for generating parametric furniture
+cabinet structures from simple placeholder boxes. It is designed for small
+furniture workshops, independent designers, and makers who want to reduce the
+manual work between layout design and manufacturing preparation.
 
----
-
-## 🚀 Installation via FreeCAD Addon Manager (Recommended)
-
-The easiest way to install AIGenFurniture is via the built-in
-**FreeCAD Addon Manager**:
-
-1. Open FreeCAD
-2. Go to **Tools → Addon Manager**
-3. Search for **AIGenFurniture**
-4. Click **Install**
-5. Restart FreeCAD
-6. Select **Cabinet Generator** from the workbench selector
-
-Do not skip the dependencies installation step that is triggered during the set-up.
-
-> **Note on platform testing:**  
-> The workbench has been tested on **Windows** and **Linux**.  
-> It has **not been tested on macOS** — it may work, but is not confirmed.
+> **Project status:** Beta  
+> **Current version:** v0.2.0  
+> **Minimum FreeCAD version:** 1.0  
 
 ---
 
-## 💾 Manual Installation (Advanced / Development)
+## What AIGenFurniture Does
 
-For advanced users or development purposes, you can install manually
-by copying the `CabinetWorkbench` folder into FreeCAD's `Mod` directory.
+Instead of modeling every cabinet board manually, you create simple boxes that
+represent the cabinet layout. AIGenFurniture turns those boxes into complete
+cabinet assemblies and generates the files required for manufacturing.
 
-| Platform | `Mod` folder path |
-|----------|-------------------|
-| Windows  | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
-| Linux    | `~/.local/share/FreeCAD/Mod` |
+The standard workflow is:
 
-> When installing manually, all Python dependencies must match
-> FreeCAD's internal Python version. The Addon Manager handles
-> this automatically — use it unless you have a specific reason not to.
-
----
-
-## ⬇️ Direct Download (Alternative)
-
-Prefer a direct download? You can also grab the latest release from the
-[aigenfurniture.com](https://www.aigenfurniture.com):
-
-- Windows users: **`AIGenFurniture_Setup_0.1.3.exe`** (Windows installer)
-- Cross-platform: source `.zip` from the release assets
+1. Run **Order Setup** and enter the customer and material information.
+2. Review **Design Rules** for dimensions, thicknesses, clearances, and edging.
+3. Add and position cabinet placeholder boxes in FreeCAD.
+4. Select cabinet types and add features such as fronts, drawers, and shelves.
+5. Run **Generate Cabinet** to create the complete cabinet assemblies.
+6. Review or edit the accessories spreadsheet created for each cabinet.
+7. Run **Generate Manufacturing Files** to create the manufacturing outputs.
 
 ---
 
-## ✨ What It Does
+## Key Features
 
-AIGenFurniture automates the transition from idea → design → manufacturing files:
+### Parametric Cabinet Generation
 
-1. **Design your layout** — represent cabinets as labeled simple boxes in FreeCAD
-2. **Configure parameters** — assign type, dimensions, and features (drawers, shelves, fronts) to each box
-3. **Generate structure** — one click replaces the box with a full cabinet assembly
-4. **Export manufacturing files** — generates all production-ready outputs under one folder
+The Community edition currently provides these cabinet types:
+
+- **Base Cabinet**
+- **Wall Cabinet**
+- **Tall Cabinet**
+- **Tall Cabinet with Plinth**
+
+Cabinet placeholders use the configured default dimensions and remain editable
+before generation. The generated assembly contains the individual boards,
+fronts, backs, and accessories required by the selected cabinet architecture.
+
+### Cabinet Features
+
+The enabled cabinet features are:
+
+- Overlay fronts, including full and partial overlay
+- Inset fronts
+- Drawers with configurable height, offset, bottom type, and slider gap
+- Fixed shelves with configurable quantity
+
+Fronts can be split into multiple sections. Tall cabinets use an opening list
+and a matching front list to describe the vertical layout. The final top
+opening is calculated automatically from the remaining cabinet height.
+
+Invalid tall-cabinet layouts are rejected before geometry is generated. This includes
+non-positive openings, invalid front flags, mismatched list lengths, and layouts
+that leave no space for the final opening.
+
+### Order Setup
+
+**Order Setup** creates an `OrderVar` spreadsheet containing the customer name
+and the chipboard, front, countertop, and HDF materials used for the order.
+The spreadsheet opens automatically so the values can be edited immediately.
+
+New manual elements and elements created during cabinet generation inherit the
+corresponding material from `OrderVar`.
+
+If an `OrderVar` spreadsheet already exists, AIGenFurniture asks for
+confirmation before rebuilding it. Cancelling leaves the existing spreadsheet
+unchanged. A confirmed rebuild removes obsolete rows and aliases while
+preserving the spreadsheet object used by the document.
+
+Addons can extend Order Setup with additional shop-specific spreadsheets or
+configuration without changing the Community workbench.
+
+### Editable Design Rules
+
+The **Design Rules** dialog provides one place to configure the defaults used
+throughout cabinet generation:
+
+| Group | Configurable rules |
+| --- | --- |
+| Board Thicknesses | Chipboard, front, countertop, and HDF thickness |
+| Cabinet defaults | Cabinet height, width, depth, and plinth height |
+| Gaps and clearances | Gap between adjacent fronts, outer front clearance, and shelf setback from front |
+| Edge banding | General, shelf, and separator edge-band thickness |
+
+Design Rules are stored in the FreeCAD user-data directory, so they remain
+available between projects and are not overwritten when the addon is updated.
+The dialog can restore the packaged factory defaults at any time.
+
+Rules are validated before they are saved or used. AIGenFurniture rejects
+negative or non-numeric values and combinations that would produce impossible
+geometry, such as a shelf setback greater than the cabinet depth. If a stored
+rules file cannot be read, the workbench falls back to the factory defaults.
+
+The rules are applied consistently to:
+
+- New cabinet placeholder dimensions
+- Manually created board thicknesses
+- Generated cabinet board and front thicknesses
+- HDF backs and drawer bottoms
+- Shelf depth and edge banding
+- Front clearances and visible gaps
+- Tower and plinth-aware front positioning
+
+### Cabinet Accessories
+
+Generating a cabinet creates a spreadsheet named
+`<cabinet-name>_accessories` inside the cabinet assembly. It contains:
+
+| Accessory Name | Quantity | Unit |
+| --- | ---: | --- |
+| Accessory generated by the cabinet architecture | Required quantity | `pcs`, `pair`, `set`, or `m` |
+
+The spreadsheet is the editable source for subsequent manufacturing exports.
+Accessory names and quantities can therefore be adjusted directly in the
+FreeCAD document before the final files are generated.
+
+Accessories from all cabinets are grouped by stable accessory code and exported with canonical English names as:
+
+```text
+BOM_Accessories_<customer-name>.csv
+```
+
+Accessory information is also preserved by the JSON design and export layer,
+allowing addons to resolve shop-specific accessory names or enrich the setup.
+
+### Manufacturing Outputs
+
+The Community edition generates:
+
+- Registry-driven CSV bills of materials, separated by element type and material
+- Chipboard and HDF cutting-list CSV files
+- One aggregated accessories CSV for the complete order
+- STL files generated from the designed order
+
+All output files are placed in a folder next to the saved FreeCAD document:
+
+```text
+<FreeCAD-document-name>_output
+```
+
+The Community export registry intentionally contains only the general-purpose
+CSV and STL exporters. Shop-specific order forms, price and offer calculations,
+assembly instructions, and drilling documents can be supplied by Pro or custom
+shop addons.
+
+### Addon-Friendly Architecture
+
+Cabinets, features, elements, order parameters, and manufacturing exporters are
+registry-driven. Addons can register additional implementations and receive the
+appropriate export context without changing the Community source code.
 
 ---
 
-## 🎥 Tutorials
+## Installation via FreeCAD Addon Manager
 
-Short video tutorials covering installation, cabinet creation, and manufacturing exports:
+The recommended installation method is the built-in FreeCAD Addon Manager:
 
-👉 **YouTube: [youtube.com/@AIGenFurniture](http://www.youtube.com/@AIGenFurniture)**
+1. Open FreeCAD.
+2. Go to **Tools → Addon Manager**.
+3. Search for **AIGenFurniture**.
+4. Click **Install**.
+5. Accept the dependency installation when prompted.
+6. Restart FreeCAD.
+7. Select **Cabinet Generator** from the workbench selector.
 
----
-
-## ❤️ Support the Project
-
-AIGenFurniture is free and open-source (LGPL 2+). If it saves you time,
-consider supporting its development:
-
-- **Ko-fi:** https://ko-fi.com/bogdan_aigenfurniture
-- **PayPal:** https://www.paypal.com/donate/?hosted_button_id=UV2AFNARW4RBN
-
-Your support directly funds new features, better documentation, and maintenance.
+> The workbench has been tested on Windows and Linux. macOS may work, but is
+> not currently tested or officially supported.
 
 ---
 
-## 💬 Feedback & Issues
+## Manual Installation
 
-Early-stage feedback shapes the product. When opening a GitHub Issue, please include:
+For development or advanced testing, copy the repository into FreeCAD's `Mod`
+directory:
 
-- Operating system (Windows / Linux)
+| Platform | FreeCAD `Mod` directory |
+| --- | --- |
+| Windows | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
+| Linux | `~/.local/share/FreeCAD/Mod` |
+
+When installing manually, all Python dependencies must be compatible with the
+Python interpreter bundled with FreeCAD. Use the Addon Manager unless you have
+a specific reason to manage the installation yourself.
+
+Alternatively, download the latest release or installer from
+[aigenfurniture.com](https://www.aigenfurniture.com).
+
+---
+
+## Tutorials
+
+Installation, cabinet creation, and manufacturing-export tutorials are
+available on the
+[AIGenFurniture YouTube channel](https://www.youtube.com/@AIGenFurniture).
+
+---
+
+## Feedback and Issues
+
+AIGenFurniture is still evolving, and practical feedback from furniture makers
+directly shapes its development.
+
+When opening a [GitHub issue](https://github.com/yelloish6/AIGenFurniture-freecad-workbench/issues),
+please include:
+
+- Operating system
 - FreeCAD version
-- How you installed the workbench (Addon Manager / manual / installer)
+- AIGenFurniture version
+- Installation method: Addon Manager, manual installation, or installer
+- Steps required to reproduce the problem
 
-You can also reach us directly: **contact@aigenfurniture.com**
+You can also contact the project at **contact@aigenfurniture.com**.
 
 ---
 
-## 📄 License
+## Support the Project
 
-[LGPL 2+](LICENSE)
+AIGenFurniture is free and open-source. If it saves you time, you can support
+continued development, documentation, and maintenance:
+
+- [Ko-fi](https://ko-fi.com/bogdan_aigenfurniture)
+- [PayPal](https://www.paypal.com/donate/?hosted_button_id=UV2AFNARW4RBN)
+
+---
+
+## License
+
+AIGenFurniture is released under the [LGPL-2.1-or-later](LICENSE) license.

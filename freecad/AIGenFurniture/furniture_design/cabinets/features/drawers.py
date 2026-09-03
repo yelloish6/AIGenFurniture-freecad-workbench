@@ -8,6 +8,17 @@ from ..elements.board import BoardPal, Pfl
 
 class DrawersMixin:
 
+    def _next_drawer_label(self):
+        prefix = self.label + ".drawer_"
+        indexes = []
+        for element in self.elements_list:
+            label = getattr(element, "label", "")
+            if label.startswith(prefix):
+                suffix = label[len(prefix):].split(".", 1)[0]
+                if suffix.isdigit():
+                    indexes.append(int(suffix))
+        return prefix + str(max(indexes, default=0) + 1)
+
     def add_tandem_box(self, tandembox_type, height_offset):
         """
         method to add a BLUM TandemBox drawer in a Cabinet
@@ -15,8 +26,9 @@ class DrawersMixin:
         :param height_offset: height of the drawer in the cabinet
         :return:
         """
-        fund_label = self.label + ".ser.jos"
-        spate_label = self.label + ".ser.sp"
+        drawer_label = self._next_drawer_label()
+        fund_label = drawer_label + ".bottom"
+        spate_label = drawer_label + ".back"
         fund_lung = int(self.width - (2 * self.thick_pal) - (37.5 * 2))
         spate_lung = self.width - 2 * 18 - 87
         fund_lat = self.depth - 20 #TODO de verificat daca la Tandembox M nu e nevoie de self.depth - 24 in loc de -20
@@ -53,9 +65,9 @@ class DrawersMixin:
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
         sert_depth = self.depth - gap_glisiera
 
-        self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
+        drawer_label = self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
 
-        pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
+        pfl = Pfl(drawer_label + ".bottom", sert_width - 4, sert_depth - 4, self.thick_pfl)
         pfl.move("x", self.thick_pal + gap_glisiera + 2)
         pfl.move("y", 2)
         pfl.move("z", height_offset - pfl.thick)
@@ -85,14 +97,14 @@ class DrawersMixin:
         sert_depth = self.depth - gap_slide
 
         if box_type == "a":
-            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
-                                     height_offset)
+            drawer_label = self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
+                                                    height_offset)
         else:
-            self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
-                                     height_offset)
+            drawer_label = self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_slide, 0,
+                                                    height_offset)
 
         if bottom == "pal":
-            fund = BoardPal(self.label + ".drw.bot", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+            fund = BoardPal(drawer_label + ".bottom", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                             self.thick_pal, "", "", "", "")
             fund.move("x", (2 * self.thick_pal) + gap_slide)
             fund.move("y", self.thick_pal)
@@ -105,7 +117,7 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".drw", sert_width - 4, sert_depth - 4, self.thick_pfl)
+            pfl = Pfl(drawer_label + ".bottom", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_slide + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
@@ -131,14 +143,14 @@ class DrawersMixin:
         sert_depth = self.depth - gap_glisiera
 
         if type == "a":
-            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
-                                     height_offset)
+            drawer_label = self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                                    height_offset)
         else:
-            self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
-                                     height_offset)
+            drawer_label = self.create_drawer_box_a(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0,
+                                                    height_offset)
 
         if bottom == "pal":
-            fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+            fund = BoardPal(drawer_label + ".bottom", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                             self.thick_pal, "", "", "", "")
             fund.move("x", (2 * self.thick_pal) + gap_glisiera)
             fund.move("y", self.thick_pal)
@@ -151,7 +163,7 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
+            pfl = Pfl(drawer_label + ".bottom", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_glisiera + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
@@ -176,10 +188,10 @@ class DrawersMixin:
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
         sert_depth = self.depth - gap_glisiera
 
-        self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
+        drawer_label = self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
 
         if bottom == "pal":
-            fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+            fund = BoardPal(drawer_label + ".bottom_1", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                             self.thick_pal, "", "", "", "")
             fund.move("x", (2 * self.thick_pal) + gap_glisiera)
             fund.move("y", self.thick_pal)
@@ -192,13 +204,13 @@ class DrawersMixin:
 
             self.append(fund)
         else:
-            pfl = Pfl(self.label + ".ser", sert_width - 4, sert_depth - 4, self.thick_pfl)
+            pfl = Pfl(drawer_label + ".bottom_1", sert_width - 4, sert_depth - 4, self.thick_pfl)
             pfl.move("x", self.thick_pal + gap_glisiera + 2)
             pfl.move("y", 2)
             pfl.move("z", height_offset - pfl.thick)
             self.append(pfl)
 
-        fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+        fund = BoardPal(drawer_label + ".bottom_2", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                         self.thick_pal, "", "", "", "")
         fund.move("x", (2 * self.thick_pal) + gap_glisiera)
         fund.move("y", self.thick_pal)
@@ -236,9 +248,9 @@ class DrawersMixin:
         sert_width = self.width - (2 * self.thick_pal) - (2 * gap_glisiera)
         sert_depth = self.depth - gap_glisiera
 
-        self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
+        drawer_label = self.create_drawer_box_b(sert_height, sert_width, sert_depth, self.thick_pal + gap_glisiera, 0, height_offset)
 
-        fund = BoardPal(self.label + ".ser.f", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
+        fund = BoardPal(drawer_label + ".bottom", sert_width - (2 * self.thick_pal), sert_depth - (2 * self.thick_pal),
                         self.thick_pal, "", "", "", "")
         fund.move("x", (2 * self.thick_pal) + gap_glisiera)
         fund.move("y", self.thick_pal)
@@ -258,7 +270,7 @@ class DrawersMixin:
         # fund.move("z", height_offset)
         # self.append(fund)
 
-        fata = BoardPal(self.label + ".ser.fata", sert_width, sert_h, self.thick_pal,
+        fata = BoardPal(drawer_label + ".front_glass_frame", sert_width, sert_h, self.thick_pal,
                         self.cant_lab, self.cant_lab, self.cant_lab, self.cant_lab)
         fata.add_obs("decupaj U. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                       str(margine) + ":" +
@@ -304,7 +316,8 @@ class DrawersMixin:
         :param offset_z:
         """
 
-        left = BoardPal(self.label + ".drw.left", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
+        drawer_label = self._next_drawer_label()
+        left = BoardPal(drawer_label + ".left_side", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
         left.rotate_cw("y")
         left.rotate("x")
         left.rotate_cw("z")
@@ -313,7 +326,7 @@ class DrawersMixin:
         left.move("z", offset_z)
         self.append(left)
 
-        front = BoardPal(self.label + ".drw.front", sert_width - (2 * self.thick_pal), sert_height, self.thick_pal,
+        front = BoardPal(drawer_label + ".front", sert_width - (2 * self.thick_pal), sert_height, self.thick_pal,
                         self.cant_lab, "", "", "")
         front.rotate("x")
         front.move("x", offset_x + self.thick_pal)
@@ -321,7 +334,7 @@ class DrawersMixin:
         front.move("y", self.thick_pal)
         self.append(front)
 
-        back = BoardPal(self.label + ".drw.back", sert_width - (2 * self.thick_pal), sert_height, self.thick_pal,
+        back = BoardPal(drawer_label + ".back", sert_width - (2 * self.thick_pal), sert_height, self.thick_pal,
                         self.cant_lab, "", "", "")
         back.rotate("x")
         back.move("x", offset_x+ self.thick_pal)
@@ -329,7 +342,7 @@ class DrawersMixin:
         back.move("z", offset_z)
         self.append(back)
 
-        right = BoardPal(self.label + ".drw.right", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
+        right = BoardPal(drawer_label + ".right_side", sert_depth, sert_height, self.thick_pal, self.cant_lab, "", self.cant_lab, self.cant_lab)
         right.rotate("x")
         right.rotate("z")
         # right.rotate("z")
@@ -342,6 +355,7 @@ class DrawersMixin:
         # ASSEMBLIES[ASSEMBLY_TYPE](left, back)
         # ASSEMBLIES[ASSEMBLY_TYPE](right, front)
         # ASSEMBLIES[ASSEMBLY_TYPE](right, back)
+        return drawer_label
 
 
     def create_drawer_box_b(self, sert_height, sert_width, sert_depth, offset_x, offset_y, offset_z):
@@ -359,7 +373,8 @@ class DrawersMixin:
         :param offset_z:
         :return:
         """
-        front = BoardPal(self.label + ".drw.front", sert_width, sert_height, self.thick_pal,
+        drawer_label = self._next_drawer_label()
+        front = BoardPal(drawer_label + ".front", sert_width, sert_height, self.thick_pal,
                         self.cant_lab, self.cant_lab, self.cant_lab, self.cant_lab)
         front.rotate("x")
         front.move("x", offset_x)
@@ -367,7 +382,7 @@ class DrawersMixin:
         front.move("y", front.thick)
         self.append(front)
 
-        left = BoardPal(self.label + ".drw.left", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
+        left = BoardPal(drawer_label + ".left_side", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
         left.rotate_cw("y")
         left.rotate("x")
         left.rotate_cw("z")
@@ -377,7 +392,7 @@ class DrawersMixin:
         left.move("y", front.thick)
         self.append(left)
 
-        right = BoardPal(self.label + ".drw.right", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
+        right = BoardPal(drawer_label + ".right_side", sert_depth - (2 * self.thick_pal), sert_height, self.thick_pal, self.cant_lab, self.cant_lab, "", "")
         right.rotate("x")
         right.rotate("z")
         # right.rotate("z")
@@ -387,7 +402,7 @@ class DrawersMixin:
         right.move("y", front.thick)
         self.append(right)
 
-        back = BoardPal(self.label + ".drw.back", sert_width, sert_height, self.thick_pal,
+        back = BoardPal(drawer_label + ".back", sert_width, sert_height, self.thick_pal,
                         self.cant_lab, self.cant_lab, self.cant_lab, self.cant_lab)
         back.rotate("x")
         back.move("x", offset_x)
@@ -399,6 +414,7 @@ class DrawersMixin:
         # ASSEMBLIES[ASSEMBLY_TYPE](left, back)
         # ASSEMBLIES[ASSEMBLY_TYPE](right, front)
         # ASSEMBLIES[ASSEMBLY_TYPE](right, back)
+        return drawer_label
 
     # def get_standard_slide_length(self, drawer_depth):
     #     """

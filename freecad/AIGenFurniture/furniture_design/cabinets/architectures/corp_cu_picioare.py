@@ -23,17 +23,17 @@ class CorpCuPicioare(Cabinet):
         :param h_skirt: height of the skirting board
         """
         super().__init__(label, height, width, depth, rules)
-        lat1 = BoardPal(self.label + ".lat1", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
+        lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
             self.cant_lab)
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
 
-        lat2 = BoardPal(self.label + ".lat2", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
+        lat2 = BoardPal(self.label + ".right_side", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                         self.cant_lab)
         lat2.rotate_cw("y")
         lat2.move("x", self.width)
 
-        jos = BoardPal(self.label + ".jos", self.width - 2 * self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        jos = BoardPal(self.label + ".bottom", self.width - 2 * self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                        "", "", "")
         jos.move("x", self.thick_pal)
         jos.move("z", h_skirt)
@@ -49,14 +49,14 @@ class CorpCuPicioare(Cabinet):
         # lat1.drill("front", depth - drill_depth_offset, h_skirt + jos.thick / 2)
         # lat2.drill("front", depth - drill_depth_offset, h_skirt + jos.thick / 2)
 
-        sus = BoardPal(self.label + ".sus", self.width - 2 * self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
+        sus = BoardPal(self.label + ".top", self.width - 2 * self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                        "", "", "")
         sus.move("x", self.thick_pal)
         sus.move("z", self.height - self.thick_pal)
 
         self.add_pfl()
 
-        skirting_board = BoardPal(self.label + ".skirt", self.width - 2 * self.thick_pal, h_skirt, self.thick_pal, self.cant_lab, "", "", "")
+        skirting_board = BoardPal(self.label + ".plinth", self.width - 2 * self.thick_pal, h_skirt, self.thick_pal, self.cant_lab, "", "", "")
         skirting_board.rotate("x"),
         skirting_board.move("x", self.thick_pal)
         skirting_board.move("y", 20)

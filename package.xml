@@ -4,8 +4,8 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>AIGenFurniture Cabinet Generator</name>
   <description>Parametric furniture cabinet design workbench. Generate cabinets from simple boxes, apply features (fronts, shelves, drawers), and export manufacturing files.</description>
-  <version>0.1.6</version>
-  <date>2026-05-04</date>
+  <version>0.2.0</version>
+  <date>2026-09-11</date>
   <freecadmin>1.0.0</freecadmin>
   <pythonmin>3.11</pythonmin>
 
@@ -14,7 +14,7 @@
 
   <license file="LICENSE">LGPL-2.1-or-later</license>
 
-  <url type="repository" branch="feature/standardized-predesign-input">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
+  <url type="repository" branch="main">https://github.com/yelloish6/AIGenFurniture-freecad-workbench</url>
   <url type="readme">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/blob/main/Resources/Documents/Overview.md</url>
   <url type="bugtracker">https://github.com/yelloish6/AIGenFurniture-freecad-workbench/issues</url>
 
