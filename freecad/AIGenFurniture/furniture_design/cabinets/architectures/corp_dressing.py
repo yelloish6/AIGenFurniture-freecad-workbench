@@ -34,19 +34,19 @@ class CorpDressing(Cabinet):
         )
 
         jos = BoardPal(self.label + ".bottom", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
-                       self.cant_lab, self.cant_lab)
+                       "", "")
         jos.move("x", self.thick_pal)
         jos.move("z", rules["height_legs"])
         self.append(jos)
 
         lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal,
-                        self.cant_lab, "", self.cant_lab, "")
+                        self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
         lat2 = BoardPal(self.label + ".right_side", self.height, self.depth, self.thick_pal,
-                        self.cant_lab, "", self.cant_lab, "")
+                        self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat2.rotate_cw("y")
         lat2.move("x", self.width)
         self.append(lat2)

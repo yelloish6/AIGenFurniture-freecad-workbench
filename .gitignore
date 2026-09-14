@@ -21,3 +21,4 @@ env/
 .DS_Store
 Thumbs.db
 .~lock.*
+/freecad/AIGenFurniture/vendor_delete/
