@@ -25,6 +25,7 @@ class CorpDressing(Cabinet):
         if front_list is None:
             front_list = [0, 0, 0]
         plinth_height = rules["height_legs"]
+        self.front_base_offset = plinth_height
         covered_height = self.height - plinth_height
         opening_heights, front_flags = validate_tower_opening_layout(
             gap_list,

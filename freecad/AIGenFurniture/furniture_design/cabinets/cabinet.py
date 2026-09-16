@@ -36,6 +36,8 @@ class Cabinet(DrawersMixin, ShelvesMixin, FrontMixin, BackMixin):
         self.cant = round(rules["cant_general"])
         self.front_gap = float(rules["gap_front"])
         self.front_clearance = float(rules["front_clearance"])
+        # Height reserved below the front area, e.g. an integrated plinth.
+        self.front_base_offset = 0
         self.pol_depth = rules["pol_depth"]
         self.cant_pol = rules["cant_pol"]
         self.cant_separator = rules["cant_separator"]

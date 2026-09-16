@@ -102,6 +102,8 @@ class FrontMixin:
 
         :param split_list: [[front1_%height,front1_%width][front2_%height,front2_%width]]
         :param front_type: "door" "drawer" "cover"
+        :param reveal: clearances [left, top, right, bottom] relative to the
+            front area above front_base_offset.
         :return: none
         """
         def parse_split_list(split_list):
@@ -118,12 +120,12 @@ class FrontMixin:
         r_left, r_top, r_right, r_bot = parse_split_list(reveal)
         gap = float(self.front_gap)
 
-        h_tot = self.height - r_top - r_bot + gap
+        h_tot = self.height - self.front_base_offset - r_top - r_bot + gap
         h_count = 0
         w_count = 0
         w_tot = self.width - r_right - r_left + gap
         origin_x0 = r_left
-        origin = [origin_x0, r_bot]
+        origin = [origin_x0, self.front_base_offset + r_bot]
         for i in range(len(split_list)):
             split = split_list[i]
             h = int((h_tot * split[0] / 100) - gap)
@@ -179,10 +181,10 @@ class FrontMixin:
 
         gap = float(self.front_gap)
         clearance = float(self.front_clearance)
-        h_tot  = self.height - (2 * self.thick_pal) - (2 * clearance) + gap
+        h_tot  = self.height - self.front_base_offset - (2 * self.thick_pal) - (2 * clearance) + gap
         w_tot  = self.width  - (2 * self.thick_pal) - (2 * clearance) + gap
         origin_x0 = self.thick_pal + clearance
-        origin = [origin_x0, self.thick_pal + clearance]
+        origin = [origin_x0, self.front_base_offset + self.thick_pal + clearance]
 
         h_count = 0
         w_count = 0

@@ -23,6 +23,7 @@ class CorpCuPicioare(Cabinet):
         :param h_skirt: height of the skirting board
         """
         super().__init__(label, height, width, depth, rules)
+        self.front_base_offset = h_skirt
         lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
             self.cant_lab)
         lat1.rotate_cw("y")

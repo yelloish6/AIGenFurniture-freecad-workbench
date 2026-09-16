@@ -7,6 +7,7 @@ from ..cabinet import Cabinet
 class Banca(Cabinet):
     def __init__(self, label, height, width, depth, rules, gap_front = 50, gap_lat = 50, height_base = 100):
         super().__init__(label, height, width, depth, rules)
+        self.front_base_offset = height_base
 
         lat1 = BoardPal(self.label + ".left_side", height - self.thick_pal, depth, self.thick_pal, "1", "", "1", "")
         lat1.rotate_cw("y")
