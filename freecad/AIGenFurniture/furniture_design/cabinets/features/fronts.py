@@ -11,6 +11,8 @@ def validate_tower_opening_layout(gap_list, front_list, covered_height, board_th
 
     gap_list contains explicitly dimensioned openings ordered bottom to top.
     The final top opening is calculated from the remaining covered height.
+    A single zero ([0]), like an empty gap list, means no separators and
+    requires exactly one front flag for the entire covered height.
     """
     if gap_list is None:
         raise ValueError("gap_list must be a sequence of positive numeric explicit opening heights.")
@@ -59,6 +61,8 @@ def validate_tower_opening_layout(gap_list, front_list, covered_height, board_th
             normalized_gap = float(gap)
         except (TypeError, ValueError) as exc:
             raise ValueError(f"gap_list[{index}] must be a positive numeric explicit opening height.") from exc
+        if normalized_gap == 0 and len(gaps_in) == 1:
+            continue
         if normalized_gap <= 0:
             raise ValueError(f"gap_list[{index}] must be strictly positive.")
         normalized_gaps.append(normalized_gap)
@@ -74,7 +78,7 @@ def validate_tower_opening_layout(gap_list, front_list, covered_height, board_th
     expected_front_count = len(normalized_gaps) + 1
     if len(normalized_fronts) != expected_front_count:
         raise ValueError(
-            "front_list length must equal len(gap_list) + 1; "
+            "front_list length must equal len(gap_list) + 1 (or 1 when gap_list is [0]); "
             f"got len(front_list)={len(normalized_fronts)} and len(gap_list)={len(normalized_gaps)}."
         )
 

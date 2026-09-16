@@ -1,4 +1,5 @@
 import itertools
+import json
 import sys
 import types
 import unittest
@@ -15,9 +16,26 @@ from furniture_design.cabinets.features.fronts import (  # noqa: E402
     FrontMixin,
     validate_tower_opening_layout,
 )
+from furniture_design.cabinets.architectures import (  # noqa: E402
+    make_tower_box,
+    make_corp_dressing,
+)
 
 
 class TowerOpeningLayoutTest(unittest.TestCase):
+    def test_no_separator_schema(self):
+        for gaps in ([0], [0.0], []):
+            for flag in (0, 1, False, True):
+                with self.subTest(gaps=gaps, flag=flag):
+                    self.assertEqual(
+                        validate_tower_opening_layout(gaps, [flag], 1000, 18),
+                        ([964.0], [int(flag)]),
+                    )
+
+    def test_zero_sentinel_requires_one_front_flag(self):
+        with self.assertRaisesRegex(ValueError, "1 when gap_list is \\[0\\]"):
+            validate_tower_opening_layout([0], [1, 0], 1000, 18)
+
     def test_valid_default_schema(self):
         openings, fronts = validate_tower_opening_layout([200, 400], [0, 0, 0], 1000, 18)
 
@@ -108,6 +126,13 @@ class TowerFrontHarness(FrontMixin):
 
 
 class TowerFrontGenerationTest(unittest.TestCase):
+    def test_full_height_front(self):
+        for flag in (0, 1):
+            cabinet = TowerFrontHarness()
+            openings, fronts = validate_tower_opening_layout([0], [flag], 1000, 18)
+            cabinet.add_tower_fronts(openings, fronts, covered_height=1000)
+            self.assertEqual(cabinet.fronts, [(996.0, 596.0, -2.0, 2.0)] if flag else [])
+
     def test_all_three_opening_front_combinations(self):
         opening_heights, _fronts = validate_tower_opening_layout([200, 400], [0, 0, 0], 1000, 18)
 
@@ -127,6 +152,24 @@ class TowerFrontGenerationTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "opening_heights length must equal front_list length"):
             cabinet.add_tower_fronts([200, 400], [1, 1, 1], covered_height=1000)
+
+
+class CabinetOpeningIntegrationTest(unittest.TestCase):
+    def test_both_architecture_factories(self):
+        rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
+        for factory in (make_tower_box, make_corp_dressing):
+            for gaps, flags in (([0], [0]), ([0], [1]), ([200, 400], [1, 0, 1])):
+                with self.subTest(factory=factory.__name__, gaps=gaps, flags=flags):
+                    cabinet = factory("test", 1000, 600, 600, rules,
+                                      box={"gap_list": gaps, "front_list": flags})
+                    separators = [e for e in cabinet.elements_list
+                                  if ".horizontal_separator_" in e.label]
+                    fronts = cabinet.get_element_list_by_type("front")
+                    self.assertEqual(len(separators), 0 if gaps == [0] else len(gaps))
+                    self.assertEqual(len(fronts), sum(flags))
+                    if gaps == [0] and flags == [1]:
+                        base = rules["height_legs"] if factory is make_corp_dressing else 0
+                        self.assertEqual(fronts[0].length, 1000 - base - 2 * rules["front_clearance"])
 
 
 if __name__ == "__main__":
