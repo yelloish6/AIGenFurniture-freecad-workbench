@@ -99,7 +99,7 @@ FEATURES = {
 
     # shelves
     "add_pol": {
-        "label": "Add Shelves",
+        "label": "Shelves",
         "enabled": True,
         "tooltip": "Add shelves",
         "params": {
