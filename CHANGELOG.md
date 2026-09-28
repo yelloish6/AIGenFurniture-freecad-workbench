@@ -20,7 +20,6 @@
   assembly, prefilled with the accessories required by its architecture.
 - Added an aggregated accessories CSV containing accessory quantities for the
   complete order.
-- Added accessory support to the JSON import and export workflows.
 - Added an Order Setup extension hook that allows Pro and shop-specific addons
   to add their own setup spreadsheets and configuration.
 

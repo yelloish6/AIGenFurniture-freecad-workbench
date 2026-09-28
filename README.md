@@ -178,25 +178,6 @@ The recommended installation method is the built-in FreeCAD Addon Manager:
 
 ---
 
-## Manual Installation
-
-For development or advanced testing, copy the repository into FreeCAD's `Mod`
-directory:
-
-| Platform | FreeCAD `Mod` directory |
-| --- | --- |
-| Windows | `C:\Users\<USERNAME>\AppData\Roaming\FreeCAD\Mod` |
-| Linux | `~/.local/share/FreeCAD/Mod` |
-
-When installing manually, all Python dependencies must be compatible with the
-Python interpreter bundled with FreeCAD. Use the Addon Manager unless you have
-a specific reason to manage the installation yourself.
-
-Alternatively, download the latest release or installer from
-[aigenfurniture.com](https://www.aigenfurniture.com).
-
----
-
 ## Tutorials
 
 Installation, cabinet creation, and manufacturing-export tutorials are
