@@ -3,11 +3,12 @@
 from ..elements.accessory import *
 from ..elements.board import *
 from ..cabinet import Cabinet
+from ..features.fronts import validate_tower_opening_layout
 
 import math
 
 class CorpDressing(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list = [20, 40], front_list = [0, 0, 0, 0]):
+    def __init__(self, label, height, width, depth, rules, gap_list=None, front_list=None):
         """
 
         :param label:
@@ -19,32 +20,45 @@ class CorpDressing(Cabinet):
         :param front_list: care gap-uri au front (ex. [0, 0, 0, 1])
         """
         super().__init__(label, height, width, depth, rules)
+        if gap_list is None:
+            gap_list = [200, 400]
+        if front_list is None:
+            front_list = [0, 0, 0]
+        plinth_height = rules["height_legs"]
+        self.front_base_offset = plinth_height
+        covered_height = self.height - plinth_height
+        opening_heights, front_flags = validate_tower_opening_layout(
+            gap_list,
+            front_list,
+            covered_height=covered_height,
+            board_thickness=self.thick_pal,
+        )
 
-        jos = BoardPal(self.label + ".jos", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
-                       self.cant_lab, self.cant_lab)
+        jos = BoardPal(self.label + ".bottom", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
+                       "", "")
         jos.move("x", self.thick_pal)
         jos.move("z", rules["height_legs"])
         self.append(jos)
 
-        lat1 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
-                        self.cant_lab, "", self.cant_lab, "")
+        lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal,
+                        self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat1.rotate_cw("y")
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat", self.height, self.depth, self.thick_pal,
-                        self.cant_lab, "", self.cant_lab, "")
+        lat2 = BoardPal(self.label + ".right_side", self.height, self.depth, self.thick_pal,
+                        self.cant_lab, "", self.cant_lab, self.cant_lab)
         lat2.rotate_cw("y")
         lat2.move("x", self.width)
         self.append(lat2)
 
-        sus = BoardPal(self.label + ".sus", self.width - (2 * self.thick_pal), self.depth - self.cant,
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - self.cant,
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("x", lat1.thick)
         sus.move("z", lat1.length - self.thick_pal)
         self.append(sus)
 
-        plinta = BoardPal(self.label + ".plinta", self.width - (2 * self.thick_pal), rules["height_legs"],
+        plinta = BoardPal(self.label + ".plinth", self.width - (2 * self.thick_pal), rules["height_legs"],
                           self.thick_pal, self.cant_lab, "", "", "")
         plinta.rotate("x")
         plinta.move("x", self.thick_pal)
@@ -52,10 +66,11 @@ class CorpDressing(Cabinet):
         self.append(plinta)
 
         # adding horizontal separators
-        offset = 0
-        for gap in range(len(gap_list)):
-            offset += gap_list[gap] + self.thick_pal
-            self.add_sep_h(self.width - 2 * self.thick_pal, 0, offset, self.cant_lab)
+        boundary_z = plinth_height + self.thick_pal
+        for opening_height in opening_heights[:-1]:
+            boundary_z += opening_height
+            self.add_sep_h(self.width - 2 * self.thick_pal, 0, boundary_z - self.thick_pal, self.cant_lab)
+            boundary_z += self.thick_pal
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0], self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + self.thick_pal, self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.thick_pal),
@@ -70,35 +85,9 @@ class CorpDressing(Cabinet):
 
         self.add_pfl()
 
-        # Se seteaza fronturile pentru turn
-        # gap_list[0]
-        if (front_list[0] == 1) and (front_list[1] == 0):
-            self.add_front_manual(gap_list[0] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (front_list[0] == 1) and (front_list[1] == 1):
-            self.add_front_manual(gap_list[0] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        # gap_list[1]
-        if (front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 0):
-            self.add_front_manual(gap_list[1] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (((front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 0))
-                or ((front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 1))):
-            self.add_front_manual(gap_list[1] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        if (front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 1):
-            self.add_front_manual(gap_list[1] + self.thick_pal - 4, self.width - 4)
-
-        # gap_list[2]
-        if (front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 0):
-            self.add_front_manual(gap_list[2] + (2 * self.thick_pal) - 4, self.width - 4)
-        if (((front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 0))
-                or ((front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 1))):
-            self.add_front_manual(gap_list[2] + (1.5 * self.thick_pal) - 3, self.width - 4)
-        if (front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 1):
-            self.add_front_manual(gap_list[2] + self.thick_pal - 4, self.width - 4)
-
-        # gap4
-        if (front_list[3] == 1) and (front_list[2] == 0):
-            self.add_front_manual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3 * self.thick_pal) - 4,
-                                  self.width - 4)
-        if (front_list[3] == 1) and (front_list[2] == 1):
-            self.add_front_manual(
-                self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.thick_pal) - 3,
-                self.width - 4)
+        self.add_tower_fronts(
+            opening_heights,
+            front_flags,
+            base_offset_z=plinth_height,
+            covered_height=covered_height,
+        )

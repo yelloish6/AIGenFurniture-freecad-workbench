@@ -90,7 +90,7 @@ class Order:
             if material_attr is None:
                 # Special handling for accessories - use element.label as material
                 if element.type == "accessory":
-                    element.material = element.label
+                    element.material = getattr(element, "pricing_key", element.label)
             else:
                 # For board types, assign material from order if element material is empty
                 if element.material == "":

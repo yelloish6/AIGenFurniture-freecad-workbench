@@ -4,9 +4,10 @@ import os, sys
 
 # Package version - follows Semantic Versioning
 # See: https://semver.org/
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-# Add the vendor folder to sys.path
-# _vendor_path = os.path.join(os.path.dirname(__file__), "vendor")
-# if _vendor_path not in sys.path:
-#     sys.path.insert(0, _vendor_path)
+# Make vendored dependencies available to both FreeCAD and CLI entry points.
+# Prefer the active runtime's packages, especially binary packages such as numpy.
+_vendor_path = os.path.join(os.path.dirname(__file__), "vendor")
+if _vendor_path not in sys.path:
+    sys.path.append(_vendor_path)

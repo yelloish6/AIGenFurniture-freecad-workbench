@@ -12,8 +12,9 @@ from ..furniture_design.cabinets.cabinet import Cabinet
 from ..furniture_design.cabinets.features import FEATURES
 from ..furniture_design.cabinets.architectures import CABINETS
 from .cmd_make_element import get_elements_registry
-from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
+from ..furniture_design.design_engine import load_default_rules
 from ..manufacturing.generate_files import generate_manufacturing_files
+from ..furniture_design.accessory_spreadsheet import read_accessories_from_assembly
 
 
 _ROT_STEPS_TABLE = None
@@ -172,21 +173,23 @@ def freecad_box_to_element(fc_box):
         "length": length,
         "width": width,
     }
-    # Only add thick if it's in the constructor keys (Pfl doesn't accept it)
+    # Only add thick if it's in the constructor keys.
     if "thick" in ctor_keys:
         ctor_args["thick"] = height
 
     # Add element-specific properties (e.g., cant_L1, cant_L2 for BoardPal)
+    param_aliases = element_def.get("param_aliases", {})
     for prop in fc_box.PropertiesList:
         if fc_box.getGroupOfProperty(prop) == "Element":
             prop_name = prop
+            ctor_prop_name = param_aliases.get(prop_name, prop_name)
             prop_value = getattr(fc_box, prop)
             # Convert FreeCAD Quantity to float if needed
             if hasattr(prop_value, "Value"):
                 prop_value = prop_value.Value
             # Only add if it's in constructor keys
-            if prop_name in ctor_keys:
-                ctor_args[prop_name] = prop_value
+            if ctor_prop_name in ctor_keys:
+                ctor_args[ctor_prop_name] = prop_value
 
     # Create element object
     element_cls = element_def["class"]
@@ -212,6 +215,9 @@ def freecad_box_to_element(fc_box):
             prop_value = prop_value.Value
 
         setattr(element, prop, prop_value)
+        canonical_prop = param_aliases.get(prop, prop)
+        if canonical_prop != prop:
+            setattr(element, canonical_prop, prop_value)
         if prop == "Material":
             element.material = prop_value
         elif prop == "ManufacturingRoute":
@@ -257,7 +263,7 @@ def freecad_document_to_order(doc):
     order = Order(customer_data)
 
     # Load default rules
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
 
     # Find all App::Part objects that represent exploded cabinets (Assy_*)
     for obj in doc.Objects:
@@ -289,14 +295,11 @@ def freecad_document_to_order(doc):
                         if element:
                             cabinet.append(element)
 
-            # Read accessories from cabinet properties
-            if hasattr(obj, "AccessoryTypes") and hasattr(obj, "AccessoryCounts"):
-                from ..furniture_design.cabinets.elements.accessory import Accessory
-                accessory_types = obj.AccessoryTypes
-                accessory_counts = obj.AccessoryCounts
-                for acc_type, acc_count in zip(accessory_types, accessory_counts):
-                    accessory = Accessory(acc_type, acc_count)
-                    cabinet.append(accessory)
+            for accessory in read_accessories_from_assembly(obj, doc):
+                cabinet.append(accessory)
+
+            cabinet.source_assembly = obj
+            cabinet.source_document = doc
 
             # Apply cabinet positioning from Part Placement
             position_list = freecad_placement_to_position_list(obj.Placement)
@@ -312,7 +315,7 @@ def generate_from_geometry():
     """Main function to generate manufacturing files from FreeCAD geometry."""
     doc = App.ActiveDocument
     if not doc:
-        QtGui.QMessageBox.warning(None, "Error", "No active document.")
+        QtGui.QMessageBox.warning(None, "Generate Manufacturing Files", "No active document.")
         return
 
     # Check if document has exploded cabinets
@@ -325,7 +328,7 @@ def generate_from_geometry():
     if not has_cabinets:
         QtGui.QMessageBox.warning(
             None,
-            "No Cabinets Found",
+            "Generate Manufacturing Files",
             "No exploded cabinets found in the document.\n"
             "Please use 'Generate Cabinet' command first."
         )
@@ -336,6 +339,29 @@ def generate_from_geometry():
             None,
             "Cabinet Generator",
             "Please save the FreeCAD file before running."
+        )
+        return
+
+    try:
+        order = freecad_document_to_order(doc)
+    except Exception as exc:
+        App.Console.PrintError(f"Error reading cabinet geometry: {exc}\n")
+        QtGui.QMessageBox.critical(
+            None,
+            "Generate Manufacturing Files",
+            f"Could not read cabinet geometry:\n{exc}",
+        )
+        return
+    is_valid, missing_params = order.validate()
+    if not is_valid:
+        missing_labels = []
+        from ..furniture_design.order import ORDER_PARAMS
+        for param_name in missing_params:
+            missing_labels.append(ORDER_PARAMS.get(param_name, {}).get("label", param_name))
+        QtGui.QMessageBox.warning(
+            None,
+            "Generate Manufacturing Files",
+            "Complete these required Order Setup fields before exporting: " + ", ".join(missing_labels),
         )
         return
 
@@ -350,8 +376,6 @@ def generate_from_geometry():
     try:
         # Read FreeCAD geometry and create Order directly
         App.Console.PrintMessage("Reading exploded cabinets from FreeCAD document...\n")
-        order = freecad_document_to_order(doc)
-
         App.Console.PrintMessage(f"Found {len(order.cabinets_list)} cabinet(s)\n")
 
         # Generate manufacturing files
@@ -361,8 +385,11 @@ def generate_from_geometry():
             "elements_registry": elements_registry,
             "features_registry": FEATURES,
             "cabinets_registry": CABINETS,
+            "stl": {
+                "is_horizontal_layout": False,
+            },
         }
-        generate_manufacturing_files(order, output_dir, context["elements_registry"])
+        generate_manufacturing_files(order, output_dir, context)
 
         QtGui.QMessageBox.information(
             None,
@@ -375,7 +402,7 @@ def generate_from_geometry():
         App.Console.PrintError(traceback.format_exc())
         QtGui.QMessageBox.critical(
             None,
-            "Error",
+            "Generate Manufacturing Files",
             f"Failed to generate manufacturing files:\n{str(e)}"
         )
 
@@ -384,7 +411,7 @@ class GenerateFromGeometryCommand:
     def GetResources(self):
         return {
             "Pixmap": get_command_icon("icon_AIGenFurniture"),
-            "MenuText": "Generate from Geometry",
+            "MenuText": "Generate Manufacturing Files",
             "ToolTip": "Generate manufacturing files from exploded cabinets in FreeCAD"
         }
 

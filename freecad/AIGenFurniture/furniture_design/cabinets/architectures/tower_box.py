@@ -5,9 +5,10 @@ import math
 from ..cabinet import Cabinet
 from ..elements.accessory import Accessory
 from ..elements.board import BoardPal
+from ..features.fronts import validate_tower_opening_layout
 
 class TowerBox(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list = [200, 400], gap_heat = 50, front_list = [0, 0, 0, 0]):
+    def __init__(self, label, height, width, depth, rules, gap_list=None, gap_heat=50, front_list=None):
         """
 
         :param label:
@@ -20,37 +21,47 @@ class TowerBox(Cabinet):
         :param front_list: care gap-uri au front (ex. [0, 0, 0, 1])
         """
         super().__init__(label, height, width, depth, rules)
+        if gap_list is None:
+            gap_list = [200, 400]
+        if front_list is None:
+            front_list = [0, 0, 0]
+        opening_heights, front_flags = validate_tower_opening_layout(
+            gap_list,
+            front_list,
+            covered_height=self.height,
+            board_thickness=self.thick_pal,
+        )
         self.depth = self.depth - gap_heat
-        jos = BoardPal(self.label + ".down", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
+        jos = BoardPal(self.label + ".bottom", self.width, self.depth, self.thick_pal, self.cant_lab, "", self.cant_lab,
                        self.cant_lab)
         self.append(jos)
 
-        lat1 = BoardPal(self.label + ".lat_l", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
+        lat1 = BoardPal(self.label + ".left_side", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat1.rotate_cw("y")
         lat1.move("z", jos.thick)
         lat1.move("x", self.thick_pal)
         self.append(lat1)
 
-        lat2 = BoardPal(self.label + ".lat_r", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
+        lat2 = BoardPal(self.label + ".right_side", self.height - self.thick_pal, self.depth + gap_heat, self.thick_pal,
                         self.cant_lab, "", self.cant_lab, "")
         lat2.rotate_cw("y")
         lat2.move("z", jos.thick)
         lat2.move("x", jos.length)
         self.append(lat2)
 
-        sus = BoardPal(self.label + ".up", self.width - (2 * self.thick_pal), self.depth - (self.cant),
+        sus = BoardPal(self.label + ".top", self.width - (2 * self.thick_pal), self.depth - (self.cant),
                        self.thick_pal, self.cant_lab, "", "", "")
         sus.move("x", lat1.thick)
         sus.move("z", lat1.length)
         self.append(sus)
 
         # adding horizontal separators
-        offset = 0
-        for gap in range(len(gap_list)):
-            offset += gap_list[gap]  # + self.thick_pal
-            self.add_sep_h(self.width - 2 * self.thick_pal, 0, offset, self.cant_lab)
-            offset += self.thick_pal
+        boundary_z = self.thick_pal
+        for opening_height in opening_heights[:-1]:
+            boundary_z += opening_height
+            self.add_sep_h(self.width - 2 * self.thick_pal, 0, boundary_z - self.thick_pal, self.cant_lab)
+            boundary_z += self.thick_pal
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0], self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + self.thick_pal, self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.thick_pal),
@@ -64,48 +75,9 @@ class TowerBox(Cabinet):
 
         self.add_pfl()
         if gap_heat > 0:
-            self.get_item_by_type_label("pfl",self.label + ".hdf").__setattr__("length", self.width - (2 * self.thick_pal))
-            self.get_item_by_type_label("pfl",self.label + ".hdf").move("x", self.thick_pal - 2)
-        # --- Setting the front doors for the tower (loop-based with fg + separator sharing) ---
-        fg = rules["gap_front"]
-
-        # --- Ensure last gap exists ---
-        used_height = sum(gap_list) + len(gap_list) * self.thick_pal
-        last_gap = self.height - used_height - (2 * self.thick_pal)  # subtract top board and bottom board
-        if len(gap_list) < len(front_list):  # only append if needed
-            gap_list = gap_list + [last_gap]
-        offset = 0  # cumulative height from bottom
-        for i, (gap, has_front) in enumerate(zip(gap_list, front_list)):
-            if has_front:
-                # Neighbors
-                below_has_front = (i > 0 and front_list[i - 1] == 1)
-                above_has_front = (i < len(front_list) - 1 and front_list[i + 1] == 1)
-
-                # Bottom trimming
-                if below_has_front:
-                    bottom_trim = (self.thick_pal / 2) + (fg / 2)
-                else:
-                    bottom_trim = fg
-
-                # Top trimming
-                if above_has_front:
-                    top_trim = (self.thick_pal / 2) + (fg / 2)
-                else:
-                    top_trim = fg
-
-                # Front height = gap minus trims
-                front_height = gap + (2 * self.thick_pal) - (bottom_trim + top_trim)
-
-                # Position = offset + bottom_trim
-                self.add_front_manual(
-                    front_height,               # door height
-                    self.width - (2 * fg),      # door width
-                    0,                          # x offset
-                    offset + bottom_trim        # z offset
-                )
-
-            # Move offset for next level
-            offset += gap + self.thick_pal
+            self.get_item_by_type_label("pfl", self.label + ".back").__setattr__("length", self.width - (2 * self.thick_pal))
+            self.get_item_by_type_label("pfl", self.label + ".back").move("x", self.thick_pal - 2)
+        self.add_tower_fronts(opening_heights, front_flags)
 
         # if front_list[0] == 1:
         #     if front_list[1] == 0:

@@ -6,28 +6,44 @@ from ..elements.board import BoardPal
 
 class ShelvesMixin:
 
-    def add_pol(self, nr, cant):
+    def _next_panel_label(self, stem):
+        prefix = self.label + "." + stem + "_"
+        indexes = []
+        for element in self.elements_list:
+            label = getattr(element, "label", "")
+            if label.startswith(prefix):
+                suffix = label[len(prefix):].split(".", 1)[0]
+                if suffix.isdigit():
+                    indexes.append(int(suffix))
+        return prefix + str(max(indexes, default=0) + 1)
+
+    def add_pol(self, Number=None, cant=None, nr=None):
         """
         adauga polite intr-un corp
-        :param nr: numarul politelor de adaugat in corp
-        :param cant: tipul de cant 0,4 sau 2 (ca si numar)
+        :param Number: numarul politelor de adaugat in corp
+        :param cant: deprecated; shelf edging comes from design rules
+        :param nr: deprecated name for Number
         :return: none
         """
-        # TODO: adancimea trebe scazuta cu grosimea cantului si inca nu merge corect
+        # pol_depth is the shelf setback from the cabinet front.
+        nr = Number if Number is not None else nr
+        if nr is None:
+            nr = 1
+        cant = self.cant_pol
         pol_lung = self.width - (2 * self.thick_pal)
-        pol_lat = (self.depth - 20)
+        pol_lat = self.depth - self.pol_depth
         for i in range(nr):
-            pol = BoardPal(self.label + ".shelf", pol_lung, pol_lat, self.thick_pal, cant, "", "", "")
+            pol = BoardPal(self.label + ".shelf_" + str(i + 1), pol_lung, pol_lat, self.thick_pal, cant, "", "", "")
             pol.move("x", self.thick_pal)
             pol.move("z", round(self.height / (nr + 1)) * (i + 1))
-            pol.move("y", 20)
+            pol.move("y", self.pol_depth)
             self.append(pol)
             self.append(Accessory("bolt polita", 4))
             self.append(Accessory("surub PFL", 2))
 
     def add_pol_2(self, orient, length, height, offset):
         """
-        adds a polita in the cabinet, but you can adjust length height and offset
+        adds a shelf in the cabinet, but you can adjust length height and offset
         :param orient: orientation ["h" or "v"]
         :param length: length of the board, 0 for default width
         :param height: positioning height
@@ -40,7 +56,7 @@ class ShelvesMixin:
                 placa_length = int(length * (self.width - (2 * self.thick_pal)))
             else:
                 placa_length = length
-            placa = BoardPal(self.label + "_sep_h" + str(length), placa_length, self.depth - self.pol_depth,
+            placa = BoardPal(self._next_panel_label("horizontal_separator"), placa_length, self.depth - self.pol_depth,
                              self.thick_pal, self.cant_pol, "", "", "")
 
             if height <= 1:
@@ -64,7 +80,7 @@ class ShelvesMixin:
                 placa_length = int(length * (self.height - (2 * self.thick_pal)))
             else:
                 placa_length = length
-            placa = BoardPal(self.label + "_sep_h" + str(length), placa_length, self.depth - self.pol_depth,
+            placa = BoardPal(self._next_panel_label("vertical_separator"), placa_length, self.depth - self.pol_depth,
                              self.thick_pal, self.cant_pol, "", "", "")
             placa.rotate("y")
 
@@ -89,7 +105,7 @@ class ShelvesMixin:
         if orient == "h":
             sep_l = self.sep_space_w
             sep_w = self.sep_max_depth
-            sep = BoardPal(self.label + ".sep" + ".h", sep_l, sep_w, self.thick_pal, sep_cant, "", "", "")
+            sep = BoardPal(self._next_panel_label("horizontal_separator"), sep_l, sep_w, self.thick_pal, sep_cant, "", "", "")
             # self.addPalObject(sep)
             # self.addPal(self.label + ".sep" + ".h", sep_l, sep_w, self.thick_pal, sep_cant, "", "", "")
 
@@ -103,7 +119,7 @@ class ShelvesMixin:
         if orient == "v":
             sep_l = self.sep_space_h
             sep_w = self.sep_max_depth
-            sep = BoardPal(self.label + ".sep" + ".v", sep_l, sep_w, self.thick_pal, sep_cant, "", "", "")
+            sep = BoardPal(self._next_panel_label("vertical_separator"), sep_l, sep_w, self.thick_pal, sep_cant, "", "", "")
             self.append(sep)
 
             self.sep_space_w = round((self.sep_space_w - self.thick_pal) / 2)
@@ -143,7 +159,7 @@ class ShelvesMixin:
         """
         sep_l = height
         sep_w = self.depth - edge_gap
-        sep = BoardPal(self.label + ".sep" + ".v", sep_l, sep_w, self.thick_pal, sep_edge, "", "", "")
+        sep = BoardPal(self._next_panel_label("vertical_separator"), sep_l, sep_w, self.thick_pal, sep_edge, "", "", "")
         self.append(sep)
         self.sep_space_w = round((self.sep_space_w - self.thick_pal) / 2)
 
@@ -157,7 +173,7 @@ class ShelvesMixin:
     def add_sep_h(self, width, offset_x, offset_z, sep_edge, edge_gap = 0):
         sep_l = width
         sep_w = self.depth - edge_gap
-        sep = BoardPal(self.label + ".sep" + ".h", sep_l, sep_w, self.thick_pal, sep_edge, "", "", "")
+        sep = BoardPal(self._next_panel_label("horizontal_separator"), sep_l, sep_w, self.thick_pal, sep_edge, "", "", "")
         self.append(sep)
         self.sep_space_w = round((self.sep_space_w - self.thick_pal) / 2)
 
@@ -165,4 +181,3 @@ class ShelvesMixin:
         sep.move("z", self.thick_pal + offset_z)
         sep.move("y", edge_gap)
         self.append(Accessory("surub", 4))
-

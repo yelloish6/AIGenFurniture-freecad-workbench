@@ -5,11 +5,12 @@ import FreeCADGui as Gui
 import os
 from .._resources import get_command_icon
 from ..furniture_design.cabinets.elements import ELEMENTS
-from .cmd_make_element import _resolve_property_spec
+from .cmd_make_element import _order_var_material_default, _resolve_property_spec
 
 from . import resources
-from ..furniture_design.design_engine import load_default_rules, DEFAULT_RULES_PATH
+from ..furniture_design.design_engine import load_default_rules
 from ..furniture_design.cabinets.architectures import get_cabinet_factory
+from ..furniture_design.accessory_spreadsheet import create_accessory_spreadsheet
 
 def is_valid_cabinet_object(obj):
     if obj is None:
@@ -85,8 +86,19 @@ def placement_from_position_list(position_list):
 
 
 def _get_element_param_value(element, param_name, default_value=""):
+    edge_aliases = {
+        "Edge_L1": "cant_L1",
+        "Edge_L2": "cant_L2",
+        "Edge_l1": "cant_l1",
+        "Edge_l2": "cant_l2",
+    }
+    canonical_param_name = edge_aliases.get(param_name, param_name)
+
     if hasattr(element, param_name):
         return getattr(element, param_name)
+
+    if canonical_param_name != param_name and hasattr(element, canonical_param_name):
+        return getattr(element, canonical_param_name)
 
     if param_name == "Material":
         return getattr(element, "material", default_value)
@@ -99,8 +111,8 @@ def _get_element_param_value(element, param_name, default_value=""):
         return getattr(element, lower_name)
 
     cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
-    if param_name in cant_names and hasattr(element, "cant_list"):
-        cant_index = cant_names.index(param_name)
+    if canonical_param_name in cant_names and hasattr(element, "cant_list"):
+        cant_index = cant_names.index(canonical_param_name)
         if cant_index < len(element.cant_list):
             return element.cant_list[cant_index]
 
@@ -122,6 +134,8 @@ def ensure_registry_params(doc_obj, element_type):
             param_name,
             param_spec,
         )
+        if param_name == "Material":
+            default_value = _order_var_material_default(doc_obj.Document, element_type) or default_value
         if not hasattr(doc_obj, param_name):
             doc_obj.addProperty(fc_type, param_name, "Element", doc_string)
             if fc_type == "App::PropertyEnumeration":
@@ -142,6 +156,8 @@ def apply_registry_param_values(doc_obj, element_type, element):
             param_name,
             param_spec,
         )
+        if param_name == "Material":
+            default_value = _order_var_material_default(doc_obj.Document, element_type) or default_value
         element_value = _get_element_param_value(element, param_name, default_value)
 
         if fc_type == "App::PropertyEnumeration":
@@ -168,7 +184,7 @@ def apply_registry_param_values(doc_obj, element_type, element):
 def explode_box_to_cabinet(box):
     doc = App.ActiveDocument
     if not box:
-        App.Console.PrintError("[WARNING] cmd_explode_cabinet.py: No box selected.\n")
+        App.Console.PrintWarning("Select one cabinet placeholder before running Generate Cabinet.\n")
         return
 
     # Get box dimensions
@@ -180,7 +196,7 @@ def explode_box_to_cabinet(box):
     cab_type = getattr(box, "CabinetType", "BaseBox")
 
     # Rules (normally from spreadsheet / OrderVar)
-    rules = load_default_rules(DEFAULT_RULES_PATH)
+    rules = load_default_rules()
 
     factory = get_cabinet_factory(cab_type)
     if not factory:
@@ -189,45 +205,52 @@ def explode_box_to_cabinet(box):
         )
         factory = get_cabinet_factory("BaseBox")
 
-    cabinet = factory(box.Label, height, width, depth, rules, box=box)
-
-    import re
-    from collections import defaultdict
-
-# TODO rewrite the section below to use the get_feature_handler() method defined in the __init__.py for features.
-    # === AUTO-APPLY BOX FEATURES ===
-    feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
-    features = defaultdict(lambda: defaultdict(dict))
-
-    # Collect features grouped by (feature_name, index)
-    for prop in box.PropertiesList:
-        match = feature_pattern.match(prop)
-        if not match:
-            continue
-        feature_name, index, param = match.groups()
-        value = getattr(box, prop)
-        features[feature_name][index][param] = value
-
-    # Execute feature methods dynamically
-    for feature_name, instances in features.items():
-        if not hasattr(cabinet, feature_name):
-            App.Console.PrintWarning(f"[WARNING] cmd_explode_cabinet.py: Cabinet has no method '{feature_name}' (skipping)\n")
-            continue
-        method = getattr(cabinet, feature_name)
-        for index, params in instances.items():
-            try:
-                method(**params)
-                App.Console.PrintMessage(f"[OK] Applied feature '{feature_name}' #{index} with {params}\n")
-            except TypeError as e:
-                App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
-
     # ── UNDO TRANSACTION ──────────────────────────────────────────────────────
     # Open a named transaction BEFORE any document mutations so that a single
     # Ctrl+Z reverses the entire cabinet generation as one atomic undo step.
     doc.openTransaction("Generate Cabinet")
     try:
+        cabinet = factory(box.Label, height, width, depth, rules, box=box)
+
+        import re
+        from collections import defaultdict
+
+        # TODO rewrite the section below to use the get_feature_handler() method defined in the __init__.py for features.
+        # === AUTO-APPLY BOX FEATURES ===
+        feature_pattern = re.compile(r"^Feature_(\w+)_([0-9]+)_(\w+)$")
+        features = defaultdict(lambda: defaultdict(dict))
+
+        # Collect features grouped by (feature_name, index)
+        for prop in box.PropertiesList:
+            match = feature_pattern.match(prop)
+            if not match:
+                continue
+            feature_name, index, param = match.groups()
+            value = getattr(box, prop)
+            features[feature_name][index][param] = value
+
+        # Execute feature methods dynamically
+        for feature_name, instances in features.items():
+            if not hasattr(cabinet, feature_name):
+                App.Console.PrintWarning(f"[WARNING] cmd_explode_cabinet.py: Cabinet has no method '{feature_name}' (skipping)\n")
+                continue
+            method = getattr(cabinet, feature_name)
+            for index, params in instances.items():
+                try:
+                    method(**params)
+                    App.Console.PrintMessage(f"[OK] Applied feature '{feature_name}' #{index} with {params}\n")
+                except TypeError as e:
+                    App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Error applying feature '{feature_name}' #{index}: {e}\n")
+
         _do_explode(doc, box, cabinet, cab_type, height, width, depth)
         doc.commitTransaction()
+    except ValueError as e:
+        doc.abortTransaction()   # rolls back every addObject / property change
+        App.Console.PrintError(
+            f"[ERROR] cmd_explode_cabinet.py: Generation failed, changes rolled back.\n"
+            f"{e}\n"
+        )
+        raise
     except Exception as e:
         doc.abortTransaction()   # rolls back every addObject / property change
         import traceback
@@ -249,18 +272,11 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
 
     # Transfer cabinet properties to part
     cab_group.addProperty("App::PropertyString", "CabinetType", "Cabinet", "Type of cabinet").CabinetType = cab_type
-    cab_group.addProperty("App::PropertyFloat", "Height", "Box", "Cabinet Height").Height = height
-    cab_group.addProperty("App::PropertyFloat", "Width", "Box", "Cabinet Height").Width = width
-    cab_group.addProperty("App::PropertyFloat", "Depth", "Box", "Cabinet Height").Depth = depth
+    cab_group.addProperty("App::PropertyFloat", "Height", "Dimensions", "Cabinet height").Height = height
+    cab_group.addProperty("App::PropertyFloat", "Width", "Dimensions", "Cabinet width").Width = width
+    cab_group.addProperty("App::PropertyFloat", "Depth", "Dimensions", "Cabinet depth").Depth = depth
 
-    # Add accessories properties (parallel arrays: names + counts)
-    cab_group.addProperty("App::PropertyStringList", "AccessoryTypes", "Cabinet",
-                          "List of accessory types")
-    cab_group.addProperty("App::PropertyIntegerList", "AccessoryCounts", "Cabinet",
-                          "List of accessory counts")
-
-    accessory_types = []
-    accessory_counts = []
+    create_accessory_spreadsheet(doc, cab_group, cabinet, box.Label)
 
     # Place elements
     for elem in cabinet.elements_list:
@@ -296,26 +312,16 @@ def _do_explode(doc, box, cabinet, cab_type, height, width, depth):
             ensure_registry_params(part, registry_element_type)
             apply_registry_param_values(part, registry_element_type, elem)
 
-            # Preserve actual board-specific edge values from the generated element.
-            if elem.type == "pal":
-                cant_names = ["cant_L1", "cant_L2", "cant_l1", "cant_l2"]
-                for name, value in zip(cant_names, elem.cant_list):
-                    setattr(part, name, str(value))
-
             # Apply recorded transformations of the element (match STL)
             part.Placement = placement_from_position_list(elem.position_list)
             cab_group.addObject(part)   # ← single call (duplicate removed)
 
         elif elem.type == "accessory":
-            accessory_types.append(elem.label)
-            accessory_counts.append(int(elem.pieces))
+            continue
 
         else:
             App.Console.PrintError(f"[ERROR] cmd_explode_cabinet.py: Unknown element type: {elem.type}\n")
 
-    # Store accessories
-    cab_group.AccessoryTypes = accessory_types
-    cab_group.AccessoryCounts = accessory_counts
     cab_group.Placement = box.Placement.multiply(placement_from_position_list(cabinet.position_list))
 
     # Hide original box
@@ -345,8 +351,8 @@ class ExplodeBoxCommand:
     def Activated(self):
         sel = Gui.Selection.getSelection()
         if len(sel) != 1 or not is_valid_cabinet_object(sel[0]):
-            App.Console.PrintError(
-                "[WARNING] cmd_explode_cabinet.py: Please select one valid cabinet box first.\n"
+            App.Console.PrintWarning(
+                "Select one cabinet placeholder before running Generate Cabinet.\n"
             )
             return
         explode_box_to_cabinet(sel[0])

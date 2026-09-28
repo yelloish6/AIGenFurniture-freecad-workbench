@@ -1,15 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # SPDX-FileNotice: Part of the AIGenFurniture addon.
-import os, sys
+import os
 import json
 import argparse
-
-# Add vendor folder to sys.path as a fallback dependency location.
-# Keep the default interpreter/site-packages resolution first so that
-# binary packages (notably numpy) come from the active Python runtime.
-_vendor_path = os.path.join(os.path.dirname(__file__), "vendor")
-if _vendor_path not in sys.path:
-    sys.path.append(_vendor_path)
 
 from .furniture_design.design_engine import design_furniture
 from .manufacturing.generate_files import generate_manufacturing_files
