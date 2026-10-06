@@ -4,8 +4,8 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>AIGenFurniture Cabinet Generator</name>
   <description>Parametric furniture cabinet design workbench. Generate cabinets from simple boxes, apply features (fronts, shelves, drawers), and export manufacturing files.</description>
-  <version>0.2.0</version>
-  <date>2026-09-11</date>
+  <version>0.2.1</version>
+  <date>2026-10-06</date>
   <freecadmin>1.0.0</freecadmin>
   <pythonmin>3.11</pythonmin>
 

@@ -155,6 +155,37 @@ class TowerFrontGenerationTest(unittest.TestCase):
 
 
 class CabinetOpeningIntegrationTest(unittest.TestCase):
+    def test_separator_edging_preserves_finished_dimensions_and_placement(self):
+        default_rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
+        for factory, gap_heat in ((make_tower_box, 0), (make_tower_box, 50),
+                                  (make_corp_dressing, 0)):
+            for separator_edge in (0, 0.4, 1, 2):
+                with self.subTest(factory=factory.__name__, gap_heat=gap_heat,
+                                  separator_edge=separator_edge):
+                    rules = dict(default_rules, cant_general=0.8, cant_pol=3,
+                                 cant_separator=separator_edge)
+                    cabinet = factory(
+                        "test", 1000, 600, 600, rules,
+                        box={"gap_list": [200, 400], "front_list": [0, 0, 0],
+                             "gap_heat": gap_heat},
+                    )
+                    separators = [e for e in cabinet.elements_list
+                                  if ".horizontal_separator_" in e.label]
+                    self.assertEqual(len(separators), 2)
+                    base = rules["height_legs"] if factory is make_corp_dressing else 0
+                    thickness = rules["thick_pal"]
+                    expected_z = (base + thickness + 200,
+                                  base + 2 * thickness + 600)
+                    for separator, z in zip(separators, expected_z):
+                        self.assertEqual(separator.cant_list, [separator_edge, "", "", ""])
+                        # Supplier dimensions already include the edge band.
+                        self.assertEqual(separator.length, 600 - 2 * thickness)
+                        self.assertEqual(separator.width, 600 - gap_heat)
+                        self.assertEqual(separator.thick, thickness)
+                        self.assertEqual(separator.position[3:], [thickness, 0, z])
+                        self.assertEqual(separator.placement["Base"],
+                                         {"x": thickness, "y": 0, "z": z})
+
     def test_both_architecture_factories(self):
         rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
         for factory in (make_tower_box, make_corp_dressing):

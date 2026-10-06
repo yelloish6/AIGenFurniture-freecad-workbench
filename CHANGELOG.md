@@ -5,6 +5,17 @@
 
 <br/>
 
+## [0.2.1] - 2026-10-06
+
+### Fixed
+
+- Separators generated from `gap_list` in Tall Cabinet and Tall Cabinet with
+  Plinth now use `cant_separator` from Design Rules instead of `cant_general`.
+- Separator board dimensions and placement remain unchanged. Specified board
+  dimensions include edge banding because cutting suppliers deliver the finished
+  boards at those dimensions; subtracting the edge-band thickness would make
+  the finished separator too shallow.
+
 ## [0.2.0] - 2026-09-11
 
 ### Added

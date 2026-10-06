@@ -60,7 +60,13 @@ class TowerBox(Cabinet):
         boundary_z = self.thick_pal
         for opening_height in opening_heights[:-1]:
             boundary_z += opening_height
-            self.add_sep_h(self.width - 2 * self.thick_pal, 0, boundary_z - self.thick_pal, self.cant_lab)
+            self.add_sep_h(
+                self.width - 2 * self.thick_pal,
+                0,
+                boundary_z - self.thick_pal,
+                self.cant_separator,
+                # edge_gap=round(self.cant_separator)
+            )
             boundary_z += self.thick_pal
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0], self.cant_lab)
         # self.addSepH(self.width - 2 * self.thick_pal, 0, gap_list[0] + gap_list[1] + self.thick_pal, self.cant_lab)

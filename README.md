@@ -8,7 +8,7 @@ furniture workshops, independent designers, and makers who want to reduce the
 manual work between layout design and manufacturing preparation.
 
 > **Project status:** Beta  
-> **Current version:** v0.2.0  
+> **Current version:** v0.2.1
 > **Minimum FreeCAD version:** 1.0  
 
 ---

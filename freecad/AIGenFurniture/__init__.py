@@ -4,7 +4,7 @@ import os, sys
 
 # Package version - follows Semantic Versioning
 # See: https://semver.org/
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 # Make vendored dependencies available to both FreeCAD and CLI entry points.
 # Prefer the active runtime's packages, especially binary packages such as numpy.
