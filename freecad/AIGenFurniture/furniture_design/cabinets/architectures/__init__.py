@@ -72,7 +72,9 @@ def make_corp_dressing(label, height, width, depth, rules, box=None):
     """Factory for Corp Dressing with extra parameter."""
     gap_list = _box_value(box, "gap_list", [200, 400])
     front_list = _box_value(box, "front_list", [0, 0, 0])
-    return CorpDressing(label, height, width, depth, rules, gap_list = gap_list, front_list = front_list)
+    plinth_height = _box_value(box, "plinth_height", rules["height_legs"])
+    return CorpDressing(label, height, width, depth, rules, gap_list=gap_list,
+                        front_list=front_list, plinth_height=plinth_height)
 
 def make_etajera(label, height, width, depth, rules, box=None):
     """Factory for Etajera with extra shelves parameter."""
@@ -251,6 +253,7 @@ CABINET_DEFINITIONS = {
             "tooltip": "Add a tall cabinet with an integrated plinth",
         },
         "params": {
+            "plinth_height": ("App::PropertyInteger", lambda rules: rules["height_legs"], "Plinth Height: height of the plinth board in mm"),
             "gap_list": ("App::PropertyIntegerList", [200, 400], "Opening heights bottom to top; final opening uses remaining height. [0] = no separators"),
             "front_list": ("App::PropertyIntegerList", [0, 0, 0], "Fronts bottom to top (0 = open, 1 = front); one per gap plus final opening, or one flag for gap_list [0]"),
         }

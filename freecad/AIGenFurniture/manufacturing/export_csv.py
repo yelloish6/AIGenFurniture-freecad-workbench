@@ -145,7 +145,7 @@ def export_csv(order, output_folder, elements_registry=None):
     #             if element.type == "blat":
     #                 order_writer.writerow([element.label, element.length, element.width])
 
-    # output for PAL optimization
+    # output for Chipboard optimization
     pal_by_material = _group_elements_by_material(_get_elements_by_type(order, "pal"))
     for material, elements in pal_by_material.items():
         safe_material = _safe_filename_part(material)
@@ -159,7 +159,7 @@ def export_csv(order, output_folder, elements_registry=None):
             for element in elements:
                 order_writer.writerow([element.length, element.width, 1, element.label, "TRUE"])
 
-    # output for PFL optimization
+    # output for HDF optimization
     pfl_by_material = _group_elements_by_material(_get_elements_by_type(order, "pfl"))
     for material, elements in pfl_by_material.items():
         safe_material = _safe_filename_part(material)
@@ -169,6 +169,20 @@ def export_csv(order, output_folder, elements_registry=None):
         )
         with open(name, mode='w', newline="") as pfl_opt_file:
             order_writer = csv.writer(pfl_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            order_writer.writerow(["Length", "Width", "Qty", "Label", "Enabled"])
+            for element in elements:
+                order_writer.writerow([element.length, element.width, 1, element.label, "TRUE"])
+
+    # output for front optimization
+    front_by_material = _group_elements_by_material(_get_elements_by_type(order, "front"))
+    for material, elements in front_by_material.items():
+        safe_material = _safe_filename_part(material)
+        name = os.path.join(
+            folder_name,
+            f"CuttingList_Front_{safe_material}_{client_name}.csv",
+        )
+        with open(name, mode='w', newline="") as front_opt_file:
+            order_writer = csv.writer(front_opt_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             order_writer.writerow(["Length", "Width", "Qty", "Label", "Enabled"])
             for element in elements:
                 order_writer.writerow([element.length, element.width, 1, element.label, "TRUE"])

@@ -44,7 +44,7 @@ def make_cabinet_command(cabinet_name, ui, params):
                 ptype, default, desc = value
                 if not hasattr(box, pname):
                     box.addProperty(ptype, pname, "Cabinet", desc)
-                    setattr(box, pname, default)
+                    setattr(box, pname, default(rules) if callable(default) else default)
 
             doc.recompute()
             App.Console.PrintMessage(f"{cabinet_name} created.\n")

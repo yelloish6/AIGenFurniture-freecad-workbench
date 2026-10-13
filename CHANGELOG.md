@@ -5,6 +5,16 @@
 
 <br/>
 
+## [0.2.2] - 2026-10-13
+
+### Fixed
+
+- `Tall Cabinet with Plinth` exposes plinth_height parameter for adjusting the
+plinth height individually for each cabinet. Parameter is initialized by default
+to the value set in Design Rules
+- `Tall Cabinet with Plinth` HDF back adjusts with plinth height
+- Fronts are now exported also for cutting lists
+
 ## [0.2.1] - 2026-10-06
 
 ### Fixed

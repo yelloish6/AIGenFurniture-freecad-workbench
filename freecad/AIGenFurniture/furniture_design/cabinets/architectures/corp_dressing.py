@@ -8,7 +8,7 @@ from ..features.fronts import validate_tower_opening_layout
 import math
 
 class CorpDressing(Cabinet):
-    def __init__(self, label, height, width, depth, rules, gap_list=None, front_list=None):
+    def __init__(self, label, height, width, depth, rules, gap_list=None, front_list=None, plinth_height=None):
         """
 
         :param label:
@@ -18,13 +18,17 @@ class CorpDressing(Cabinet):
         :param rules:
         :param gap_list: intaltimea gap-urilor de jos in sus. Ultimul gap e cat ramane (ex:[gen_h_base - 2 * t1.pal_width,300, gen_h_tower - gen_h_base - 318 - gen_h_top])
         :param front_list: care gap-uri au front (ex. [0, 0, 0, 1])
+        :param plinth_height: plinth board height in mm; defaults to rules["height_legs"].
         """
         super().__init__(label, height, width, depth, rules)
         if gap_list is None:
             gap_list = [200, 400]
         if front_list is None:
             front_list = [0, 0, 0]
-        plinth_height = rules["height_legs"]
+        if plinth_height is None:
+            plinth_height = rules["height_legs"]
+        if not isinstance(plinth_height, (int, float)) or not math.isfinite(plinth_height) or plinth_height < 0:
+            raise ValueError("plinth_height must be a finite, non-negative height in mm")
         self.front_base_offset = plinth_height
         covered_height = self.height - plinth_height
         opening_heights, front_flags = validate_tower_opening_layout(
@@ -37,7 +41,7 @@ class CorpDressing(Cabinet):
         jos = BoardPal(self.label + ".bottom", self.width - (2 * self.thick_pal), self.depth, self.thick_pal, self.cant_lab, "",
                        "", "")
         jos.move("x", self.thick_pal)
-        jos.move("z", rules["height_legs"])
+        jos.move("z", plinth_height)
         self.append(jos)
 
         lat1 = BoardPal(self.label + ".left_side", self.height, self.depth, self.thick_pal,
@@ -58,7 +62,7 @@ class CorpDressing(Cabinet):
         sus.move("z", lat1.length - self.thick_pal)
         self.append(sus)
 
-        plinta = BoardPal(self.label + ".plinth", self.width - (2 * self.thick_pal), rules["height_legs"],
+        plinta = BoardPal(self.label + ".plinth", self.width - (2 * self.thick_pal), plinth_height,
                           self.thick_pal, self.cant_lab, "", "", "")
         plinta.rotate("x")
         plinta.move("x", self.thick_pal)
@@ -89,7 +93,7 @@ class CorpDressing(Cabinet):
         self.append(Accessory("clema plinta", picioare / 2))
         self.append(Accessory("surub 3.5x16", picioare * 4))  # pentru picioare
 
-        self.add_pfl()
+        self.add_pfl(base_offset_z=plinth_height)
 
         self.add_tower_fronts(
             opening_heights,

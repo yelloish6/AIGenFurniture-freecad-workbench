@@ -17,6 +17,7 @@ from furniture_design.cabinets.features.fronts import (  # noqa: E402
     validate_tower_opening_layout,
 )
 from furniture_design.cabinets.architectures import (  # noqa: E402
+    CABINET_DEFINITIONS,
     make_tower_box,
     make_corp_dressing,
 )
@@ -155,6 +156,37 @@ class TowerFrontGenerationTest(unittest.TestCase):
 
 
 class CabinetOpeningIntegrationTest(unittest.TestCase):
+    def test_plinth_height_controls_boards_back_and_fronts(self):
+        rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
+        for plinth_height in (0, 100, 180):
+            for as_object in (False, True):
+                with self.subTest(plinth_height=plinth_height, as_object=as_object):
+                    box = {"gap_list": [0], "front_list": [1], "plinth_height": plinth_height}
+                    if as_object:
+                        box = types.SimpleNamespace(**box)
+                    cabinet = make_corp_dressing("test", 1000, 600, 600, rules, box=box)
+                    boards = {e.label: e for e in cabinet.elements_list}
+                    self.assertEqual(boards["test.plinth"].width, plinth_height)
+                    self.assertEqual(boards["test.bottom"].position[5], plinth_height)
+                    back = boards["test.back"]
+                    self.assertEqual(back.width, 1000 - plinth_height - 4)
+                    self.assertEqual(back.position[5], plinth_height + 2)
+                    self.assertEqual(back.placement["Base"]["z"], plinth_height + 2)
+                    self.assertEqual(back.position[5] + back.position[2], 998)
+                    front = cabinet.get_element_list_by_type("front")[0]
+                    self.assertEqual(front.length, 1000 - plinth_height - 2 * rules["front_clearance"])
+                    self.assertEqual(cabinet.front_base_offset, plinth_height)
+
+    def test_plinth_height_defaults_to_rules_and_rejects_negative_height(self):
+        rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
+        rules["height_legs"] = 150
+        property_default = CABINET_DEFINITIONS["Tower"]["params"]["plinth_height"][1]
+        self.assertEqual(property_default(rules), 150)
+        cabinet = make_corp_dressing("test", 1000, 600, 600, rules)
+        self.assertEqual(cabinet.front_base_offset, 150)
+        with self.assertRaisesRegex(ValueError, "plinth_height"):
+            make_corp_dressing("test", 1000, 600, 600, rules, box={"plinth_height": -1})
+
     def test_separator_edging_preserves_finished_dimensions_and_placement(self):
         default_rules = json.loads((PACKAGE_ROOT / "furniture_design/default_rules.json").read_text())
         for factory, gap_heat in ((make_tower_box, 0), (make_tower_box, 50),

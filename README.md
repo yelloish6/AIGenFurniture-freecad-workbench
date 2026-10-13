@@ -8,7 +8,7 @@ furniture workshops, independent designers, and makers who want to reduce the
 manual work between layout design and manufacturing preparation.
 
 > **Project status:** Beta  
-> **Current version:** v0.2.1
+> **Current version:** v0.2.2
 > **Minimum FreeCAD version:** 1.0  
 
 ---
@@ -138,7 +138,7 @@ allowing addons to resolve shop-specific accessory names or enrich the setup.
 The Community edition generates:
 
 - Registry-driven CSV bills of materials, separated by element type and material
-- Chipboard and HDF cutting-list CSV files
+- Chipboard, HDF and front cutting-list CSV files
 - One aggregated accessories CSV for the complete order
 - STL files generated from the designed order
 

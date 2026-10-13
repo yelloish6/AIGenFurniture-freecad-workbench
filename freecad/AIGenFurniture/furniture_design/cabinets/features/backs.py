@@ -15,11 +15,12 @@ class BackMixin:
             self.elements_list.pop(index)
 
 
-    def add_pfl(self):
-        placa = Pfl(self.label + ".back", self.width - 4, self.height - 4, self.thick_pfl)
+    def add_pfl(self, base_offset_z=0):
+        back_height = self.height - base_offset_z
+        placa = Pfl(self.label + ".back", self.width - 4, back_height - 4, self.thick_pfl)
         placa.rotate("x")
         placa.move("y", self.depth + 1 + placa.thick)
         placa.move("x", 2)
-        placa.move("z", 2)
+        placa.move("z", base_offset_z + 2)
         self.append(placa)
-        self.append(Accessory("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150)))
+        self.append(Accessory("surub PFL", 2 * round(back_height / 150) + 2 * round(self.width / 150)))
